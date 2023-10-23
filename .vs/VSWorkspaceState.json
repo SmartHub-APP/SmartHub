@@ -1,11 +1,12 @@
 {
   "ExpandedNodes": [
     "",
+    "\\app\\lib",
     "\\pkg",
     "\\pkg\\api",
     "\\pkg\\database",
     "\\pkg\\tool"
   ],
-  "SelectedNode": "\\pkg\\api\\login.go",
+  "SelectedNode": "\\pkg\\tool\\config.go",
   "PreviewInSolutionExplorer": false
 }

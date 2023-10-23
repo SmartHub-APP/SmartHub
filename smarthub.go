@@ -2,9 +2,9 @@ package main
 
 import (
     "log"
+    SmartHubAPI "SmartHub/pkg/api"
     SmartHubTool "SmartHub/pkg/tool"
     SmartHubDatabase "SmartHub/pkg/database"
-//    SmartHubAPI "SmartHub/pkg/api"
 )
 
 var db SmartHubDatabase.SmartHubDB
@@ -27,4 +27,8 @@ func main() {
     isOK, msg = db.CheckTable(cfg)
     if (!isOK) { log.Fatal("### Error: " + msg + "\n") }
     log.Println("## 3. Check database table", msg)
+
+    log.Println("## 4. Setup api router")
+    SmartHubAPI.CreateRouter(cfg)
+    log.Println("## 4. Setup api router done")
 }
