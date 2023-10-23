@@ -1,3 +1,3 @@
-module Back
+module SmartHub
 
 go 1.20
