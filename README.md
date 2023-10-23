@@ -3,7 +3,7 @@
 ## SmartHub
 
 ### Download
-- ```git clone gh repo clone Smarthub-system/SmartHub```
+- ```git clone https://github.com/Smarthub-system/SmartHub.git```
 
 ### Command
 - Debug
