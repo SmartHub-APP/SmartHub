@@ -2,11 +2,11 @@ package main
 
 import (
     "fmt"
-    shDB "Back/src/database"
+//    SmartHubAPI "SmartHub/pkg/api"
+//    SmartHubTool "SmartHub/pkg/tool"
+//    SmartHubDatabase "SmartHub/pkg/database"
 )
 
 func main() {
     fmt.Println("# Start")
-
-    shDB.Hi()
 }
