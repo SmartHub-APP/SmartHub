@@ -1,12 +1,30 @@
 package main
 
 import (
-    "os"
-//    SmartHubAPI "SmartHub/pkg/api"
+    "log"
     SmartHubTool "SmartHub/pkg/tool"
-//    SmartHubDatabase "SmartHub/pkg/database"
+    SmartHubDatabase "SmartHub/pkg/database"
+//    SmartHubAPI "SmartHub/pkg/api"
 )
 
+var db SmartHubDatabase.SmartHubDB
+var cfg SmartHubTool.SettingConfig
+
 func main() {
-    SmartHubTool.LoadArguments(os.Args)
+    log.Println("### SmartHub start")
+
+    log.Println("## 1. Loading argument")
+    isOK, msg := cfg.LoadArguments()
+    if (!isOK) { log.Fatal("### Error: " + msg + "\n") }
+    log.Println("## 1. Loading argument", msg)
+
+    log.Println("## 2. Connect to database")
+    isOK, msg = db.Connection(cfg)
+    if (!isOK) { log.Fatal("### Error: " + msg + "\n") }
+    log.Println("## 2. Connect to database", msg)
+
+    log.Println("## 3. Check database table")
+    isOK, msg = db.CheckTable(cfg)
+    if (!isOK) { log.Fatal("### Error: " + msg + "\n") }
+    log.Println("## 3. Check database table", msg)
 }

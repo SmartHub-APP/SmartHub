@@ -4,9 +4,8 @@
     "\\pkg",
     "\\pkg\\api",
     "\\pkg\\database",
-    "\\pkg\\object",
     "\\pkg\\tool"
   ],
-  "SelectedNode": "\\pkg\\tool\\config.go",
+  "SelectedNode": "\\pkg\\api\\login.go",
   "PreviewInSolutionExplorer": false
 }
