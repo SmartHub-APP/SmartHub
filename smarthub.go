@@ -1,12 +1,12 @@
 package main
 
 import (
-    "fmt"
+    "os"
 //    SmartHubAPI "SmartHub/pkg/api"
-//    SmartHubTool "SmartHub/pkg/tool"
+    SmartHubTool "SmartHub/pkg/tool"
 //    SmartHubDatabase "SmartHub/pkg/database"
 )
 
 func main() {
-    fmt.Println("# Start")
+    SmartHubTool.LoadArguments(os.Args)
 }
