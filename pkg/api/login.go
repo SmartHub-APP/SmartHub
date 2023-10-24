@@ -39,7 +39,7 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
 		switch r.Method {
 			case "POST" :
                 if u.Username == "" || u.Password == "" {
-                    http.Error(w, err"Missed field", http.StatusBadRequest)
+                    http.Error(w, "Missed field", http.StatusBadRequest)
                     return
                 }
 
