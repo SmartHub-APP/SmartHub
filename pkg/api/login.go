@@ -29,7 +29,7 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
 
         err := json.NewDecoder(r.Body).Decode(&u)
         if err != nil {
-            http.Error(w, err.Error(), http.StatusBadRequest)
+            http.Error(w, "Failed to decode response", http.StatusBadRequest)
             return
         }
 
@@ -39,7 +39,7 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
 		switch r.Method {
 			case "POST" :
                 if u.Username == "" || u.Password == "" {
-                    http.Error(w, err.Error(), http.StatusBadRequest)
+                    http.Error(w, err"Missed field", http.StatusBadRequest)
                     return
                 }
 
