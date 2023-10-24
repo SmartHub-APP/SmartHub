@@ -33,6 +33,9 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
             return
         }
 
+        fmt.Println("*"+ u.Username +"*")
+        fmt.Println("*"+ u.Password +"*")
+
 		switch r.Method {
 			case "POST" :
                 if u.Username == "" || u.Password == "" {
