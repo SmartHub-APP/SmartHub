@@ -27,7 +27,6 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET")
 		w.Header().Set("Content-Type", "application/json")
 
-        fmt.Println(r.Body)
         err := json.NewDecoder(r.Body).Decode(&u)
         if err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
@@ -36,7 +35,10 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
 
 		switch r.Method {
 			case "POST" :
-                fmt.Println(u.Username, u.Password)
+                if u.Username == "" || u.Password == "" {
+                    http.Error(w, err.Error(), http.StatusBadRequest)
+                    return
+                }
 
 				if success := true /*Try2Login(u.Username, u.Password)*/; success {
                     accessToken, refreshToken := getTokens(u.Username)
