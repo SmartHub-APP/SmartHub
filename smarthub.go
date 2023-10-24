@@ -28,7 +28,6 @@ func main() {
     if (!isOK) { log.Fatal("### Error: " + msg + "\n") }
     log.Println("## 3. Check database table", msg)
 
-    log.Println("## 4. Setup api router")
+    log.Println("## 4. Create API router")
     SmartHubAPI.CreateRouter(cfg)
-    log.Println("## 4. Setup api router done")
 }
