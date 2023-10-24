@@ -1,11 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/services.dart';
-
 import 'config.dart';
 import 'object.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 FrontStyle uiStyle = FrontStyle(
   leadWidth: Device.screenType == ScreenType.mobile ? 35.w : 18.w,

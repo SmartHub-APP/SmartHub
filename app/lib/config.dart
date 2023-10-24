@@ -6,7 +6,6 @@ import 'tabs/customer.dart';
 import 'tabs/dashboard.dart';
 import 'tabs/leads_appointment.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 Transaction newTransaction = Transaction(
   onSelect: false,
@@ -66,7 +65,6 @@ InitSetting ini = InitSetting(
 );
 
 SystemControl manager = SystemControl(
-  aesKey: 'FlexibleSmartHubMadeByConnection',
   systemName: 'Smarthub',
   systemVersion: 'v0.0.9',
   user: User(account: '', password: '', tokenAccess: '', tokenRefresh: ''),
