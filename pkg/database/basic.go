@@ -7,14 +7,14 @@ import (
 	SmartHubTool "SmartHub/pkg/tool"
 )
 
+type SmartHubDB struct {
+	ctl *sql.DB
+}
+
 const (
     maxOpenConns int = 10
     maxIdleConns int = 10
 )
-
-type SmartHubDB struct {
-	ctl *sql.DB
-}
 
 func (DB *SmartHubDB) Connection(cfg SmartHubTool.SettingConfig) (bool, string) {
 	uri := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", cfg.DB_User, cfg.DB_Password, cfg.DB_Address, cfg.DB_Port, cfg.DB_Name)

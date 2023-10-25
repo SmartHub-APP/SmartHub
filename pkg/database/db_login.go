@@ -4,27 +4,50 @@ import (
 	"fmt"
 )
 
-func (DB *SmartHubDB) Try2Login(username, password string) (bool, string) {
-	sql := fmt.Sprintf("SELECT `Password` FROM `Memeber` WHERE `Name`='%s';", username)
+type LoginResult struct {
+    Message    string
+    Username   string
+    Password   string
+    Permission string
+}
 
-	Hits, err := DB.ctl.Query(sql)
+var sqlLogin = `
+SELECT Member.Name, Member.Password, Role.Permission
+FROM Member
+INNER JOIN Role
+ON Member.RoleID=Role.ID
+WHERE Member.Account='%s'
+`
+
+func (DB *SmartHubDB) Try2Login(username, password string) LoginResult {
+	var lr LoginResult
+
+	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlLogin, username))
     defer Hits.Close()
 
-	if err != nil { return false, "Query failed" }
+	if err != nil {
+		lr.Message = "Query failed"
+		return lr
+	}
 
-	hitPwd := ""
 	for Hits.Next() {
-		Hits.Scan(&hitPwd)
+		Hits.Scan(
+			&lr.Username,
+			&lr.Password,
+			&lr.Permission,
+		)
 		break
 	}
 
-	if hitPwd == "" {
-		return false, "Account not exist"
+	if lr.Password == "" {
+		lr.Message = "Account not exist"
+		return lr
 	}
 
-	if hitPwd != password {
-		return false, "Mismatch password"
+	if lr.Password != password {
+		lr.Message = "Mismatch password"
+		return lr
 	}
 
-	return true, hitPwd
+	return lr
 }
