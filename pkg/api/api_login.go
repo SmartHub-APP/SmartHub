@@ -1,11 +1,10 @@
 ﻿package api
 
 import (
-    "fmt"
-    "time"
 	"net/http"
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
+    SmartHubTool "SmartHub/pkg/tool"
+    SmartHubDatabase "SmartHub/pkg/database"
 )
 
 type User struct {
@@ -13,11 +12,7 @@ type User struct {
 	Password string `json:"Password"`
 }
 
-const (
-    jwtKey = "JWT-SecurePassword@SmartHub"
-)
-
-func RouterLogin() func(http.ResponseWriter, *http.Request) {
+func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
         r.ParseForm()
 
@@ -33,9 +28,6 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
             return
         }
 
-        fmt.Println("*"+ u.Username +"*")
-        fmt.Println("*"+ u.Password +"*")
-
 		switch r.Method {
 			case "POST" :
                 if u.Username == "" || u.Password == "" {
@@ -43,8 +35,8 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
                     return
                 }
 
-				if success := true /*Try2Login(u.Username, u.Password)*/; success {
-                    accessToken, refreshToken := getTokens(u.Username)
+				if ok, msg := db.Try2Login(u.Username, u.Password); ok {
+                    accessToken, refreshToken := SmartHubTool.GetTokens(u.Username)
             
                     response := map[string]string{
                         "access_token":  accessToken,
@@ -60,26 +52,8 @@ func RouterLogin() func(http.ResponseWriter, *http.Request) {
                     w.WriteHeader(http.StatusOK)
                     w.Write(jsonResponse)
                 } else {
-                    http.Error(w, "Unauthorized", http.StatusUnauthorized)
+                    http.Error(w, msg, http.StatusUnauthorized)
                 }
 	    }
 	}
-}
-
-func getTokens(username string) (string, string) {
-    accessClaims := jwt.MapClaims{
-        "username": username,
-        "exp": time.Now().Add(time.Hour * 1).Unix(),
-    }
-    accessJWT := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
-    accessToken, _ := accessJWT.SignedString([]byte(jwtKey))
-
-    refreshClaims := jwt.MapClaims{
-        "username": username,
-        "exp":      time.Now().Add(time.Hour * 24).Unix(),
-    }
-    refreshJWT := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
-    refreshToken, _ := refreshJWT.SignedString([]byte(jwtKey))
-
-    return accessToken, refreshToken
 }
