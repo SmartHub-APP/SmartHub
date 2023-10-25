@@ -15,8 +15,11 @@ func (DB *SmartHubDB) Try2Login(username, password string) (bool, string) {
 	hitPwd := ""
 	for Hits.Next() {
 		Hits.Scan(&hitPwd)
-		fmt.Println("###"+hitPwd+"###")
 		break
+	}
+
+	if hitPwd == "" {
+		return false, "Account not exist"
 	}
 
 	if hitPwd != password {
