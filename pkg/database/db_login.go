@@ -19,10 +19,10 @@ ON Member.RoleID=Role.ID
 WHERE Member.Account='%s'
 `
 
-func (DB *SmartHubDB) Try2Login(username, password string) LoginResult {
+func (DB *SmartHubDB) Try2Login(account, password string) LoginResult {
 	var lr LoginResult
 
-	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlLogin, username))
+	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlLogin, account))
     defer Hits.Close()
 
 	if err != nil {
