@@ -51,6 +51,16 @@ func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http
 
                     Resp.Username, Resp.Permission = rf.Username, rf.Permission
                     Resp.AccessToken, Resp.RefreshToken = accessTK, refreshTK
+
+                    jsonResponse, err := json.Marshal(Resp)
+                    if err != nil {
+                        http.Error(w, err.Error(), http.StatusInternalServerError)
+                        return
+                    }
+        
+                    w.Header().Set("Content-Type", "application/json")
+                    w.WriteHeader(http.StatusOK)
+                    w.Write(jsonResponse)
                 } else {
                     if RET := db.Try2Login(Req.Account, Req.Password); RET.Message == "" {
                         accessTK, refreshTK := SmartHubTool.GetTokens(Req.Account)
