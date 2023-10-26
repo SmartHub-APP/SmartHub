@@ -1,6 +1,7 @@
 ﻿package api
 
 import (
+    "fmt"
 	"net/http"
 	"encoding/json"
     SmartHubTool "SmartHub/pkg/tool"
@@ -78,6 +79,7 @@ func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http
 }
 
 func DetermineWay(req LoginRequest) (bool, bool, string) {
+    fmt.Println("==========================")
     if req.AccessToken == "" || req.RefreshToken == "" {
         if req.Account == "" || req.Password == "" {
             return true, false, "Missed field"
@@ -87,9 +89,11 @@ func DetermineWay(req LoginRequest) (bool, bool, string) {
         rtExpire, rtUID := SmartHubTool.ParseToken(req.RefreshToken)
 
         if rtExpire {
+            fmt.Println("rtExpire")
             return true, false, "Refresh time expired"
         } else {
             if atExpire {
+                fmt.Println("atExpire")
                 ret := atUID
 
                 if rtUID != "" { ret = rtUID }
@@ -99,5 +103,6 @@ func DetermineWay(req LoginRequest) (bool, bool, string) {
         }
     }
 
+    fmt.Println("allAlive")
     return false, false, ""
 }
