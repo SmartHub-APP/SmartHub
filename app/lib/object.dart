@@ -35,7 +35,6 @@ class FrontStyle {
 
 // ##### Controller
 class SystemControl {
-  String aesKey;
   String systemName;
   String systemVersion;
   User user;
@@ -44,7 +43,6 @@ class SystemControl {
 
   SystemControl updateLogin(User newUser, List<bool> newPerm) {
     return SystemControl(
-      aesKey: aesKey,
       systemName: systemName,
       systemVersion: systemVersion,
       user: newUser,
@@ -54,7 +52,6 @@ class SystemControl {
   }
 
   SystemControl({
-    required this.aesKey,
     required this.systemName,
     required this.systemVersion,
     required this.user,

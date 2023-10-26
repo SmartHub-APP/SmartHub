@@ -1,5 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
-
 import '../config.dart';
 import '../object.dart';
 import '../interaction.dart';
@@ -7,6 +5,7 @@ import 'package:sprintf/sprintf.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Customer extends StatefulWidget {
   const Customer({super.key});
@@ -32,7 +31,6 @@ class _CustomerState extends State<Customer> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveSizer(
-
       builder: (context, orientation, screenType) {
         double sWidth = MediaQuery.of(context).size.width;
         bool isMobile = sWidth < 700;
@@ -106,7 +104,7 @@ class _CustomerState extends State<Customer> {
                                   decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                   child: text3(
                                     "${searchRange.start.year}/${searchRange.start.month}/${searchRange.start.day} ~"
-                                        "${searchRange.end.year}/${searchRange.end.month}/${searchRange.end.day}",
+                                    "${searchRange.end.year}/${searchRange.end.month}/${searchRange.end.day}",
                                     color: Colors.black,
                                   ),
                                 ),
@@ -268,7 +266,7 @@ class _CustomerState extends State<Customer> {
                                 colIndex = colID;
                                 sortAscend = direction;
                                 selfTransactions.sort(
-                                      (a, b) => direction ? a.saleDate.toString().compareTo(b.saleDate.toString()) : b.saleDate.toString().compareTo(a.saleDate.toString()),
+                                  (a, b) => direction ? a.saleDate.toString().compareTo(b.saleDate.toString()) : b.saleDate.toString().compareTo(a.saleDate.toString()),
                                 );
                               });
                             },
@@ -368,7 +366,7 @@ class _CustomerState extends State<Customer> {
                               buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
                               items: List.generate(
                                 maxPage,
-                                    (pID) => (pID + 1).toString(),
+                                (pID) => (pID + 1).toString(),
                               ).map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
                               onChanged: (newValue) {
                                 setState(() {
