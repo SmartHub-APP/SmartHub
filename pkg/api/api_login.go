@@ -30,7 +30,7 @@ func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http
 
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {
-                    http.Error(w, "Failed to decode response", http.StatusBadRequest)
+                    http.Error(w, "Failed to decode request", http.StatusBadRequest)
                     return
                 }
 

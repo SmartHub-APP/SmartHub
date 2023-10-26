@@ -12,15 +12,15 @@ const (
 
 func GetTokens(username string) (string, string) {
     accessClaims := jwt.MapClaims{
-        "username": username,
-        "exp": time.Now().Add(time.Hour * 1).Unix(),
+        "UserName": username,
+        "ExpireAt": time.Now().Add(time.Hour * 1).Unix(),
     }
     accessJWT := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
     accessToken, _ := accessJWT.SignedString([]byte(jwtKey))
 
     refreshClaims := jwt.MapClaims{
-        "username": username,
-        "exp":      time.Now().Add(time.Hour * 24).Unix(),
+        "UserName": username,
+        "ExpireAt": time.Now().Add(time.Hour * 24).Unix(),
     }
     refreshJWT := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
     refreshToken, _ := refreshJWT.SignedString([]byte(jwtKey))
@@ -38,7 +38,7 @@ func ParseToken(tokenString string) (string, error) {
     if err != nil { return "Failed to parse token", err }
     
     claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok { return "Failed to extract claims", err }
+	if !ok || !token.Valid { return "Failed to extract claims", err }
 
     fmt.Println("=========================")
     for key, val := range claims {
