@@ -1,7 +1,6 @@
 package tool
 
 import (
-    "fmt"
     "time"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -28,23 +27,22 @@ func GetTokens(username string) (string, string) {
     return accessToken, refreshToken
 }
 
-func ParseToken(tokenString string) (string, error) {
-    claims := jwt.MapClaims{}
+func ParseToken(tokenString string) (bool, string) {
+    Claims := jwt.MapClaims{}
 
     token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
         return []byte(jwtKey), nil
     })
 
-    if err != nil { return "Failed to parse token", err }
+    if err != nil { return true, "Failed to parse token" }
     
-    claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid { return "Failed to extract claims", err }
+    Claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid { return true, "Failed to extract claims" }
 
-    fmt.Println("=========================")
-    for key, val := range claims {
-        fmt.Printf("Key: %v, value: %v\n", key, val)
+    expireTime := int64(Claims["ExpireAt"].(float64))
+    if time.Now().Unix() > expireTime {
+        return true, "Refresh Token has expired"
     }
-    fmt.Println("=========================")
 
-    return "", nil
+    return false, Claims["UserName"].(string)
 }
