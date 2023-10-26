@@ -11,8 +11,8 @@
   "TB_Appointment": "Appointment",
   "API_Base": "/smarthub",
   "API_Login": "/login",
-  "API_User": "/user",
   "API_Role": "/role",
+  "API_User": "/user",
   "API_Transaction": "/transaction",
   "API_Appointment": "/appointment"
 }
