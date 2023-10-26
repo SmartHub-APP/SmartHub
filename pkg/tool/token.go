@@ -1,6 +1,7 @@
 package tool
 
 import (
+    "fmt"
     "time"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -27,17 +28,23 @@ func GetTokens(username string) (string, string) {
     return accessToken, refreshToken
 }
 
-func ParseToken(tokenString string) (jwt.MapClaims, error) {
+func ParseToken(tokenString string) (string, error) {
+    claims := jwt.MapClaims{}
+
     token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
         return []byte(jwtKey), nil
     })
-    if err != nil {
-        return nil, err
-    }
 
-    if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-        return claims, nil
-    }
+    if err != nil { return "Failed to parse token", err }
+    
+    claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok { return "Failed to extract claims", err }
 
-    return nil, err
+    fmt.Println("=========================")
+    for key, val := range claims {
+        fmt.Printf("Key: %v, value: %v\n", key, val)
+    }
+    fmt.Println("=========================")
+
+    return "", nil
 }
