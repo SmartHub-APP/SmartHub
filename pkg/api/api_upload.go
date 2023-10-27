@@ -66,7 +66,7 @@ func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.Respons
                     return
                 }
 
-                if msg := db.FileDELETE(Req); msg == "" {
+                if msg := db.FileDELETE(file); msg == "" {
                     w.WriteHeader(http.StatusNoContent)
                 } else {
                     if err != nil {
