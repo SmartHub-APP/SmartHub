@@ -10,7 +10,7 @@ import (
     SmartHubDatabase "SmartHub/pkg/database"
 )
 
-func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseWriter, *http.Request) {
+func RouterFile(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
         Val := r.URL.Query()
 
