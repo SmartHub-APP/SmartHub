@@ -1,6 +1,7 @@
 package main
 
 import (
+    "os"
     "log"
     SmartHubAPI "SmartHub/pkg/api"
     SmartHubTool "SmartHub/pkg/tool"
@@ -29,7 +30,7 @@ func main() {
     log.Println("## 3. Check database table", msg)
 
     log.Println("## 4. Setup cdn folder")
-    err := SmartHubTool.EnsureFolder(SmartHubCFG.SH_CDN)
+    err := os.MkdirAll(SmartHubCFG.SH_CDN, os.ModePerm)
     if err != nil { log.Fatal("### Error: Create CDN archive error\n") }
     log.Println("## 4. Setup cdn folder")
 
