@@ -3,7 +3,6 @@
 import (
     "os"
     "io"
-    "fmt"
     "strings"
 	"net/http"
     "path/filepath"
@@ -54,8 +53,6 @@ func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.Respons
                 w.WriteHeader(http.StatusCreated)
 
             case "DELETE" :
-                var Req string
-
                 file := strings.TrimSpace(Val.Get("file"))
 
                 if file == "" {
@@ -63,9 +60,7 @@ func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.Respons
                     return
                 }
 
-                fmt.Println(filepath.Join(base, Req))
-
-                err := os.Remove(filepath.Join(base, Req))
+                err := os.Remove(filepath.Join(base, file))
                 if err != nil {
                     http.Error(w, "Failed to delete file", http.StatusInternalServerError)
                     return
