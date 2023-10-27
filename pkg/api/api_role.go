@@ -35,7 +35,7 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                         return
                     }
         
-                    w.Header().Set("Content-Type", "application/json")
+                    w.Header().Set("Content-Type", "application/json; charset=utf-8")
                     w.WriteHeader(http.StatusOK)
                     w.Write(jsonResponse)
                 }
