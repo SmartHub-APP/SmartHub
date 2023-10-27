@@ -80,6 +80,9 @@ func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http
                         http.Error(w, RET.Message, http.StatusUnauthorized)
                     }
                 }
+
+            default:
+                http.Error(w, "No such method", http.StatusMethodNotAllowed)
 	    }
 	}
 }
