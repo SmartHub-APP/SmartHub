@@ -52,3 +52,5 @@ clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Aut
 ## Upload
 1. POST
 clear; curl -X POST -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -F "FileContent=@README.md" http://140.113.120.235:25000/smarthub/upload -v
+2. DELETE
+clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '[9,10]' http://140.113.120.235:25000/smarthub/member -v
