@@ -3,6 +3,7 @@
 import (
     "os"
     "io"
+    "fmt"
 	"net/http"
     SmartHubTool "SmartHub/pkg/tool"
     SmartHubDatabase "SmartHub/pkg/database"
@@ -21,6 +22,7 @@ func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.Respons
                 }
                 defer file.Close()
 
+                fmt.Println(SmartHubTool.SHA256FilePath(base, handler.Filename))
                 dest, err := os.Create(SmartHubTool.SHA256FilePath(base, handler.Filename))
                 if err != nil {
                     http.Error(w, "Failed to create file", http.StatusInternalServerError)
