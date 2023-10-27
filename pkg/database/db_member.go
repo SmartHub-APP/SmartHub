@@ -22,7 +22,7 @@ VALUES ('%d', '%s', '%s', '%s', '%d', '%s', '%s');
 `
 var sqlMemberPUT = `
 UPDATE Member
-SET Name="%s", Account="%s", Password="%s", RoleID="%d", BankCode="%s", BankAccount="%s"
+SET Status="%d", Name="%s", Account="%s", Password="%s", RoleID="%d", BankCode="%s", BankAccount="%s"
 WHERE ID="%d";
 `
 var sqlMemberDELETE = `DELETE FROM Member WHERE ID IN (%s);`

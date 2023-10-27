@@ -45,7 +45,7 @@ clear; curl -X GET -H 'Content-Type: application/json; charset=utf-8' -H 'Author
 2. POST
 clear; curl -X POST -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '{"Status":1,"RoleID":2,"Name":"NameTest1","Account":"AccountTest1","Password":"PasswordTest1","BankCode":"546","BankAccount":"5465"}' http://140.113.120.235:25000/smarthub/member -v
 3. PUT
-clear; curl -X PUT -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '{"Name":" Test008","Perm":"888888","ID":8}' http://140.113.120.235:25000/smarthub/member -v
+clear; curl -X PUT -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '{"ID":6,"Status":1,"RoleID":2,"Name":"HAHAHA","Account":"123123123","Password":"94879487","BankCode":"456","BankAccount":"789"}' http://140.113.120.235:25000/smarthub/member -v
 4. DELETE
-clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '[7,8]' http://140.113.120.235:25000/smarthub/member -v
+clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '[9,10]' http://140.113.120.235:25000/smarthub/member -v
 
