@@ -12,9 +12,10 @@ import (
 
 func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+        Val := r.URL.Query()
+
 		switch r.Method {
 			case "POST" :
-                Val := r.URL.Query()
                 TID := strings.TrimSpace(Val.Get("TID"))
 
                 if TID == "" {
@@ -31,12 +32,11 @@ func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.Respons
                 }
                 defer file.Close()
 
-                HashCode := SmartHubTool.SHA256EncodeTime(handler.Filename)
-                FileSave := filepath.Join(base, HashCode + filepath.Ext(handler.Filename))
+                HashCode := SmartHubTool.SHA256EncodeTime(handler.Filename) + filepath.Ext(handler.Filename)
 
                 db.FilePOST(TID, handler.Filename, HashCode)
 
-                dest, err := os.Create(FileSave)
+                dest, err := os.Create(filepath.Join(base, HashCode))
                 if err != nil {
                     http.Error(w, "Failed to create file", http.StatusInternalServerError)
                     return
@@ -49,8 +49,33 @@ func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.Respons
                 }
 
         		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-        		w.Header().Set("Access-Control-Allow-Methods", "POST")
+        		w.Header().Set("Access-Control-Allow-Methods", "POST, DELETE")
                 w.WriteHeader(http.StatusCreated)
+
+            case "DELETE" :
+                var Req string
+
+                file := strings.TrimSpace(Val.Get("file"))
+
+                if file == "" {
+                    http.Error(w, "Missed field", http.StatusBadRequest)
+                    return
+                }
+
+                err := os.Remove(filepath.Join(base, Req))
+                if err != nil {
+                    http.Error(w, "Failed to delete file", http.StatusInternalServerError)
+                    return
+                }
+
+                if msg := db.FileDELETE(Req); msg == "" {
+                    w.WriteHeader(http.StatusNoContent)
+                } else {
+                    if err != nil {
+                         http.Error(w, msg, http.StatusInternalServerError)
+                         return
+                     }
+                }
 
             default:
                 http.Error(w, "No such method", http.StatusMethodNotAllowed)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var sqlFilePOST = `INSERT INTO File (TransactionID, FileName, HashCode) VALUES ('%d', '%s', '%s');`
+var sqlFilePOST = `INSERT INTO File (TransactionID, FileName, HashCode) VALUES ('%s', '%s', '%s');`
 var sqlFileDELETE = `DELETE FROM File WHERE HashCode='%s';`
 
 func (DB *SmartHubDB) FilePOST(TransactionID, FileName, HashCode string) string {
