@@ -13,7 +13,6 @@ func SHA256EncodeTime(input string) string {
     return string(hasher.Sum(nil))
 }
 
-
 func SHA256FilePath(base, input string) string {
     fName := SHA256EncodeTime(input) + filepath.Ext(input)
 
