@@ -21,8 +21,8 @@ type SettingConfig struct {
     TB_Appointment  string  `json:"TB_Appointment"`
     API_Base        string  `json:"API_Base"`
     API_Login       string  `json:"API_Login"`
-    API_User        string  `json:"API_User"`
     API_Role        string  `json:"API_Role"`
+    API_User        string  `json:"API_User"`
     API_Transaction string  `json:"API_Transaction"`
     API_Appointment string  `json:"API_Appointment"`
 }
