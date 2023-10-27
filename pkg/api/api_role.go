@@ -10,8 +10,6 @@ import (
 type RoleRequest struct {
 	Account  string `json:"Account"`
 	Password string `json:"Password"`
-    AccessToken  string `json:"AccessToken"`
-	RefreshToken string `json:"RefreshToken"`
 }
 
 func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
