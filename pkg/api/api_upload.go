@@ -14,14 +14,15 @@ func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.Respons
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 			case "POST" :
-                r.ParseMultipartForm(500 << 20)
-
-                TID := strings.TrimSpace(r.FormValue("TID"))
+                Val := r.URL.Query()
+                TID := strings.TrimSpace(Val.Get("TID"))
 
                 if TID == "" {
                     http.Error(w, "Missed field", http.StatusBadRequest)
                     return
                 }
+
+                r.ParseMultipartForm(500 << 20)
 
 				file, handler, err := r.FormFile("FileContent")
                 if err != nil {
