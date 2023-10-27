@@ -47,7 +47,7 @@ func (DB *SmartHubDB) MemberGET() ([]Member, string) {
 }
 
 func (DB *SmartHubDB) MemberPOST(m MemberInsert) string {
-	sql := fmt.Sprintf(sqlMemberPOST, m.Status, m.RoleID, m.Name, m.Account, m.Password, m.BankCode, m.BankAccount)
+	sql := fmt.Sprintf(sqlMemberPOST, m.Status, m.Name, m.Account, m.Password, m.RoleID, m.BankCode, m.BankAccount)
 
 	if _, err := DB.ctl.Exec(sql); err != nil { return "Query failed" }
 
