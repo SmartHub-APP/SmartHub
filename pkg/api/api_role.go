@@ -2,6 +2,7 @@ package api
 
 import (
 //	"fmt"
+    "strings"
     "net/http"
 	"encoding/json"
     SmartHubDatabase "SmartHub/pkg/database"
@@ -40,6 +41,14 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {
                     http.Error(w, "Failed to decode request", http.StatusBadRequest)
+                    return
+                }
+
+                trimName := strings.TrimSpace(Req.Name)
+                trimPerm := strings.TrimSpace(Req.Perm)
+
+                if trimName == "" || trimPerm == "" {
+                    http.Error(w, "Missed field", http.StatusBadRequest)
                     return
                 }
 

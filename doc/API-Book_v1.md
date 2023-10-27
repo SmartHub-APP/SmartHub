@@ -31,6 +31,6 @@
 
 ## Role
 1. GET
-```curl -X GET -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' http://140.113.120.235:25000/smarthub/role```
+clear; curl -X GET -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' http://140.113.120.235:25000/smarthub/role
 2. POST
-
+clear; curl -X POST -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '{"Name":"Boss","Perm":"123123"}' http://140.113.120.235:25000/smarthub/role
