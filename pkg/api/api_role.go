@@ -1,14 +1,20 @@
 package api
 
 import (
-//	"fmt"
+	"fmt"
     "strings"
     "net/http"
 	"encoding/json"
     SmartHubDatabase "SmartHub/pkg/database"
 )
 
-type RoleRequest struct {
+type RoleRequestPost struct {
+	Name string `json:"Name"`
+	Perm string `json:"Perm"`
+}
+
+type RoleRequestPut struct {
+    ID int `json:"ID"`
 	Name string `json:"Name"`
 	Perm string `json:"Perm"`
 }
@@ -35,8 +41,8 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                     w.Write(jsonResponse)
                 }
 
-			case "POST" :
-                var Req RoleRequest
+			case "POST":
+                var Req RoleRequestPost
 
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {
@@ -52,8 +58,53 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                     return
                 }
 
-                if msg := db.RolePOST(Req.Name, Req.Perm); msg == "" {        
-                    w.WriteHeader(http.StatusOK)
+                if msg := db.RolePOST(trimName, trimPerm); msg == "" {        
+                    w.WriteHeader(http.StatusCreated)
+                } else {
+                    if err != nil {
+                         http.Error(w, msg, http.StatusInternalServerError)
+                         return
+                     }
+                }
+
+			case "PUT":
+                var Req RoleRequestPut
+
+                err := json.NewDecoder(r.Body).Decode(&Req)
+                if err != nil {
+                    http.Error(w, "Failed to decode request", http.StatusBadRequest)
+                    return
+                }
+
+                trimName := strings.TrimSpace(Req.Name)
+                trimPerm := strings.TrimSpace(Req.Perm)
+
+                fmt.Println(trimName, trimPerm, Req.ID)
+                if trimName == "" || trimPerm == "" || Req.ID == 0 {
+                    http.Error(w, "Missed field", http.StatusBadRequest)
+                    return
+                }
+
+                if msg := db.RolePUT(trimName, trimPerm, Req.ID); msg == "" {        
+                    w.WriteHeader(http.StatusNoContent)
+                } else {
+                    if err != nil {
+                         http.Error(w, msg, http.StatusInternalServerError)
+                         return
+                     }
+                }
+
+			case "DELETE":
+                var Req []int
+
+                err := json.NewDecoder(r.Body).Decode(&Req)
+                if err != nil {
+                    http.Error(w, "Failed to decode request", http.StatusBadRequest)
+                    return
+                }
+
+                if msg := db.RoleDELETE(Req); msg == "" {        
+                    w.WriteHeader(http.StatusNoContent)
                 } else {
                     if err != nil {
                          http.Error(w, msg, http.StatusInternalServerError)
