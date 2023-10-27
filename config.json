@@ -1,5 +1,6 @@
 {
   "SH_Port": "25000",
+  "SH_CDN": "assets/cdn/",
   "DB_Name": "Smarthub",
   "DB_User": "smarthub",
   "DB_Password": "DatabaseAdmin@SmartHub",
@@ -9,6 +10,7 @@
   "TB_Role": "Role",
   "TB_Transaction": "Transaction",
   "TB_Appointment": "Appointment",
+  "API_CDN": "/image/",
   "API_Base": "/smarthub",
   "API_Login": "/login",
   "API_Role": "/role",
