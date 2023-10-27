@@ -1,31 +1,30 @@
 package api
 
 import (
-    "strings"
     "net/http"
 	"encoding/json"
     SmartHubDatabase "SmartHub/pkg/database"
 )
 
-type RoleRequestPost struct {
+type MemberRequestPost struct {
 	Name string `json:"Name"`
 	Perm string `json:"Perm"`
 }
 
-type RoleRequestPut struct {
+type MemberRequestPut struct {
     ID int `json:"ID"`
 	Name string `json:"Name"`
 	Perm string `json:"Perm"`
 }
 
-func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
+func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
 
 		switch r.Method {
             case "GET":
-                if RET, msg := db.RoleGET(); msg != "" {
+                if RET, msg := db.MemberGET(); msg != "" {
                     http.Error(w, msg, http.StatusInternalServerError)
                     return
                 } else {
@@ -41,7 +40,7 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                 }
 
 			case "POST":
-                var Req RoleRequestPost
+                var Req SmartHubDatabase.MemberInsert
 
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {
@@ -49,15 +48,14 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                     return
                 }
 
-                trimName := strings.TrimSpace(Req.Name)
-                trimPerm := strings.TrimSpace(Req.Perm)
-
-                if trimName == "" || trimPerm == "" {
+                if ok, after := SmartHubDatabase.ValidMemberInsert(Req); ok {
+                    Req = after
+                } else {
                     http.Error(w, "Missed field", http.StatusBadRequest)
                     return
                 }
 
-                if msg := db.RolePOST(trimName, trimPerm); msg == "" {        
+                if msg := db.MemberPOST(Req); msg == "" {
                     w.WriteHeader(http.StatusCreated)
                 } else {
                     if err != nil {
@@ -67,7 +65,7 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                 }
 
 			case "PUT":
-                var Req RoleRequestPut
+                var Req SmartHubDatabase.Member
 
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {
@@ -75,15 +73,14 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                     return
                 }
 
-                trimName := strings.TrimSpace(Req.Name)
-                trimPerm := strings.TrimSpace(Req.Perm)
-
-                if trimName == "" || trimPerm == "" || Req.ID == 0 {
+                if ok, after := SmartHubDatabase.ValidMember(Req); ok {
+                    Req = after
+                } else {
                     http.Error(w, "Missed field", http.StatusBadRequest)
                     return
                 }
 
-                if msg := db.RolePUT(trimName, trimPerm, Req.ID); msg == "" {        
+                if msg := db.MemberPUT(Req); msg == "" {        
                     w.WriteHeader(http.StatusNoContent)
                 } else {
                     if err != nil {
@@ -101,7 +98,7 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
                     return
                 }
 
-                if msg := db.RoleDELETE(Req); msg == "" {        
+                if msg := db.MemberDELETE(Req); msg == "" {        
                     w.WriteHeader(http.StatusNoContent)
                 } else {
                     if err != nil {
