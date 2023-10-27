@@ -1,7 +1,7 @@
 package database
 
 import (
-	//"fmt"
+	"fmt"
 )
 
 type Role struct {
@@ -9,12 +9,18 @@ type Role struct {
 	Perm string
 }
 
-var sqlGetRoles = `SELECT Name, Permission FROM Role;`
+var sqlRoleGet = `SELECT Name, Permission FROM Role;`
+var sqlRolePOST = `
+INSERT INTO Role (Name, Permission)
+SELECT '%s', '%s'
+FROM dual
+WHERE NOT EXISTS (SELECT 1 FROM Role WHERE Name = '%s');
+`
 
-func (DB *SmartHubDB) GetRoles() ([]Role, string) {
+func (DB *SmartHubDB) RoleGET() ([]Role, string) {
 	var Roles []Role
 
-	Hits, err := DB.ctl.Query(sqlGetRoles)
+	Hits, err := DB.ctl.Query(sqlRoleGet)
     defer Hits.Close()
 
 	if err != nil { return []Role{}, "Query failed" }
@@ -29,22 +35,11 @@ func (DB *SmartHubDB) GetRoles() ([]Role, string) {
 
 	return Roles, ""
 }
-/*
-func (DB *SmartHubDB) GetRoles() []Role, msg {
-	var Roles []Role
 
-	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlGetRoles))
-    defer Hits.Close()
+func (DB *SmartHubDB) RolePOST(name, perm string) string {
+	_, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePOST, name, perm, name))
 
-	if err != nil { return [], "Query failed" }
+	if err != nil { return "Query failed" }
 
-	for Hits.Next() {
-		var tmep Role
-
-		Hits.Scan( &tmep.Name, &tmep.Perm )
-
-		Roles = append(Roles, temp)
-	}
-
-	return Roles
-}*/
+	return ""
+}
