@@ -10,6 +10,7 @@ import (
 
 type SettingConfig struct {
     SH_Port         string  `json:"SH_Port"`
+    SH_CDN          string  `json:"SH_CDN"`
     DB_Name         string  `json:"DB_Name"`
     DB_User         string  `json:"DB_User"`
     DB_Password     string  `json:"DB_Password"`
@@ -20,9 +21,11 @@ type SettingConfig struct {
     TB_Transaction  string  `json:"TB_Transaction"`
     TB_Appointment  string  `json:"TB_Appointment"`
     API_Base        string  `json:"API_Base"`
-    API_Login       string  `json:"API_Login"`
+    API_CDN         string  `json:"API_CDN"`
     API_Role        string  `json:"API_Role"`
+    API_Login       string  `json:"API_Login"`
     API_Member      string  `json:"API_Member"`
+    API_Upload      string  `json:"API_Upload"`
     API_Transaction string  `json:"API_Transaction"`
     API_Appointment string  `json:"API_Appointment"`
 }
