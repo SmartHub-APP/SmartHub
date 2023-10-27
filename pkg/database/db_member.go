@@ -7,7 +7,7 @@ import (
 
 type Member struct {
 	ID, Status, RoleID int
-    Name, Account, Password, BankCode, BankAccount string
+    Name, Account, Password, BankCode, BankAccount, CreateTime string
 }
 
 type MemberInsert struct {
@@ -38,7 +38,7 @@ func (DB *SmartHubDB) MemberGET() ([]Member, string) {
 	for Hits.Next() {
 		var R Member
 
-		Hits.Scan(&R.ID, &R.Status, &R.Name, &R.Account, &R.Password, &R.RoleID, &R.BankCode, &R.BankAccount)
+		Hits.Scan(&R.ID, &R.Status, &R.Name, &R.Account, &R.Password, &R.RoleID, &R.BankCode, &R.BankAccount, &R.CreateTime)
 
 		Members = append(Members, R)
 	}
