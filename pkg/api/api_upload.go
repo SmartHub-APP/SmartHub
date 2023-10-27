@@ -3,6 +3,7 @@
 import (
     "os"
     "io"
+    "fmt"
     "strings"
 	"net/http"
     "path/filepath"
@@ -61,6 +62,8 @@ func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.Respons
                     http.Error(w, "Missed field", http.StatusBadRequest)
                     return
                 }
+
+                fmt.Println(filepath.Join(base, Req))
 
                 err := os.Remove(filepath.Join(base, Req))
                 if err != nil {
