@@ -6,7 +6,7 @@ import (
 
 type File struct {
     FileName string
-    FilePath string
+    HashCode string
 }
 
 var sqlFileGET = `SELECT FileName, HashCode FROM File WHERE TransactionID=%s;`
@@ -24,7 +24,7 @@ func (DB *SmartHubDB) FileGET(TransactionID string) ([]File, string) {
 	for Hits.Next() {
 		var F File
 
-		Hits.Scan(&F.FileName, &F.FilePath)
+		Hits.Scan(&F.FileName, &F.HashCode)
 
 		Files = append(Files, F)
 	}

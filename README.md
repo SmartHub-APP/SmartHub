@@ -7,6 +7,6 @@
 
 ### Command
 - Debug
-    - ```go run smarthub.go```
+    - ```go run smarthub.go -i config.json```
 - Build
     - ```go build smarthub.go```

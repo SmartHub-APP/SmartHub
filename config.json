@@ -11,7 +11,6 @@
   "TB_Transaction": "Transaction",
   "TB_Appointment": "Appointment",
   "API_Base": "/smarthub",
-  "API_CDN": "/f/",
   "API_File": "/file",
   "API_Role": "/role",
   "API_User": "/user",

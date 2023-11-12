@@ -24,19 +24,50 @@ func RouterFile(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseW
                     return
                 }
 
-                if Files, msg := db.FileGET(TID); msg != "" {
-                    http.Error(w, msg, http.StatusInternalServerError)
-                    return
+                if FID := strings.TrimSpace(Val.Get("FID")); FID == "" {
+                    if Files, msg := db.FileGET(TID); msg != "" {
+                        http.Error(w, msg, http.StatusInternalServerError)
+                        return
+                    } else {
+                        jsonResponse, err := json.Marshal(Files)
+                        if err != nil {
+                            http.Error(w, err.Error(), http.StatusInternalServerError)
+                            return
+                        }
+            
+                        w.Header().Set("Content-Type", "application/json; charset=utf-8")
+                        w.WriteHeader(http.StatusOK)
+                        w.Write(jsonResponse)
+                    }
                 } else {
-                    jsonResponse, err := json.Marshal(Files)
-                    if err != nil {
-                        http.Error(w, err.Error(), http.StatusInternalServerError)
+                    fPath := filepath.Join(base, FID)
+
+                    if  _, err := os.Stat(fPath); err == nil {
+                        if Files, msg := db.FileGET(TID); msg != "" {
+                            http.Error(w, msg, http.StatusInternalServerError)
+                            return
+                        } else {
+                            fName := ""
+
+                            for _, File := range Files {
+                                if File.HashCode == FID {
+                                    fName = File.FileName
+                                    break
+                                }
+                            }
+
+                            if fName == "" {
+                                w.Header().Set("Content-Disposition", "attachment; filename="+FID)
+                            } else {
+                                w.Header().Set("Content-Disposition", "attachment; filename="+fName)
+                            }
+
+                            http.ServeFile(w, r, fPath)
+                        }
+                    } else {
+                        http.Error(w, err.Error(), http.StatusNotFound)
                         return
                     }
-        
-                    w.Header().Set("Content-Type", "application/json; charset=utf-8")
-                    w.WriteHeader(http.StatusOK)
-                    w.Write(jsonResponse)
                 }
 
 			case "POST" :

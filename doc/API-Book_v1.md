@@ -49,8 +49,10 @@ clear; curl -X PUT -H 'Content-Type: application/json; charset=utf-8' -H 'Author
 4. DELETE
 clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '[9,10]' http://140.113.120.235:25000/smarthub/member -v
 
-## Upload
-1. POST
-clear; curl -X POST -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -F "FileContent=@README.md" http://140.113.120.235:25000/smarthub/upload?TID=123 -v
-2. DELETE
-clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' http://140.113.120.235:25000/smarthub/upload?6039bfa8263a81a5dc45221a84415272c37545bd3bcc222cb9e90cb31f3ac121.md -v
+## File
+1. GET
+clear; curl -X GET -H 'Authorization: Bearer "{ACCESS_TOKEN}"' http://140.113.120.235:25000/smarthub/file?TID=123 -v
+2. POST
+ curl -X POST -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -F "FileContent=@Poker.c" http://140.113.120.235:25000/smarthub/file?TID=123 -v
+3. DELETE
+clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' http://140.113.120.235:25000/smarthub/file?file=06400aa33c0e207610d1f4aeea7c8ef9aaecfd9be026c3ef6ce355697e0f73f5.c -v
