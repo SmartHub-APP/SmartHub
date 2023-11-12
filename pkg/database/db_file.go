@@ -17,7 +17,6 @@ func (DB *SmartHubDB) FileGET(TransactionID string) ([]File, string) {
 	var Files []File
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlFileGET, TransactionID))
-    defer Hits.Close()
 
 	if err != nil { return Files, "Query failed" }
 	fmt.Println(TransactionID)
@@ -28,6 +27,8 @@ func (DB *SmartHubDB) FileGET(TransactionID string) ([]File, string) {
 		fmt.Println(F)
 		Files = append(Files, F)
 	}
+
+	defer Hits.Close()
 
 	return Files, ""
 }
