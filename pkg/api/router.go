@@ -7,7 +7,6 @@ import (
 )
 
 func CreateRouter(cfg SmartHubTool.SettingConfig, db SmartHubDatabase.SmartHubDB) {
-    http.Handle(cfg.API_CDN, http.StripPrefix(cfg.API_CDN, http.FileServer(http.Dir(cfg.SH_CDN))))
 	http.HandleFunc(cfg.API_Base + cfg.API_File, RouterFile(db, cfg.SH_CDN))
 	http.HandleFunc(cfg.API_Base + cfg.API_Login, RouterLogin(db))
 	http.HandleFunc(cfg.API_Base + cfg.API_Role, RouterRole(db))
