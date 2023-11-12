@@ -6,15 +6,39 @@ import (
     "strings"
 	"net/http"
     "path/filepath"
+    "encoding/json"
     SmartHubTool "SmartHub/pkg/tool"
     SmartHubDatabase "SmartHub/pkg/database"
 )
 
-func RouterUpload(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseWriter, *http.Request) {
+func RouterFile(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
         Val := r.URL.Query()
 
 		switch r.Method {
+            case "GET":
+                TID := strings.TrimSpace(Val.Get("TID"))
+
+                if TID == "" {
+                    http.Error(w, "Missed field", http.StatusBadRequest)
+                    return
+                }
+
+                if Files, msg := db.FileGET(TID); msg != "" {
+                    http.Error(w, msg, http.StatusInternalServerError)
+                    return
+                } else {
+                    jsonResponse, err := json.Marshal(Files)
+                    if err != nil {
+                        http.Error(w, err.Error(), http.StatusInternalServerError)
+                        return
+                    }
+        
+                    w.Header().Set("Content-Type", "application/json; charset=utf-8")
+                    w.WriteHeader(http.StatusOK)
+                    w.Write(jsonResponse)
+                }
+
 			case "POST" :
                 TID := strings.TrimSpace(Val.Get("TID"))
 

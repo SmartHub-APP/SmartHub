@@ -4,8 +4,33 @@ import (
 	"fmt"
 )
 
+type File struct {
+    FileName string
+    FilePath string
+}
+
+var sqlFileGET = `SELECT FileName, HashCode FROM File WHERE TransactionID=%s;`
 var sqlFilePOST = `INSERT INTO File (TransactionID, FileName, HashCode) VALUES ('%s', '%s', '%s');`
 var sqlFileDELETE = `DELETE FROM File WHERE HashCode='%s';`
+
+func (DB *SmartHubDB) FileGET(TransactionID string) ([]File, string) {
+	var Files []File
+
+	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlFileGET, TransactionID))
+    defer Hits.Close()
+
+	if err != nil { return Files, "Query failed" }
+
+	for Hits.Next() {
+		var F File
+
+		Hits.Scan(&F.FileName, &F.FilePath)
+
+		Files = append(Files, F)
+	}
+
+	return Files, ""
+}
 
 func (DB *SmartHubDB) FilePOST(TransactionID, FileName, HashCode string) string {
 	sql := fmt.Sprintf(sqlFilePOST, TransactionID, FileName, HashCode)
