@@ -19,12 +19,10 @@ func (DB *SmartHubDB) FileGET(TransactionID string) ([]File, string) {
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlFileGET, TransactionID))
 
 	if err != nil { return Files, "Query failed" }
-	fmt.Println(TransactionID)
+
 	for Hits.Next() {
 		var F File
-		
 		Hits.Scan(&F.FileName, &F.HashCode)
-		fmt.Println(F)
 		Files = append(Files, F)
 	}
 
