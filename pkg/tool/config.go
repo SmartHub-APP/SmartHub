@@ -24,6 +24,7 @@ type SettingConfig struct {
     API_CDN         string  `json:"API_CDN"`
     API_File        string  `json:"API_File"`
     API_Role        string  `json:"API_Role"`
+    API_User        string  `json:"API_User"`
     API_Login       string  `json:"API_Login"`
     API_Member      string  `json:"API_Member"`
     API_Transaction string  `json:"API_Transaction"`

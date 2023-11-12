@@ -14,6 +14,7 @@
   "API_CDN": "/f/",
   "API_File": "/file",
   "API_Role": "/role",
+  "API_User": "/user",
   "API_Login": "/login",
   "API_Member": "/member",
   "API_Transaction": "/transaction",
