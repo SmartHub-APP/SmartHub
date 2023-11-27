@@ -72,6 +72,7 @@ Future<String> try2Login() async {
   return state;
 }
 
+// ## Future remove
 Future<void> logout() async {
   SharedPreferences cache = await SharedPreferences.getInstance();
 
