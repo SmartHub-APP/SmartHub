@@ -30,9 +30,6 @@ Future<String> try2Login() async {
   }
 
   try {
-    print("=======================");
-    print(manager.user.account);
-    print(manager.user.password);
     http.Response response = await http.post(
       Uri.parse(ini.api.server + ini.api.login),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
