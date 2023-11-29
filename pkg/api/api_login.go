@@ -23,12 +23,12 @@ type LoginReponse struct {
 
 func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+    	w.Header().Set("Access-Control-Allow-Methods", "POST")
+
 		switch r.Method {
 			case "POST" :
                 var Req LoginRequest
-
-        		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-        		w.Header().Set("Access-Control-Allow-Methods", "POST")
 
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {

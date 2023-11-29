@@ -32,21 +32,16 @@ Appointment newAppointment = Appointment(
 );
 
 InitSetting ini = InitSetting(
-  api: API(
-    server: 'http://mothra.life.nctu.edu.tw:25000',
-    login: '/smarthub-login',
-    dashboard: '/smarthub-dashboard',
+  api: Api(
+    login: "/smarthub/login",
   ),
-  url: Url(
-    login: "/login",
-    tabData: [
-      TabData(route: "/dashboard", content: const Dashboard()),
-      TabData(route: "/customer", content: const Customer()),
-      TabData(route: "/product", content: const Product()),
-      TabData(route: "/leads-appointment", content: const LeadsAppointment()),
-      TabData(route: "/payment", content: const Payment()),
-    ],
-  ),
+  urls: [
+    Url(route: "/dashboard", content: const Dashboard()),
+    Url(route: "/customer", content: const Customer()),
+    Url(route: "/product", content: const Product()),
+    Url(route: "/leads-appointment", content: const LeadsAppointment()),
+    Url(route: "/payment", content: const Payment()),
+  ],
   timeStart: DateTime(2000, 1, 1),
   cacheName: CacheName(account: 'account', password: 'password', tokenAccess: 'tokenAccess', tokenRefresh: 'tokenRefresh'),
   transactionStatus: ["None", "Completed", "Pending Document", "Pending Loan", "Cancelled", "Pending Signing"],
@@ -65,11 +60,12 @@ InitSetting ini = InitSetting(
 );
 
 SystemControl manager = SystemControl(
-  systemName: 'Smarthub',
+  systemName: 'SmartHub',
   systemVersion: 'v0.0.9',
-  user: User(account: '', password: '', tokenAccess: '', tokenRefresh: ''),
+  apiServer: "http://mothra.life.nctu.edu.tw:25000",
+  user: User(account: '', name: ''),
   icon: const SizedBox(),
-  tabPermissions: [true, false, false, false, false, false],
+  tabPermission: TabPermission(setting: 0, dashboard: 0, customer: 0, product: 0, leadsAppointment: 0, payment: 0),
 );
 
 List<Transaction> fakeTransactionGenerator(int amount) {

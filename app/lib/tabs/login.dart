@@ -80,16 +80,13 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       if (inputAccount.text.isNotEmpty && inputPassword.text.isNotEmpty) {
                         setState(() {
-                          manager.user.account = inputAccount.text;
-                          manager.user.password = inputPassword.text;
-
                           EasyLoading.show(status: "${context.tr('login_tabName')} ...");
 
-                          try2Login().then((value) {
+                          try2Login(inputAccount.text, inputPassword.text).then((value) {
                             EasyLoading.dismiss();
 
                             if (value.isEmpty) {
-                              router.navigateTo(context, ini.url.tabData[0].route, transition: TransitionType.none);
+                              router.navigateTo(context, ini.urls[0].route, transition: TransitionType.none);
                             } else {
                               alertDialog(context, context.tr('error'), value, context.tr('ok'));
                             }

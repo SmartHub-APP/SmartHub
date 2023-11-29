@@ -35,19 +35,21 @@ class FrontStyle {
 
 // ##### Controller
 class SystemControl {
+  String apiServer;
   String systemName;
   String systemVersion;
   User user;
   Widget icon;
-  List<bool> tabPermissions;
+  TabPermission tabPermission;
 
-  SystemControl updateLogin(User newUser, List<bool> newPerm) {
+  SystemControl updateLogin(User newUser, TabPermission newPerm) {
     return SystemControl(
       systemName: systemName,
       systemVersion: systemVersion,
       user: newUser,
       icon: icon,
-      tabPermissions: newPerm,
+      apiServer: apiServer,
+      tabPermission: newPerm,
     );
   }
 
@@ -56,21 +58,18 @@ class SystemControl {
     required this.systemVersion,
     required this.user,
     required this.icon,
-    required this.tabPermissions,
+    required this.apiServer,
+    required this.tabPermission,
   });
 }
 
 class User {
+  String name;
   String account;
-  String password;
-  String tokenAccess;
-  String tokenRefresh;
 
   User({
+    required this.name,
     required this.account,
-    required this.password,
-    required this.tokenAccess,
-    required this.tokenRefresh,
   });
 }
 
@@ -124,15 +123,6 @@ class TabPermission {
   int leadsAppointment;
   int payment;
 
-  factory TabPermission.fromJson(Map<String, dynamic> json) => TabPermission(
-        setting: json["setting"],
-        dashboard: json["dashboard"],
-        customer: json["customer"],
-        product: json["product"],
-        leadsAppointment: json["leadsAppointment"],
-        payment: json["payment"],
-      );
-
   TabPermission({
     required this.setting,
     required this.dashboard,
@@ -151,33 +141,33 @@ class TabPermission {
 /// 2 : internet unreachable
 /// ```
 class LoginResponse {
+  String userName;
   String tokenAccess;
   String tokenRefresh;
-  String message;
-  TabPermission permission;
+  String permission;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-        tokenAccess: json["tokenAccess"],
-        tokenRefresh: json["tokenRefresh"],
-        message: json["message"],
-        permission: TabPermission.fromJson(json["permission"]),
+        userName: json["Username"],
+        permission: json["Permission"],
+        tokenAccess: json["AccessToken"],
+        tokenRefresh: json["RefreshToken"],
       );
 
-  List<bool> getPermList() {
-    List<bool> ret = [true];
-    ret.add(permission.customer > 0);
-    ret.add(permission.product > 0);
-    ret.add(permission.leadsAppointment > 0);
-    ret.add(permission.payment > 0);
-    ret.add(permission.setting > 0);
-
-    return ret;
+  TabPermission getPerm() {
+    return TabPermission(
+      setting: int.parse(permission[0]),
+      dashboard: int.parse(permission[1]),
+      customer: int.parse(permission[2]),
+      product: int.parse(permission[3]),
+      leadsAppointment: int.parse(permission[4]),
+      payment: int.parse(permission[5]),
+    );
   }
 
   LoginResponse({
+    required this.userName,
     required this.tokenAccess,
     required this.tokenRefresh,
-    required this.message,
     required this.permission,
   });
 }
@@ -254,19 +244,19 @@ class Role {
 
 // ##### Rooted Setting
 class InitSetting {
-  API api;
-  Url url;
+  Api api;
   DateTime timeStart;
   CacheName cacheName;
   List<String> transactionStatus;
   List<String> appointmentLeadStatus;
   List<String> profitStatus;
+  List<Url> urls;
   List<Lang> languages;
   List<Role> preRoles;
 
   InitSetting({
     required this.api,
-    required this.url,
+    required this.urls,
     required this.timeStart,
     required this.cacheName,
     required this.transactionStatus,
@@ -277,6 +267,12 @@ class InitSetting {
   });
 }
 
+class Api {
+  String login;
+
+  Api({required this.login});
+}
+
 class Lang {
   String langName;
   Locale ref;
@@ -284,33 +280,11 @@ class Lang {
   Lang({required this.langName, required this.ref});
 }
 
-class API {
-  String server;
-  String login;
-  String dashboard;
-
-  API({
-    required this.server,
-    required this.login,
-    required this.dashboard,
-  });
-}
-
 class Url {
-  String login;
-  List<TabData> tabData;
-
-  Url({
-    required this.login,
-    required this.tabData,
-  });
-}
-
-class TabData {
   String route;
   dynamic content;
 
-  TabData({
+  Url({
     required this.route,
     required this.content,
   });
