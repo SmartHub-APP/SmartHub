@@ -1,6 +1,7 @@
 package tool
 
 import (
+    "fmt"
     "time"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -40,6 +41,9 @@ func ParseToken(tokenString string) (bool, string) {
 	if !ok || !token.Valid { return true, "Failed to extract claims" }
 
     expireTime := int64(Claims["ExpireAt"].(float64))
+
+    fmt.Println(time.Now().Unix(), expireTime)
+
     if time.Now().Unix() > expireTime {
         return true, "Refresh Token has expired"
     }
