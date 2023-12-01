@@ -1,6 +1,7 @@
 ﻿package api
 
 import (
+    "fmt"
 	"net/http"
 	"encoding/json"
     SmartHubTool "SmartHub/pkg/tool"
@@ -102,6 +103,9 @@ func DetermineWay(req LoginRequest) (bool, bool, string) {
     } else {
         atExpire, atUID := SmartHubTool.ParseToken(req.AccessToken)
         rtExpire, rtUID := SmartHubTool.ParseToken(req.RefreshToken)
+
+        fmt.Println("AccessToken ", atExpire, atUID)
+        fmt.Println("RefreshToken", atExpire, atUID)
 
         if rtExpire {
             return true, false, "Refresh time expired"
