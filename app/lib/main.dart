@@ -84,11 +84,11 @@ class _RoutePageState extends State<RoutePage> with SingleTickerProviderStateMix
     // 2. Customer
     if (manager.tabPermission.customer > 0) ini.urls[1],
     // 3. Product
-    if (manager.tabPermission.product > 0) ini.urls[3],
+    if (manager.tabPermission.product > 0) ini.urls[2],
     // 4. Leads Appointment
-    if (manager.tabPermission.leadsAppointment > 0) ini.urls[4],
+    if (manager.tabPermission.leadsAppointment > 0) ini.urls[3],
     // 5. Payment
-    if (manager.tabPermission.payment > 0) ini.urls[5],
+    if (manager.tabPermission.payment > 0) ini.urls[4],
   ];
 
   @override

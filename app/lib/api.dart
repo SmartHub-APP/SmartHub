@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<String> try2Login(String account, password) async {
-  String state = "Token not exist";
   SharedPreferences cache = await SharedPreferences.getInstance();
 
   try {
@@ -20,10 +19,10 @@ Future<String> try2Login(String account, password) async {
       }),
     );
 
-    LoginResponse resp = LoginResponse.fromJson(jsonDecode(response.body));
-
     if (response.statusCode == 200) {
       print("## 2");
+      LoginResponse resp = LoginResponse.fromJson(jsonDecode(response.body));
+
       cache.setString(ini.cacheName.tokenAccess, resp.tokenAccess);
       cache.setString(ini.cacheName.tokenRefresh, resp.tokenRefresh);
 
@@ -35,15 +34,15 @@ Future<String> try2Login(String account, password) async {
         resp.getPerm(),
       );
     } else {
-      print("## 3");
-      print(jsonDecode(response.body));
       await cache.clear();
+
+      return response.body;
     }
   } catch (_) {
-    state = "Network error";
+    return "Network error";
   }
 
-  return state;
+  return "";
 }
 
 // ## Future remove

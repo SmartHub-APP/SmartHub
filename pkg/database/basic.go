@@ -35,9 +35,6 @@ func (DB *SmartHubDB) CheckTable(cfg SmartHubTool.SettingConfig) (bool, string) 
 	_, isExist  = DB.ctl.Query("select * from Role;")
     if isExist != nil { return false, isExist.Error() }
 
-	_, isExist  = DB.ctl.Query("select * from Login;")
-    if isExist != nil { return false, isExist.Error() }
-
 	_, isExist  = DB.ctl.Query("select * from Member;")
     if isExist != nil { return false, isExist.Error() }
 

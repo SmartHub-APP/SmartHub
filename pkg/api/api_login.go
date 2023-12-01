@@ -93,6 +93,7 @@ func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http
 	}
 }
 
+// isFailed, goRefresh, msg
 func DetermineWay(req LoginRequest) (bool, bool, string) {
     if req.AccessToken == "" || req.RefreshToken == "" {
         if req.Account == "" || req.Password == "" {
