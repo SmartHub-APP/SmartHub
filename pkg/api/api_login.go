@@ -52,8 +52,8 @@ func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http
                 var Resp LoginReponse
 
                 if goRefresh {
-                    accessTK, refreshTK := SmartHubTool.GetTokens(Req.Account)
-                    rf := db.GetNameAndPerm(Req.Account)
+                    accessTK, refreshTK := SmartHubTool.GetTokens(msg)
+                    rf := db.GetNameAndPerm(msg)
 
                     Resp.Username, Resp.Permission = rf.Username, rf.Permission
                     Resp.AccessToken, Resp.RefreshToken = accessTK, refreshTK
