@@ -94,7 +94,6 @@ func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http
 	}
 }
 
-// isFailed, goRefresh, msg
 func DetermineWay(req LoginRequest) (bool, bool, string) {
     if req.AccessToken == "" || req.RefreshToken == "" {
         if req.Account == "" || req.Password == "" {
@@ -111,11 +110,9 @@ func DetermineWay(req LoginRequest) (bool, bool, string) {
             return true, false, "Refresh time expired"
         } else {
             if atExpire {
-                ret := atUID
-
-                if rtUID != "" { ret = rtUID }
-
-                return false, true, ret
+                return false, true, rtUID
+            } else {
+                return false, true, atUID
             }
         }
     }
