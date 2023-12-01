@@ -655,6 +655,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
           appointment: appoint.isNotEmpty ? appoint[0] : null,
           saleDate: selectDate,
           imgUrl: picURLs,
+          projectName: inputTrans.projectName,
         )
       : inputTrans;
 }
