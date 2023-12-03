@@ -182,7 +182,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
   bool canSave = false;
   DateTime selectDate = inputTrans.saleDate ?? ini.timeStart;
   TextEditingController editName = TextEditingController(text: inputTrans.name);
-  TextEditingController editCategory = TextEditingController(text: inputTrans.category);
+  TextEditingController editCategory = TextEditingController(text: inputTrans.unit);
   TextEditingController editPosition = TextEditingController(text: inputTrans.position);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
   TextEditingController editPrice = TextEditingController(text: inputTrans.price.toString());
@@ -219,7 +219,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                         controller: editCategory,
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
-                          labelText: context.tr('customer_colClass'),
+                          labelText: context.tr('customer_colUnit'),
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -648,7 +648,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
           profit: double.parse(editProfit.text),
           id: inputTrans.id,
           name: editName.text,
-          category: editCategory.text,
+          unit: editCategory.text,
           position: editPosition.text,
           description: editDescription.text,
           customer: userCustomers,

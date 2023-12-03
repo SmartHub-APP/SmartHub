@@ -20,7 +20,6 @@ Future<String> try2Login(String account, password) async {
     );
 
     if (response.statusCode == 200) {
-      print("## 2");
       LoginResponse resp = LoginResponse.fromJson(jsonDecode(response.body));
 
       cache.setString(ini.cacheName.tokenAccess, resp.tokenAccess);

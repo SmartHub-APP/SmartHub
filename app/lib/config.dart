@@ -16,7 +16,7 @@ Transaction newTransaction = Transaction(
   projectName: "",
   id: "",
   name: "",
-  category: "",
+  unit: "",
   position: "",
   description: '',
   agent: [],
@@ -72,7 +72,7 @@ SystemControl manager = SystemControl(
 List<Transaction> fakeTransactionGenerator(int amount) {
   Random seed = Random();
   return List.generate(amount, (index) {
-    String rngString5 = "$index-${randomString(5)}";
+    String rngString3 = "$index-${randomString(3)}";
     String rngString15 = "$index-${randomString(15)}";
     return Transaction(
       id: rngString15,
@@ -82,8 +82,8 @@ List<Transaction> fakeTransactionGenerator(int amount) {
       price: seed.nextInt(100000) + 10000,
       status: seed.nextInt(5) + 1,
       projectName: (seed.nextInt(10) + 1).toString(),
-      name: "Name - $rngString5",
-      category: "Category - $rngString5",
+      name: "Name$rngString3",
+      unit: "unit$rngString3",
       position: "Position - $rngString15",
       description: "Description - $rngString15-$rngString15",
       agent: List.generate(3, (index) => randomPerson()),

@@ -199,7 +199,7 @@ class Transaction {
   bool onSelect;
   int price, status, isPaid;
   double profit;
-  String id, name, category, position, description, projectName;
+  String id, name, unit, position, description, projectName;
   Person? appointment;
   DateTime? saleDate;
   List<String> imgUrl;
@@ -214,7 +214,7 @@ class Transaction {
     required this.projectName,
     required this.id,
     required this.name,
-    required this.category,
+    required this.unit,
     required this.position,
     required this.description,
     this.appointment,

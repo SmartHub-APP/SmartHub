@@ -55,7 +55,7 @@ class _ProductState extends State<Product> {
                                 controller: filterClass,
                                 decoration: InputDecoration(
                                   border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colClass'),
+                                  labelText: context.tr('customer_colUnit'),
                                 ),
                               ),
                             ),
@@ -196,7 +196,7 @@ class _ProductState extends State<Product> {
                               const SizedBox(height: 5),
                               text3("\$${pubTransactions[index].price}"),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].category),
+                              text3(pubTransactions[index].unit),
                               const SizedBox(height: 5),
                               text3(pubTransactions[index].position),
                               const SizedBox(height: 5),
