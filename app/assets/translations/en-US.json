@@ -36,7 +36,7 @@
   "emptyAgent": "Agent cannot be empty",
   "emptyClass": "Class cannot be empty",
   "emptyPrice": "Price cannot be empty",
-  "emptyProfit": "Profit cannot be empty",
+  "emptyCommission": "commission cannot be empty",
   "emptyStatus": "Status cannot be None",
   "emptyPayStatus": "Payment status cannot be None",
   "emptyPosition": "Position cannot be None",
@@ -84,6 +84,6 @@
   "payment_colSoldDate": "Sold date",
   "payment_colAgent": "Agent",
   "payment_colBankInfo": "Bank",
-  "payment_colPercent": "Profit (%)",
-  "payment_colProfit": "Profit ($)"
+  "payment_colPercent": "commission (%)",
+  "payment_colCommission": "commission ($)"
 }

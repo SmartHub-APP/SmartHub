@@ -9,19 +9,18 @@ import 'package:flutter/material.dart';
 
 Transaction newTransaction = Transaction(
   onSelect: false,
-  isPaid: 0,
-  profit: 0,
+  payStatus: 0,
+  commission: 0,
   price: 0,
   status: 0,
   projectName: "",
   id: "",
-  name: "",
   unit: "",
-  position: "",
   description: '',
+  saleDate: DateTime.now(),
   agent: [],
-  imgUrl: [],
-  customer: [],
+  clients: [],
+  documents: [],
 );
 
 Appointment newAppointment = Appointment(
@@ -47,7 +46,7 @@ InitSetting ini = InitSetting(
   cacheName: CacheName(account: 'account', password: 'password', tokenAccess: 'tokenAccess', tokenRefresh: 'tokenRefresh'),
   transactionStatus: ["None", "Completed", "Pending Document", "Pending Loan", "Cancelled", "Pending Signing"],
   appointmentLeadStatus: ["None", "Upcoming", "Completed", "Canceled"],
-  profitStatus: ["None", "Claimed", "Unclaimed"],
+  commissionStatus: ["None", "Claimed", "Unclaimed"],
   languages: [
     Lang(langName: "English(US)", ref: const Locale('en', 'US')),
     Lang(langName: "中文(繁體)", ref: const Locale('zh', 'TW')),
@@ -73,23 +72,21 @@ List<Transaction> fakeTransactionGenerator(int amount) {
   Random seed = Random();
   return List.generate(amount, (index) {
     String rngString3 = "$index-${randomString(3)}";
-    String rngString15 = "$index-${randomString(15)}";
+    String rngString10 = "$index-${randomString(10)}";
     return Transaction(
-      id: rngString15,
-      profit: seed.nextInt(30) + 1,
-      isPaid: seed.nextInt(3),
+      id: rngString10,
+      commission: seed.nextInt(30) + 1,
+      payStatus: seed.nextInt(3),
       onSelect: false,
       price: seed.nextInt(100000) + 10000,
       status: seed.nextInt(5) + 1,
-      projectName: (seed.nextInt(10) + 1).toString(),
-      name: "Name$rngString3",
-      unit: "unit$rngString3",
-      position: "Position - $rngString15",
-      description: "Description - $rngString15-$rngString15",
+      projectName: "ProjectName-$rngString3",
+      unit: "Unit-$rngString3",
+      description: "Description - $rngString10-$rngString10",
+      appoint: randomPerson(),
       agent: List.generate(3, (index) => randomPerson()),
-      customer: List.generate(3, (index) => randomPerson()),
-      appointment: randomPerson(),
-      imgUrl: List.generate(3, (index) => randomPic()),
+      clients: List.generate(3, (index) => randomPerson()),
+      documents: List.generate(3, (index) => randomPic()),
       saleDate: DateTime(
         seed.nextInt(23) + 2000,
         seed.nextInt(12) + 1,

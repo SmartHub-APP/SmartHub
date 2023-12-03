@@ -197,31 +197,30 @@ class Appointment {
 
 class Transaction {
   bool onSelect;
-  int price, status, isPaid;
-  double profit;
-  String id, name, unit, position, description, projectName;
-  Person? appointment;
-  DateTime? saleDate;
-  List<String> imgUrl;
-  List<Person> agent, customer;
+  int price, status, payStatus;
+  double commission;
+  String id, unit, projectName;
+  String? description;
+  Person? appoint;
+  DateTime saleDate;
+  List<String> documents;
+  List<Person> clients, agent;
 
   Transaction({
     required this.onSelect,
-    required this.isPaid,
-    required this.price,
-    required this.status,
-    required this.profit,
     required this.projectName,
+    required this.price,
+    required this.commission,
+    required this.payStatus,
+    required this.status,
     required this.id,
-    required this.name,
     required this.unit,
-    required this.position,
-    required this.description,
-    this.appointment,
-    this.saleDate,
+    required this.saleDate,
     required this.agent,
-    required this.imgUrl,
-    required this.customer,
+    required this.documents,
+    required this.clients,
+    this.description,
+    this.appoint,
   });
 }
 
@@ -250,7 +249,7 @@ class InitSetting {
   CacheName cacheName;
   List<String> transactionStatus;
   List<String> appointmentLeadStatus;
-  List<String> profitStatus;
+  List<String> commissionStatus;
   List<Url> urls;
   List<Lang> languages;
   List<Role> preRoles;
@@ -262,7 +261,7 @@ class InitSetting {
     required this.cacheName,
     required this.transactionStatus,
     required this.appointmentLeadStatus,
-    required this.profitStatus,
+    required this.commissionStatus,
     required this.languages,
     required this.preRoles,
   });

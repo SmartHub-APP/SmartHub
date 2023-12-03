@@ -192,17 +192,13 @@ class _ProductState extends State<Product> {
                           decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                           child: Column(
                             children: [
-                              text2(pubTransactions[index].name, isBold: true),
-                              const SizedBox(height: 5),
                               text3("\$${pubTransactions[index].price}"),
                               const SizedBox(height: 5),
                               text3(pubTransactions[index].unit),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].position),
-                              const SizedBox(height: 5),
-                              if (pubTransactions[index].imgUrl.isNotEmpty)
+                              if (pubTransactions[index].documents.isNotEmpty)
                                 Image.network(
-                                  pubTransactions[index].imgUrl[0],
+                                  pubTransactions[index].documents[0],
                                   frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
                                     if (wasSynchronouslyLoaded) return child;
                                     return AnimatedOpacity(opacity: frame == null ? 0 : 1, duration: const Duration(seconds: 1), curve: Curves.easeIn, child: child);

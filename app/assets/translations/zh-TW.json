@@ -36,7 +36,7 @@
   "emptyAgent": "指定房仲不可為空",
   "emptyClass": "種類不可為空",
   "emptyPrice": "價格不可為空",
-  "emptyProfit": "分潤不可為空",
+  "emptyCommission": "分潤不可為空",
   "emptyStatus": "狀態不可為 None",
   "emptyPayStatus": "付款狀態不可為 None",
   "emptyPosition": "位置不可為空",
@@ -85,5 +85,5 @@
   "payment_colAgent": "房仲",
   "payment_colBankInfo": "銀行",
   "payment_colPercent": "分潤 (%)",
-  "payment_colProfit": "分潤 ($)"
+  "payment_colCommission": "分潤 ($)"
 }

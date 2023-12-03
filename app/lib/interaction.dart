@@ -85,6 +85,20 @@ Widget userShow(BuildContext context, List<Person> users) {
   );
 }
 
+String userShowText(List<Person> users) {
+  String ret = "";
+
+  if (users.isNotEmpty) {
+    ret = users[0].name;
+    if (users.length > 1) {
+      for (var user in users) {
+        ret += ", ${user.name}";
+      }
+    }
+  }
+  return ret;
+}
+
 alertDialog(BuildContext context, String header, message, button) {
   showDialog(
     context: context,
@@ -178,19 +192,17 @@ Future<DateTimeRange> selectDateRange(BuildContext context) async {
 Future<Transaction> transactionData(BuildContext context, Transaction inputTrans) async {
   int currentIndex = 0;
   int editStatus = inputTrans.status;
-  int editClaimed = inputTrans.isPaid;
+  int editClaimed = inputTrans.payStatus;
   bool canSave = false;
-  DateTime selectDate = inputTrans.saleDate ?? ini.timeStart;
-  TextEditingController editName = TextEditingController(text: inputTrans.name);
-  TextEditingController editCategory = TextEditingController(text: inputTrans.unit);
-  TextEditingController editPosition = TextEditingController(text: inputTrans.position);
+  DateTime selectDate = inputTrans.saleDate;
+  TextEditingController editUnit = TextEditingController(text: inputTrans.unit);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
   TextEditingController editPrice = TextEditingController(text: inputTrans.price.toString());
-  TextEditingController editProfit = TextEditingController(text: inputTrans.profit.toString());
-  List<Person> appoint = inputTrans.appointment == null ? [] : [inputTrans.appointment!];
-  List<Person> userCustomers = inputTrans.customer;
-  List<Person> userAgents = inputTrans.agent;
-  List<String> picURLs = inputTrans.imgUrl;
+  TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
+  List<Person> agents = inputTrans.agent;
+  List<Person> clients = inputTrans.clients;
+  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<String> documents = inputTrans.documents;
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -208,26 +220,10 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                     children: [
                       SizedBox(height: 2.h),
                       TextField(
-                        controller: editName,
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          labelText: context.tr('customer_colName'),
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      TextField(
-                        controller: editCategory,
+                        controller: editUnit,
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
                           labelText: context.tr('customer_colUnit'),
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      TextField(
-                        controller: editPosition,
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          labelText: context.tr('customer_colPosition'),
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -241,7 +237,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                       ),
                       SizedBox(height: 2.h),
                       TextField(
-                        controller: editProfit,
+                        controller: editCommission,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
@@ -294,13 +290,13 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                 iconStyleData: const IconStyleData(icon: SizedBox()),
                                 hint: Text(context.tr('payment_colStatus')),
                                 buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
-                                items: ini.profitStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
+                                items: ini.commissionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
                                 onChanged: (newValue) {
                                   setState(() {
-                                    editClaimed = ini.profitStatus.indexWhere((element) => element == newValue);
+                                    editClaimed = ini.commissionStatus.indexWhere((element) => element == newValue);
                                   });
                                 },
-                                value: ini.profitStatus[editClaimed],
+                                value: ini.commissionStatus[editClaimed],
                               ),
                             ),
                           )
@@ -339,9 +335,9 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, userCustomers).then((value) {
+                                userEdit(context, clients).then((value) {
                                   setState(() {
-                                    userCustomers = value;
+                                    clients = value;
                                   });
                                 });
                               },
@@ -350,7 +346,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                                child: userShow(context, userCustomers),
+                                child: userShow(context, clients),
                               ),
                             ),
                           )
@@ -364,9 +360,9 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, userAgents).then((value) {
+                                userEdit(context, agents).then((value) {
                                   setState(() {
-                                    userAgents = value;
+                                    agents = value;
                                   });
                                 });
                               },
@@ -375,7 +371,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                                child: userShow(context, userAgents),
+                                child: userShow(context, agents),
                               ),
                             ),
                           )
@@ -426,7 +422,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                     tooltip: context.tr('delete'),
                                     onPressed: () {
                                       setState(() {
-                                        picURLs.removeAt(currentIndex);
+                                        documents.removeAt(currentIndex);
                                         if (currentIndex != 0) {
                                           currentIndex--;
                                         }
@@ -435,7 +431,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                   ),
                                 ),
                                 const SizedBox(width: 25),
-                                if (picURLs.isNotEmpty) text3("${currentIndex + 1} / ${picURLs.length}"),
+                                if (documents.isNotEmpty) text3("${currentIndex + 1} / ${documents.length}"),
                                 const SizedBox(width: 25),
                                 Container(
                                   decoration: BoxDecoration(
@@ -447,7 +443,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                     tooltip: context.tr('upload'),
                                     onPressed: () {
                                       setState(() {
-                                        picURLs.add(randomPic());
+                                        documents.add(randomPic());
                                       });
                                     },
                                   ),
@@ -461,7 +457,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                       Container(
                         height: 60.h,
                         decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                        child: picURLs.isEmpty
+                        child: documents.isEmpty
                             ? Center(child: text2(context.tr('emptyPicture')))
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -482,7 +478,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                   Expanded(
                                     flex: 8,
                                     child: Image.network(
-                                      picURLs[currentIndex],
+                                      documents[currentIndex],
                                       frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
                                         if (wasSynchronouslyLoaded) return child;
                                         return AnimatedOpacity(
@@ -496,7 +492,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                   ),
                                   Expanded(
                                     flex: 1,
-                                    child: currentIndex != picURLs.length - 1
+                                    child: currentIndex != documents.length - 1
                                         ? IconButton(
                                             icon: const Icon(Icons.arrow_forward_ios_outlined),
                                             onPressed: () {
@@ -527,10 +523,10 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                   tooltip: context.tr('clear'),
                   onPressed: () {
                     setState(() {
-                      editName.text = editCategory.text = editPrice.text = editProfit.text = editPosition.text = editDescription.text = "";
+                      editUnit.text = editPrice.text = editCommission.text = editDescription.text = "";
                       editStatus = editClaimed = 0;
                       selectDate = ini.timeStart;
-                      appoint = userCustomers = userAgents = [];
+                      appoint = clients = agents = [];
                     });
                   },
                 ),
@@ -561,25 +557,11 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                   icon: const Icon(Icons.save_alt_sharp),
                   tooltip: context.tr('save'),
                   onPressed: () {
-                    if (editName.text.isEmpty) {
-                      alertDialog(
-                        context,
-                        context.tr('error'),
-                        context.tr('emptyName'),
-                        context.tr('ok'),
-                      );
-                    } else if (editCategory.text.isEmpty) {
+                    if (editUnit.text.isEmpty) {
                       alertDialog(
                         context,
                         context.tr('error'),
                         context.tr('emptyClass'),
-                        context.tr('ok'),
-                      );
-                    } else if (editPosition.text.isEmpty) {
-                      alertDialog(
-                        context,
-                        context.tr('error'),
-                        context.tr('emptyPosition'),
                         context.tr('ok'),
                       );
                     } else if (editDescription.text.isEmpty) {
@@ -596,7 +578,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                         context.tr('emptyPrice'),
                         context.tr('ok'),
                       );
-                    } else if (editProfit.text.isEmpty) {
+                    } else if (editCommission.text.isEmpty) {
                       alertDialog(
                         context,
                         context.tr('error'),
@@ -642,19 +624,17 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
       ? Transaction(
           onSelect: inputTrans.onSelect,
           price: int.parse(editPrice.text),
-          agent: userAgents,
+          agent: agents,
           status: editStatus,
-          isPaid: editClaimed,
-          profit: double.parse(editProfit.text),
+          payStatus: editClaimed,
+          commission: double.parse(editCommission.text),
           id: inputTrans.id,
-          name: editName.text,
-          unit: editCategory.text,
-          position: editPosition.text,
+          unit: editUnit.text,
           description: editDescription.text,
-          customer: userCustomers,
-          appointment: appoint.isNotEmpty ? appoint[0] : null,
+          clients: clients,
+          appoint: appoint.isNotEmpty ? appoint[0] : null,
           saleDate: selectDate,
-          imgUrl: picURLs,
+          documents: documents,
           projectName: inputTrans.projectName,
         )
       : inputTrans;
@@ -685,7 +665,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colStatus')} : ")),
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colDate')} : ")),
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -734,7 +714,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colTime')} : ")),
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colDate')} : ")),
                           Expanded(
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -759,7 +739,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colLeads')} : ")),
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colDate')} : ")),
                           Expanded(
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -784,7 +764,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colAgent')} : ")),
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colDate')} : ")),
                           Expanded(
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),

@@ -215,16 +215,6 @@ class _CustomerState extends State<Customer> {
                         showCheckboxColumn: true,
                         columns: [
                           DataColumn(
-                            label: text3(context.tr('customer_colName'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.name.compareTo(b.name) : b.name.compareTo(a.name));
-                              });
-                            },
-                          ),
-                          DataColumn(
                             label: text3(context.tr('customer_colProject'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
@@ -289,14 +279,13 @@ class _CustomerState extends State<Customer> {
                               });
                             },
                             cells: [
-                              DataCell(Container(width: 7.w, color: Colors.amber, child: text3(data.name))),
-                              DataCell(Container(width: 7.w, color: Colors.amber, child: text3(data.projectName))),
-                              DataCell(Container(width: 7.w, color: Colors.amber, child: text3(data.unit))),
-                              DataCell(Container(width: 7.w, color: Colors.amber, child: text3(data.price.toString()))),
-                              DataCell(Container(width: 9.w, color: Colors.amber, child: text3(ini.transactionStatus[data.status]))),
-                              DataCell(Container(width: 6.w, color: Colors.amber, child: text3(data.saleDate == null ? "" : data.saleDate.toString().substring(0, 10)))),
-                              DataCell(Container(width: 10.w, color: Colors.amber, child: userShow(context, data.agent))),
-                              DataCell(Container(width: 12.w, color: Colors.amber, child: text3(data.description))),
+                              DataCell(SizedBox(width: 7.w, child: text3(data.projectName))),
+                              DataCell(SizedBox(width: 7.w, child: text3(data.unit))),
+                              DataCell(SizedBox(width: 7.w, child: text3(data.price.toString()))),
+                              DataCell(SizedBox(width: 9.w, child: text3(ini.transactionStatus[data.status]))),
+                              DataCell(SizedBox(width: 6.w, child: text3(data.saleDate.toString().substring(0, 10)))),
+                              DataCell(SizedBox(width: 10.w, child: text3(userShowText(data.agent)))),
+                              DataCell(SizedBox(width: 12.w, child: text3(data.description ?? ""))),
                               DataCell(
                                 IconButton(
                                   onPressed: () async {

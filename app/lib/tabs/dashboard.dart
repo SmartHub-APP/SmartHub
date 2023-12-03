@@ -302,7 +302,6 @@ class _DashboardState extends State<Dashboard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          text3(recentTransactions[index].name),
                           text3(recentTransactions[index].projectName),
                         ],
                       ),
