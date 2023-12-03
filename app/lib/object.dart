@@ -182,12 +182,14 @@ class DataPoint {
 
 class Appointment {
   bool onSelect;
+  String projectName;
   int status;
   Person lead, agent;
   DateTime appointDate;
 
   Appointment({
     required this.onSelect,
+    required this.projectName,
     required this.status,
     required this.lead,
     required this.agent,
@@ -199,7 +201,7 @@ class Transaction {
   bool onSelect;
   int price, status, payStatus;
   double commission;
-  String id, unit, projectName;
+  String id, unit, name, projectName;
   String? description;
   Person? appoint;
   DateTime saleDate;
@@ -208,6 +210,7 @@ class Transaction {
 
   Transaction({
     required this.onSelect,
+    required this.name,
     required this.projectName,
     required this.price,
     required this.commission,

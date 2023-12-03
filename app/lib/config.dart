@@ -12,7 +12,7 @@ Transaction newTransaction = Transaction(
   payStatus: 0,
   commission: 0,
   price: 0,
-  status: 0,
+  status: 2,
   projectName: "",
   id: "",
   unit: "",
@@ -21,6 +21,7 @@ Transaction newTransaction = Transaction(
   agent: [],
   clients: [],
   documents: [],
+  name: '',
 );
 
 Appointment newAppointment = Appointment(
@@ -29,6 +30,7 @@ Appointment newAppointment = Appointment(
   lead: Person(name: "", role: ini.preRoles.last),
   agent: Person(name: "", role: ini.preRoles.last),
   appointDate: ini.timeStart,
+  projectName: '',
 );
 
 InitSetting ini = InitSetting(
@@ -81,6 +83,7 @@ List<Transaction> fakeTransactionGenerator(int amount) {
       price: seed.nextInt(100000) + 10000,
       status: seed.nextInt(5) + 1,
       projectName: "ProjectName-$rngString3",
+      name: "Name-$rngString3",
       unit: "Unit-$rngString3",
       description: "Description - $rngString10-$rngString10",
       appoint: randomPerson(),
@@ -129,6 +132,7 @@ List<Appointment> fakeAppointmentGenerator(int amount) {
     return Appointment(
       onSelect: false,
       status: seed.nextInt(3) + 1,
+      projectName: randomString(5),
       lead: randomPerson(),
       agent: randomPerson(),
       appointDate: DateTime(

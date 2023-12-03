@@ -9,10 +9,10 @@ import 'package:easy_localization/easy_localization.dart';
 FrontStyle uiStyle = FrontStyle(
   leadWidth: Device.screenType == ScreenType.mobile ? 35.w : 18.w,
   loginWidth: Device.screenType == ScreenType.mobile ? 80.w : 50.w,
-  fontSize1: 16.sp,
-  fontSize2: 15.sp,
-  fontSize3: 12.sp,
-  fontSize4: 9.sp,
+  fontSize1: 17.sp,
+  fontSize2: 16.sp,
+  fontSize3: 13.sp,
+  fontSize4: 11.sp,
   roundCorner: BorderRadius.circular(10),
   roundCorner2: BorderRadius.circular(8),
 );
@@ -26,7 +26,7 @@ String personInfoMsg(BuildContext context, Person p) {
 Text text1(String show, {bool isBold = false, Color color = Colors.black}) {
   return Text(
     show,
-    style: TextStyle(fontSize: uiStyle.fontSize1, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: color),
+    style: TextStyle(fontSize: uiStyle.fontSize2, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: color),
     overflow: TextOverflow.ellipsis,
   );
 }
@@ -90,6 +90,7 @@ String userShowText(List<Person> users) {
 
   if (users.isNotEmpty) {
     ret = users[0].name;
+
     if (users.length > 1) {
       for (var user in users) {
         ret += ", ${user.name}";
@@ -196,9 +197,10 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
   bool canSave = false;
   DateTime selectDate = inputTrans.saleDate;
   TextEditingController editUnit = TextEditingController(text: inputTrans.unit);
-  TextEditingController editDescription = TextEditingController(text: inputTrans.description);
   TextEditingController editPrice = TextEditingController(text: inputTrans.price.toString());
   TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
+  TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
+  TextEditingController editDescription = TextEditingController(text: inputTrans.description);
   List<Person> agents = inputTrans.agent;
   List<Person> clients = inputTrans.clients;
   List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
@@ -218,6 +220,39 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colClient')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                userEdit(context, clients).then((value) {
+                                  setState(() {
+                                    clients = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, clients),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editProjectName,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colProject'),
+                        ),
+                      ),
                       SizedBox(height: 2.h),
                       TextField(
                         controller: editUnit,
@@ -251,7 +286,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                         maxLines: 10,
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
-                          labelText: context.tr('customer_colDescription'),
+                          labelText: context.tr('customer_colDescription_optional'),
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -281,30 +316,6 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('payment_colStatus')} : ")),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                              child: DropdownButton2(
-                                underline: const SizedBox(),
-                                iconStyleData: const IconStyleData(icon: SizedBox()),
-                                hint: Text(context.tr('payment_colStatus')),
-                                buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
-                                items: ini.commissionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    editClaimed = ini.commissionStatus.indexWhere((element) => element == newValue);
-                                  });
-                                },
-                                value: ini.commissionStatus[editClaimed],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        children: [
                           SizedBox(width: 10.w, child: text3("${context.tr('customer_colDate')} : ")),
                           Expanded(
                             child: TextButton(
@@ -317,36 +328,11 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: text3("${selectDate.year}/${selectDate.month}/${selectDate.day}"),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colClient')} : ")),
-                          Expanded(
-                            child: TextButton(
-                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                              onPressed: () {
-                                userEdit(context, clients).then((value) {
-                                  setState(() {
-                                    clients = value;
-                                  });
-                                });
-                              },
-                              child: Container(
-                                height: 7.5.h,
-                                alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                                child: userShow(context, clients),
                               ),
                             ),
                           )
@@ -367,7 +353,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -392,7 +378,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -406,7 +392,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          text3("${context.tr('customer_colPicture')} : "),
+                          text3("${context.tr('customer_colDocument')} : "),
                           Expanded(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -458,7 +444,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                         height: 60.h,
                         decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                         child: documents.isEmpty
-                            ? Center(child: text2(context.tr('emptyPicture')))
+                            ? Center(child: text2(context.tr('emptyDocument')))
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
@@ -523,7 +509,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                   tooltip: context.tr('clear'),
                   onPressed: () {
                     setState(() {
-                      editUnit.text = editPrice.text = editCommission.text = editDescription.text = "";
+                      editProjectName.text = editUnit.text = editPrice.text = editCommission.text = editDescription.text = "";
                       editStatus = editClaimed = 0;
                       selectDate = ini.timeStart;
                       appoint = clients = agents = [];
@@ -564,11 +550,11 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                         context.tr('emptyClass'),
                         context.tr('ok'),
                       );
-                    } else if (editDescription.text.isEmpty) {
+                    } else if (editProjectName.text.isEmpty) {
                       alertDialog(
                         context,
                         context.tr('error'),
-                        context.tr('emptyDescription'),
+                        context.tr('emptyName'),
                         context.tr('ok'),
                       );
                     } else if (editPrice.text.isEmpty) {
@@ -624,6 +610,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
       ? Transaction(
           onSelect: inputTrans.onSelect,
           price: int.parse(editPrice.text),
+          name: inputTrans.name,
           agent: agents,
           status: editStatus,
           payStatus: editClaimed,
@@ -635,7 +622,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
           appoint: appoint.isNotEmpty ? appoint[0] : null,
           saleDate: selectDate,
           documents: documents,
-          projectName: inputTrans.projectName,
+          projectName: editProjectName.text,
         )
       : inputTrans;
 }
@@ -656,16 +643,17 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
             shape: RoundedRectangleBorder(borderRadius: uiStyle.roundCorner),
             backgroundColor: Colors.white,
             titlePadding: EdgeInsets.zero,
-            content: SizedBox(
+            content: Container(
                 width: 20.w,
-                height: 50.h,
+                height: 45.h,
+                alignment: Alignment.center,
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colDate')} : ")),
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colStatus')} : ")),
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -701,7 +689,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -714,7 +702,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colDate')} : ")),
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colTime')} : ")),
                           Expanded(
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -726,7 +714,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -739,7 +727,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colDate')} : ")),
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colAgent')} : ")),
                           Expanded(
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -751,7 +739,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -764,7 +752,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colDate')} : ")),
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colLeads')} : ")),
                           Expanded(
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
@@ -776,7 +764,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -877,6 +865,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
           lead: lead[0],
           agent: agent[0],
           status: editStatus,
+          projectName: input.projectName,
           appointDate: DateTime(
             selectDate.year,
             selectDate.month,

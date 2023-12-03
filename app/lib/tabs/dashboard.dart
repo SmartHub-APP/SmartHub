@@ -172,7 +172,7 @@ class _DashboardState extends State<Dashboard> {
 
   Widget statisticBlock(String title, subTitle, value, Icon icon) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.w),
+      padding: EdgeInsets.symmetric(vertical: 0.8.h, horizontal: 2.w),
       height: 18.h,
       margin: EdgeInsets.only(top: 3.h),
       decoration: BoxDecoration(
@@ -189,7 +189,7 @@ class _DashboardState extends State<Dashboard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [text3(title, isBold: true), text1(value), text3(subTitle)],
+              children: [text4(title, isBold: true), text1(value), text4(subTitle)],
             ),
           ),
           Expanded(
@@ -287,7 +287,7 @@ class _DashboardState extends State<Dashboard> {
                 shrinkWrap: true,
                 itemCount: recentTransactions.length,
                 separatorBuilder: (BuildContext context, int index) {
-                  return SizedBox(height: 2.h);
+                  return const Divider();
                 },
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
@@ -295,14 +295,22 @@ class _DashboardState extends State<Dashboard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          text2("\$ ${recentTransactions[index].price}", isBold: true),
-                          text3(recentTransactions[index].saleDate.toString().substring(0, 16)),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          text3(recentTransactions[index].projectName),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              text4(recentTransactions[index].saleDate.toString().substring(0, 16)),
+                              text2("\$ ${recentTransactions[index].price}", isBold: true),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              text3(recentTransactions[index].name),
+                              text3(recentTransactions[index].projectName),
+                            ],
+                          ),
                         ],
                       ),
                     ],

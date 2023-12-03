@@ -19,6 +19,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
   bool sortAscend = true;
   DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
   TextEditingController filterName = TextEditingController(text: "");
+  TextEditingController filterProjectName = TextEditingController(text: "");
   List<Appointment> leadAppointments = fakeAppointmentGenerator(10);
 
   @override
@@ -37,7 +38,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 7,
+                        flex: 10,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
@@ -52,8 +53,18 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
+                              child: TextField(
+                                controller: filterProjectName,
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  labelText: context.tr('customer_colProject'),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 1.w),
+                            Expanded(
                               child: Container(
-                                height: 7.6.h,
+                                height: 6.h,
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: DropdownButton2(
                                   underline: const SizedBox(),
@@ -82,7 +93,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                   });
                                 },
                                 child: Container(
-                                  height: 7.6.h,
+                                  height: 6.h,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                   child: text3(
@@ -150,6 +161,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                   setState(() {
                                     searchStatus = 0;
                                     filterName.text = '';
+                                    filterProjectName.text = '';
                                     searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
                                   });
                                 },
@@ -201,6 +213,16 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                         showCheckboxColumn: true,
                         columns: [
                           DataColumn(
+                            label: text3(context.tr('customer_colProject'), isBold: true),
+                            onSort: (int colID, bool direction) {
+                              setState(() {
+                                colIndex = colID;
+                                sortAscend = direction;
+                                leadAppointments.sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
+                              });
+                            },
+                          ),
+                          DataColumn(
                             label: text3(context.tr('leadsAppointment_colStatus'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
@@ -224,7 +246,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                           ),
                           DataColumn(label: text3(context.tr('leadsAppointment_colLeads'), isBold: true)),
                           DataColumn(label: text3(context.tr('leadsAppointment_colAgent'), isBold: true)),
-                          DataColumn(label: text3(context.tr('edit'), isBold: true)),
+                          const DataColumn(label: SizedBox()),
                         ],
                         rows: leadAppointments.map((data) {
                           return DataRow(
@@ -235,6 +257,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                               });
                             },
                             cells: [
+                              DataCell(text3(data.projectName)),
                               DataCell(text3(ini.appointmentLeadStatus[data.status])),
                               DataCell(text3(data.appointDate.toString().substring(0, 16))),
                               DataCell(Container(padding: const EdgeInsets.all(10), child: userShow(context, [data.lead]))),
