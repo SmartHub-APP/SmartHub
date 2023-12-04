@@ -9,28 +9,32 @@ import 'package:flutter/material.dart';
 
 Transaction newTransaction = Transaction(
   onSelect: false,
+  price: 0,
+  priceSQFT: 0,
+  status: 2,
   payStatus: 0,
   commission: 0,
-  price: 0,
-  status: 2,
-  projectName: "",
   id: "",
   unit: "",
-  description: '',
+  name: "",
+  location: "",
+  developer: "",
+  description: "",
+  projectName: "",
   saleDate: DateTime.now(),
+  launchDate: DateTime.now(),
   agent: [],
   clients: [],
   documents: [],
-  name: '',
 );
 
 Appointment newAppointment = Appointment(
   onSelect: false,
   status: 0,
+  projectName: '',
+  appointDate: ini.timeStart,
   lead: Person(name: "", role: ini.preRoles.last),
   agent: Person(name: "", role: ini.preRoles.last),
-  appointDate: ini.timeStart,
-  projectName: '',
 );
 
 InitSetting ini = InitSetting(
@@ -76,15 +80,18 @@ List<Transaction> fakeTransactionGenerator(int amount) {
     String rngString3 = "$index-${randomString(3)}";
     String rngString10 = "$index-${randomString(10)}";
     return Transaction(
-      id: rngString10,
-      commission: seed.nextInt(30) + 1,
-      payStatus: seed.nextInt(3),
       onSelect: false,
-      price: seed.nextInt(100000) + 10000,
+      id: rngString10,
       status: seed.nextInt(5) + 1,
-      projectName: "ProjectName-$rngString3",
+      payStatus: seed.nextInt(3),
+      commission: seed.nextInt(30) + 1,
+      price: seed.nextInt(100000) + 10000,
+      priceSQFT: seed.nextInt(100) + 100,
       name: "Name-$rngString3",
       unit: "Unit-$rngString3",
+      location: "Location-$rngString3",
+      developer: "Developer-$rngString3",
+      projectName: "ProjectName-$rngString3",
       description: "Description - $rngString10-$rngString10",
       appoint: randomPerson(),
       agent: List.generate(3, (index) => randomPerson()),
@@ -97,15 +104,22 @@ List<Transaction> fakeTransactionGenerator(int amount) {
         seed.nextInt(12) + 1,
         seed.nextInt(60) + 1,
       ),
+      launchDate: DateTime(
+        seed.nextInt(23) + 2000,
+        seed.nextInt(12) + 1,
+        seed.nextInt(25) + 1,
+        seed.nextInt(12) + 1,
+        seed.nextInt(60) + 1,
+      ),
     );
   });
 }
 
-String randomPic() {
+File randomPic() {
   var seed = Random();
   double w = (seed.nextInt(5) + 2) * 100;
   double h = (seed.nextInt(5) + 2) * 100;
-  return "https://picsum.photos/$w/$h?random=${seed.nextInt(20) + 5}";
+  return File(fileName: randomString(10), fileHash: "https://picsum.photos/$w/$h?random=${seed.nextInt(20) + 5}");
 }
 
 String randomString(int len) {

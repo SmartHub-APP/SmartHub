@@ -200,12 +200,13 @@ class Appointment {
 class Transaction {
   bool onSelect;
   int price, status, payStatus;
+  int? priceSQFT;
   double commission;
-  String id, unit, name, projectName;
+  String id, unit, name, projectName, location, developer;
   String? description;
   Person? appoint;
-  DateTime saleDate;
-  List<String> documents;
+  DateTime saleDate, launchDate;
+  List<File> documents;
   List<Person> clients, agent;
 
   Transaction({
@@ -222,6 +223,10 @@ class Transaction {
     required this.agent,
     required this.documents,
     required this.clients,
+    required this.location,
+    required this.developer,
+    required this.launchDate,
+    this.priceSQFT,
     this.description,
     this.appoint,
   });
@@ -236,6 +241,12 @@ class Person {
   String? bankAccount;
 
   Person({required this.role, required this.name, this.email, this.phone, this.bankCode, this.bankAccount});
+}
+
+class File {
+  String fileName, fileHash;
+
+  File({required this.fileName, required this.fileHash});
 }
 
 class Role {

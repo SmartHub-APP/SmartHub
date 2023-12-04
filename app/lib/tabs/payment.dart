@@ -87,7 +87,7 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionData(context, newTransaction).then((value) {
+                                  transactionPayment(context, newTransaction).then((value) {
                                     setState(() {
                                       if (value != newTransaction) {
                                         transactions.add(value);
@@ -259,7 +259,7 @@ class _PaymentState extends State<Payment> {
                               DataCell(
                                 IconButton(
                                   onPressed: () async {
-                                    await transactionData(context, data).then((value) {
+                                    await transactionPayment(context, data).then((value) {
                                       setState(() {
                                         transactions[transactions.indexWhere((element) => element == data)] = value;
                                       });

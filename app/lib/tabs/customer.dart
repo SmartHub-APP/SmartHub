@@ -122,7 +122,7 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionData(context, newTransaction).then((value) {
+                                  transactionCustomer(context, newTransaction).then((value) {
                                     setState(() {
                                       if (value != newTransaction) {
                                         selfTransactions.add(value);
@@ -289,7 +289,7 @@ class _CustomerState extends State<Customer> {
                               DataCell(
                                 IconButton(
                                   onPressed: () async {
-                                    await transactionData(context, data).then((value) {
+                                    await transactionCustomer(context, data).then((value) {
                                       setState(() {
                                         selfTransactions[selfTransactions.indexWhere((element) => element == data)] = value;
                                       });
