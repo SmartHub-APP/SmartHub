@@ -67,7 +67,6 @@ InitSetting ini = InitSetting(
 
 SystemControl manager = SystemControl(
   systemName: 'SmartHub',
-  systemVersion: 'v0.0.9',
   apiServer: "http://mothra.life.nctu.edu.tw:25000",
   user: User(account: '', name: ''),
   icon: const SizedBox(),

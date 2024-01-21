@@ -1,7 +1,7 @@
 import 'api.dart';
 import 'config.dart';
-import 'interaction.dart';
 import 'object.dart';
+import 'interaction.dart';
 import 'tabs/login.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';

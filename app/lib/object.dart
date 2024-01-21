@@ -37,7 +37,6 @@ class FrontStyle {
 class SystemControl {
   String apiServer;
   String systemName;
-  String systemVersion;
   User user;
   Widget icon;
   TabPermission tabPermission;
@@ -45,7 +44,6 @@ class SystemControl {
   SystemControl updateLogin(User newUser, TabPermission newPerm) {
     return SystemControl(
       systemName: systemName,
-      systemVersion: systemVersion,
       user: newUser,
       icon: icon,
       apiServer: apiServer,
@@ -55,7 +53,6 @@ class SystemControl {
 
   SystemControl({
     required this.systemName,
-    required this.systemVersion,
     required this.user,
     required this.icon,
     required this.apiServer,

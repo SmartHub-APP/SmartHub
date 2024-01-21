@@ -30,25 +30,27 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.cyan,
             actions: [
               Center(child: text3("${context.tr('settingLanguage')} : ", color: Colors.white)),
-              Row(
-                  children: ini.languages.map((lang) {
-                return InkWell(
-                  onTap: () {
-                    context.setLocale(lang.ref);
+              DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  value: context.locale,
+                  dropdownColor: Colors.black54,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  iconSize: 30,
+                  onChanged: (Locale? newValue) {
+                    context.setLocale(newValue!);
                   },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: uiStyle.roundCorner2,
-                    ),
-                    child: text3(lang.langName),
-                  ),
-                );
-              }).toList()),
+                  items: ini.languages.map((lang) {
+                    return DropdownMenuItem(
+                      value: lang.ref,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 1.w),
+                        alignment: Alignment.center,
+                        child: text3(lang.langName, color: Colors.white),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ],
           ),
           body: Center(

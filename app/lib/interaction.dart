@@ -7,7 +7,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 FrontStyle uiStyle = FrontStyle(
-  leadWidth: Device.screenType == ScreenType.mobile ? 35.w : 18.w,
+  leadWidth: Device.screenType == ScreenType.mobile ? 25.w : 10.w,
   loginWidth: Device.screenType == ScreenType.mobile ? 80.w : 50.w,
   fontSize1: 16.sp,
   fontSize2: 15.sp,
@@ -55,14 +55,8 @@ Text text4(String show, {bool isBold = false, Color color = Colors.black}) {
   );
 }
 
-Widget leadingIcon = Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  crossAxisAlignment: CrossAxisAlignment.center,
-  children: [
-    text1(manager.systemName, color: Colors.white),
-    SizedBox(width: 1.w),
-    text3(manager.systemVersion, color: Colors.white),
-  ],
+Widget leadingIcon = Center(
+  child: text1(manager.systemName, color: Colors.white),
 );
 
 Widget userShow(BuildContext context, List<Person> users) {
