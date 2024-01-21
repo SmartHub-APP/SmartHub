@@ -42,17 +42,13 @@ func (DB *SmartHubDB) RoleGET() ([]Role, string) {
 }
 
 func (DB *SmartHubDB) RolePOST(name, perm string) string {
-	_, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePOST, name, perm))
-
-	if err != nil { return "Query failed" }
+	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePOST, name, perm)); err != nil { return "Query failed" }
 
 	return ""
 }
 
 func (DB *SmartHubDB) RolePUT(name, perm string, id int) string {
-	_, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePUT, name, perm, id))
-
-	if err != nil { return "Query failed" }
+	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePUT, name, perm, id)); err != nil { return "Query failed" }
 
 	return ""
 }
@@ -62,9 +58,7 @@ func (DB *SmartHubDB) RoleDELETE(IDs []int) string {
 
 	for _, id := range IDs { query += fmt.Sprintf(",%d", id) }
 
-	_, err := DB.ctl.Exec(fmt.Sprintf(sqlRoleDELETE, query[1:]))
-
-	if err != nil { return "Query failed" }
+	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRoleDELETE, query[1:])); err != nil { return "Query failed" }
 
 	return ""
 }

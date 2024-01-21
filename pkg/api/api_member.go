@@ -6,25 +6,25 @@ import (
     SmartHubDatabase "SmartHub/pkg/database"
 )
 
-type TransactoinRequestPost struct {
+type MemberRequestPost struct {
 	Name string `json:"Name"`
 	Perm string `json:"Perm"`
 }
 
-type TransactoinRequestPut struct {
+type MemberRequestPut struct {
     ID int `json:"ID"`
 	Name string `json:"Name"`
 	Perm string `json:"Perm"`
 }
 
-func RouterTransactoin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
+func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
 
 		switch r.Method {
             case "GET":
-                if RET, msg := db.TransactoinGET(); msg != "" {
+                if RET, msg := db.MemberGET(); msg != "" {
                     http.Error(w, msg, http.StatusInternalServerError)
                     return
                 } else {
@@ -40,7 +40,7 @@ func RouterTransactoin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
                 }
 
 			case "POST":
-                var Req SmartHubDatabase.TransactoinInsert
+                var Req SmartHubDatabase.MemberInsert
 
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {
@@ -48,14 +48,14 @@ func RouterTransactoin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
                     return
                 }
 
-                if ok, after := SmartHubDatabase.ValidTransactoinInsert(Req); ok {
+                if ok, after := SmartHubDatabase.ValidMemberInsert(Req); ok {
                     Req = after
                 } else {
                     http.Error(w, "Missed field", http.StatusBadRequest)
                     return
                 }
 
-                if msg := db.TransactoinPOST(Req); msg == "" {
+                if msg := db.MemberPOST(Req); msg == "" {
                     w.WriteHeader(http.StatusCreated)
                 } else {
                     if err != nil {
@@ -65,7 +65,7 @@ func RouterTransactoin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
                 }
 
 			case "PUT":
-                var Req SmartHubDatabase.Transactoin
+                var Req SmartHubDatabase.Member
 
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {
@@ -73,14 +73,14 @@ func RouterTransactoin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
                     return
                 }
 
-                if ok, after := SmartHubDatabase.ValidTransactoin(Req); ok {
+                if ok, after := SmartHubDatabase.ValidMember(Req); ok {
                     Req = after
                 } else {
                     http.Error(w, "Missed field", http.StatusBadRequest)
                     return
                 }
 
-                if msg := db.TransactoinPUT(Req); msg == "" {        
+                if msg := db.MemberPUT(Req); msg == "" {        
                     w.WriteHeader(http.StatusNoContent)
                 } else {
                     if err != nil {
@@ -98,7 +98,7 @@ func RouterTransactoin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
                     return
                 }
 
-                if msg := db.TransactoinDELETE(Req); msg == "" {        
+                if msg := db.MemberDELETE(Req); msg == "" {        
                     w.WriteHeader(http.StatusNoContent)
                 } else {
                     if err != nil {

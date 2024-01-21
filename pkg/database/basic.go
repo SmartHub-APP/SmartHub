@@ -29,16 +29,19 @@ func (DB *SmartHubDB) Connection(cfg SmartHubTool.SettingConfig) (bool, string) 
 }
 
 func (DB *SmartHubDB) CheckTable(cfg SmartHubTool.SettingConfig) (bool, string) {
-	_, isExist := DB.ctl.Query("select * from " + cfg.TB_User + ";")
+	_, isExist := DB.ctl.Query("select * from File;")
     if isExist != nil { return false, isExist.Error() }
 
-	_, isExist  = DB.ctl.Query("select * from " + cfg.TB_Role + ";")
+	_, isExist  = DB.ctl.Query("select * from Role;")
     if isExist != nil { return false, isExist.Error() }
 
-	_, isExist  = DB.ctl.Query("select * from " + cfg.TB_Transaction + ";")
+	_, isExist  = DB.ctl.Query("select * from Member;")
     if isExist != nil { return false, isExist.Error() }
 
-	_, isExist  = DB.ctl.Query("select * from " + cfg.TB_Appointment + ";")
+	_, isExist  = DB.ctl.Query("select * from Transaction;")
+    if isExist != nil { return false, isExist.Error() }
+
+	_, isExist  = DB.ctl.Query("select * from Appointment;")
     if isExist != nil { return false, isExist.Error() }
 
 	return true, "success"

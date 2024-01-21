@@ -1,7 +1,7 @@
 import 'api.dart';
 import 'config.dart';
-import 'interaction.dart';
 import 'object.dart';
+import 'interaction.dart';
 import 'tabs/login.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +16,12 @@ FluroRouter router = FluroRouter();
 
 // ##### Route
 void defineRoutes() {
-  router.define(ini.url.login, handler: Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+  router.define(ini.api.login, handler: Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
     return const Login();
   }));
 
-  for (var tabId = 0; tabId < ini.url.tabData.length; tabId++) {
-    router.define(ini.url.tabData[tabId].route, handler: Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
+  for (var tabId = 0; tabId < ini.urls.length; tabId++) {
+    router.define(ini.urls[tabId].route, handler: Handler(handlerFunc: (BuildContext? context, Map<String, List<String>> params) {
       return RoutePage(page: tabId);
     }));
   }
@@ -32,7 +32,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
-  await try2Login().then((ret) => autoLogin = ret.isEmpty);
+  await try2Login("", "").then((ret) => autoLogin = ret.isEmpty);
 
   setPathUrlStrategy();
 
@@ -78,17 +78,22 @@ class RoutePage extends StatefulWidget {
 class _RoutePageState extends State<RoutePage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  List<TabData> showTabs = [];
+  List<Url> showTabs = [
+    // 1. Dashboard
+    if (manager.tabPermission.dashboard > 0) ini.urls[0],
+    // 2. Customer
+    if (manager.tabPermission.customer > 0) ini.urls[1],
+    // 3. Product
+    if (manager.tabPermission.product > 0) ini.urls[2],
+    // 4. Leads Appointment
+    if (manager.tabPermission.leadsAppointment > 0) ini.urls[3],
+    // 5. Payment
+    if (manager.tabPermission.payment > 0) ini.urls[4],
+  ];
 
   @override
   void initState() {
     super.initState();
-
-    for (var tabId = 0; tabId < ini.url.tabData.length; tabId++) {
-      if (manager.tabPermissions[tabId]) {
-        showTabs.add(ini.url.tabData[tabId]);
-      }
-    }
 
     _tabController = TabController(length: showTabs.length, vsync: this, initialIndex: widget.page);
   }
@@ -119,15 +124,15 @@ class _RoutePageState extends State<RoutePage> with SingleTickerProviderStateMix
               indicator: const UnderlineTabIndicator(),
               tabs: [
                 // 1. Dashboard
-                if (manager.tabPermissions[0]) Tab(text: context.tr('dashboard_tabName')),
+                if (manager.tabPermission.dashboard > 0) Tab(text: context.tr('dashboard_tabName')),
                 // 2. Customer
-                if (manager.tabPermissions[1]) Tab(text: context.tr('customer_tabName')),
+                if (manager.tabPermission.customer > 0) Tab(text: context.tr('customer_tabName')),
                 // 3. Product
-                if (manager.tabPermissions[2]) Tab(text: context.tr('product_tabName')),
+                if (manager.tabPermission.product > 0) Tab(text: context.tr('product_tabName')),
                 // 4. Leads Appointment
-                if (manager.tabPermissions[3]) Tab(text: context.tr('leadsAppointment_tabName')),
+                if (manager.tabPermission.leadsAppointment > 0) Tab(text: context.tr('leadsAppointment_tabName')),
                 // 5. Payment
-                if (manager.tabPermissions[4]) Tab(text: context.tr('payment_tabName')),
+                if (manager.tabPermission.payment > 0) Tab(text: context.tr('payment_tabName')),
               ],
             ),
             actions: [
@@ -144,7 +149,7 @@ class _RoutePageState extends State<RoutePage> with SingleTickerProviderStateMix
                 tooltip: context.tr('logout'),
                 onPressed: () {
                   logout();
-                  router.navigateTo(context, ini.url.login, transition: TransitionType.none);
+                  router.navigateTo(context, ini.api.login, transition: TransitionType.none);
                 },
               ),
               SizedBox(width: 2.w),

@@ -59,13 +59,13 @@ class _PaymentState extends State<Payment> {
                                   iconStyleData: const IconStyleData(icon: SizedBox()),
                                   hint: Text(context.tr('customer_selStatus')),
                                   buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
-                                  items: ini.profitStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
+                                  items: ini.commissionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      searchStatus = ini.profitStatus.indexWhere((element) => element == newValue);
+                                      searchStatus = ini.commissionStatus.indexWhere((element) => element == newValue);
                                     });
                                   },
-                                  value: ini.profitStatus[searchStatus],
+                                  value: ini.commissionStatus[searchStatus],
                                 ),
                               ),
                             ),
@@ -87,7 +87,7 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionData(context, newTransaction).then((value) {
+                                  transactionPayment(context, newTransaction).then((value) {
                                     setState(() {
                                       if (value != newTransaction) {
                                         transactions.add(value);
@@ -217,17 +217,17 @@ class _PaymentState extends State<Payment> {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                transactions.sort((a, b) => direction ? a.profit.compareTo(b.profit) : b.profit.compareTo(a.profit));
+                                transactions.sort((a, b) => direction ? a.commission.compareTo(b.commission) : b.commission.compareTo(a.commission));
                               });
                             },
                           ),
                           DataColumn(
-                            label: text3(context.tr('payment_colProfit'), isBold: true),
+                            label: text3(context.tr('payment_colCommission'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                transactions.sort((a, b) => direction ? (a.profit * a.price).compareTo(b.profit * b.price) : (b.profit * b.price).compareTo(a.profit * a.price));
+                                transactions.sort((a, b) => direction ? (a.commission * a.price).compareTo(b.commission * b.price) : (b.commission * b.price).compareTo(a.commission * a.price));
                               });
                             },
                           ),
@@ -243,23 +243,23 @@ class _PaymentState extends State<Payment> {
                             },
                             cells: [
                               DataCell(text3(data.id)),
-                              DataCell(text3(ini.profitStatus[data.isPaid])),
+                              DataCell(text3(ini.commissionStatus[data.payStatus])),
                               DataCell(text3(data.saleDate.toString().substring(0, 16))),
-                              DataCell(Container(padding: const EdgeInsets.all(10), child: data.appointment == null ? const SizedBox() : userShow(context, [data.appointment!]))),
+                              DataCell(Container(padding: const EdgeInsets.all(10), child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!]))),
                               DataCell(
-                                data.appointment == null
+                                data.appoint == null
                                     ? const SizedBox()
                                     : Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [text3(data.appointment!.bankCode ?? ""), text3(data.appointment!.bankAccount ?? "")],
+                                        children: [text3(data.appoint!.bankCode ?? ""), text3(data.appoint!.bankAccount ?? "")],
                                       ),
                               ),
-                              DataCell(text3("${data.profit} %")),
-                              DataCell(text3((data.profit * data.price * 0.01).toStringAsFixed(3))),
+                              DataCell(text3("${data.commission} %")),
+                              DataCell(text3((data.commission * data.price * 0.01).toStringAsFixed(3))),
                               DataCell(
                                 IconButton(
                                   onPressed: () async {
-                                    await transactionData(context, data).then((value) {
+                                    await transactionPayment(context, data).then((value) {
                                       setState(() {
                                         transactions[transactions.indexWhere((element) => element == data)] = value;
                                       });

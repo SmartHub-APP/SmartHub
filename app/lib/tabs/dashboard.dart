@@ -14,7 +14,6 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  int viewIndex = 0;
   DateTimeRange selectRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
   List<DataPoint> pltData = [
     DataPoint('1', 5),
@@ -32,7 +31,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> views = [context.tr('dashboard_overview'), context.tr('dashboard_agent'), context.tr('dashboard_project')];
     return ResponsiveSizer(
       builder: (context, orientation, screenType) {
         double sWidth = MediaQuery.of(context).size.width;
@@ -50,36 +48,10 @@ class _DashboardState extends State<Dashboard> {
                       Container(
                         width: 23.w,
                         height: 5.h,
-                        decoration: BoxDecoration(color: Colors.black26, borderRadius: BorderRadius.circular(5)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: views
-                              .asMap()
-                              .entries
-                              .map(
-                                (btn) => TextButton(
-                                  style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                                  onPressed: () {
-                                    setState(() {
-                                      viewIndex = btn.key;
-                                    });
-                                  },
-                                  child: Container(
-                                    width: 6.w,
-                                    height: 3.5.h,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      color: viewIndex == btn.key ? Colors.white : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: text3(btn.value, color: viewIndex == btn.key ? Colors.black : Colors.white),
-                                  ),
-                                ),
-                              )
-                              .toList(),
-                        ),
+                        alignment: Alignment.centerLeft,
+                        child: text2(context.tr('dashboard_overview'), color: Colors.black),
                       ),
-                      downloadBetween()
+                      downloadForm()
                     ]),
                     Row(
                       children: [
@@ -141,12 +113,26 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget downloadBetween() {
+  Widget downloadForm() {
     return SizedBox(
-      width: 23.w,
+      width: 30.w,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          TextButton(
+            style: TextButton.styleFrom(padding: EdgeInsets.zero),
+            onPressed: () {},
+            child: Container(
+              width: 6.w,
+              height: 5.h,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: Colors.black26, borderRadius: BorderRadius.circular(5)),
+              child: text3(
+                context.tr("dashboard_agent"),
+                color: Colors.white,
+              ),
+            ),
+          ),
           TextButton(
             style: TextButton.styleFrom(padding: EdgeInsets.zero),
             onPressed: () {
@@ -186,7 +172,7 @@ class _DashboardState extends State<Dashboard> {
 
   Widget statisticBlock(String title, subTitle, value, Icon icon) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.w),
+      padding: EdgeInsets.symmetric(vertical: 0.8.h, horizontal: 2.w),
       height: 18.h,
       margin: EdgeInsets.only(top: 3.h),
       decoration: BoxDecoration(
@@ -203,7 +189,7 @@ class _DashboardState extends State<Dashboard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [text3(title, isBold: true), text1(value), text3(subTitle)],
+              children: [text4(title, isBold: true), text1(value), text4(subTitle)],
             ),
           ),
           Expanded(
@@ -297,31 +283,36 @@ class _DashboardState extends State<Dashboard> {
           Expanded(
             flex: 16,
             child: SingleChildScrollView(
-              child: ListView.builder(
+              child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: recentTransactions.length,
+                separatorBuilder: (BuildContext context, int index) {
+                  return const Divider();
+                },
                 itemBuilder: (BuildContext context, int index) {
-                  return ExpansionTile(
-                    childrenPadding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
-                    expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        text2("\$ ${recentTransactions[index].price}", isBold: true),
-                        text3(recentTransactions[index].saleDate.toString().substring(0, 16)),
-                      ],
-                    ),
+                  return Column(
                     children: [
-                      text2(recentTransactions[index].name, isBold: true),
-                      text3(recentTransactions[index].category),
-                      SizedBox(height: 2.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          text3(recentTransactions[index].appointment == null ? "" : recentTransactions[index].appointment!.name, isBold: true),
-                          text3(recentTransactions[index].appointment == null ? "" : recentTransactions[index].appointment!.email ?? ""),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              text4(recentTransactions[index].saleDate.toString().substring(0, 16)),
+                              text2("\$ ${recentTransactions[index].price}", isBold: true),
+                            ],
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              text3(recentTransactions[index].name),
+                              text3(recentTransactions[index].projectName),
+                            ],
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   );
                 },

@@ -9,49 +9,50 @@ import 'package:flutter/material.dart';
 
 Transaction newTransaction = Transaction(
   onSelect: false,
-  isPaid: 0,
-  profit: 0,
   price: 0,
-  status: 0,
+  priceSQFT: 0,
+  status: 2,
+  payStatus: 0,
+  commission: 0,
   id: "",
+  unit: "",
   name: "",
-  category: "",
-  position: "",
-  description: '',
+  location: "",
+  developer: "",
+  description: "",
+  projectName: "",
+  saleDate: DateTime.now(),
+  launchDate: DateTime.now(),
   agent: [],
-  imgUrl: [],
-  customer: [],
+  clients: [],
+  documents: [],
 );
 
 Appointment newAppointment = Appointment(
   onSelect: false,
   status: 0,
+  projectName: '',
+  appointDate: ini.timeStart,
   lead: Person(name: "", role: ini.preRoles.last),
   agent: Person(name: "", role: ini.preRoles.last),
-  appointDate: ini.timeStart,
 );
 
 InitSetting ini = InitSetting(
-  api: API(
-    server: 'http://mothra.life.nctu.edu.tw:25000',
-    login: '/smarthub-login',
-    dashboard: '/smarthub-dashboard',
+  api: Api(
+    login: "/smarthub/login",
   ),
-  url: Url(
-    login: "/login",
-    tabData: [
-      TabData(route: "/dashboard", content: const Dashboard()),
-      TabData(route: "/customer", content: const Customer()),
-      TabData(route: "/product", content: const Product()),
-      TabData(route: "/leads-appointment", content: const LeadsAppointment()),
-      TabData(route: "/payment", content: const Payment()),
-    ],
-  ),
+  urls: [
+    Url(route: "/dashboard", content: const Dashboard()),
+    Url(route: "/customer", content: const Customer()),
+    Url(route: "/product", content: const Product()),
+    Url(route: "/leads-appointment", content: const LeadsAppointment()),
+    Url(route: "/payment", content: const Payment()),
+  ],
   timeStart: DateTime(2000, 1, 1),
   cacheName: CacheName(account: 'account', password: 'password', tokenAccess: 'tokenAccess', tokenRefresh: 'tokenRefresh'),
   transactionStatus: ["None", "Completed", "Pending Document", "Pending Loan", "Cancelled", "Pending Signing"],
   appointmentLeadStatus: ["None", "Upcoming", "Completed", "Canceled"],
-  profitStatus: ["None", "Claimed", "Unclaimed"],
+  commissionStatus: ["None", "Claimed", "Unclaimed"],
   languages: [
     Lang(langName: "English(US)", ref: const Locale('en', 'US')),
     Lang(langName: "中文(繁體)", ref: const Locale('zh', 'TW')),
@@ -65,34 +66,44 @@ InitSetting ini = InitSetting(
 );
 
 SystemControl manager = SystemControl(
-  systemName: 'Smarthub',
-  systemVersion: 'v0.0.9',
-  user: User(account: '', password: '', tokenAccess: '', tokenRefresh: ''),
+  systemName: 'SmartHub',
+  apiServer: "http://mothra.life.nctu.edu.tw:25000",
+  user: User(account: '', name: ''),
   icon: const SizedBox(),
-  tabPermissions: [true, false, false, false, false, false],
+  tabPermission: TabPermission(setting: 0, dashboard: 0, customer: 0, product: 0, leadsAppointment: 0, payment: 0),
 );
 
 List<Transaction> fakeTransactionGenerator(int amount) {
   Random seed = Random();
   return List.generate(amount, (index) {
-    String rngString5 = "$index-${randomString(5)}";
-    String rngString15 = "$index-${randomString(15)}";
+    String rngString3 = "$index-${randomString(3)}";
+    String rngString10 = "$index-${randomString(10)}";
     return Transaction(
-      id: rngString15,
-      profit: seed.nextInt(30) + 1,
-      isPaid: seed.nextInt(3),
       onSelect: false,
-      price: seed.nextInt(100000) + 10000,
+      id: rngString10,
       status: seed.nextInt(5) + 1,
-      name: "Name - $rngString5",
-      category: "Category - $rngString5",
-      position: "Position - $rngString15",
-      description: "Description - $rngString15-$rngString15",
+      payStatus: seed.nextInt(3),
+      commission: seed.nextInt(30) + 1,
+      price: seed.nextInt(100000) + 10000,
+      priceSQFT: seed.nextInt(100) + 100,
+      name: "Name-$rngString3",
+      unit: "Unit-$rngString3",
+      location: "Location-$rngString3",
+      developer: "Developer-$rngString3",
+      projectName: "ProjectName-$rngString3",
+      description: "Description - $rngString10-$rngString10",
+      appoint: randomPerson(),
       agent: List.generate(3, (index) => randomPerson()),
-      customer: List.generate(3, (index) => randomPerson()),
-      appointment: randomPerson(),
-      imgUrl: List.generate(3, (index) => randomPic()),
+      clients: List.generate(3, (index) => randomPerson()),
+      documents: List.generate(3, (index) => randomPic()),
       saleDate: DateTime(
+        seed.nextInt(23) + 2000,
+        seed.nextInt(12) + 1,
+        seed.nextInt(25) + 1,
+        seed.nextInt(12) + 1,
+        seed.nextInt(60) + 1,
+      ),
+      launchDate: DateTime(
         seed.nextInt(23) + 2000,
         seed.nextInt(12) + 1,
         seed.nextInt(25) + 1,
@@ -103,11 +114,11 @@ List<Transaction> fakeTransactionGenerator(int amount) {
   });
 }
 
-String randomPic() {
+File randomPic() {
   var seed = Random();
   double w = (seed.nextInt(5) + 2) * 100;
   double h = (seed.nextInt(5) + 2) * 100;
-  return "https://picsum.photos/$w/$h?random=${seed.nextInt(20) + 5}";
+  return File(fileName: randomString(10), fileHash: "https://picsum.photos/$w/$h?random=${seed.nextInt(20) + 5}");
 }
 
 String randomString(int len) {
@@ -134,6 +145,7 @@ List<Appointment> fakeAppointmentGenerator(int amount) {
     return Appointment(
       onSelect: false,
       status: seed.nextInt(3) + 1,
+      projectName: randomString(5),
       lead: randomPerson(),
       agent: randomPerson(),
       appointDate: DateTime(

@@ -55,7 +55,7 @@ class _ProductState extends State<Product> {
                                 controller: filterClass,
                                 decoration: InputDecoration(
                                   border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colClass'),
+                                  labelText: context.tr('customer_colUnit'),
                                 ),
                               ),
                             ),
@@ -97,7 +97,7 @@ class _ProductState extends State<Product> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionData(context, newTransaction).then((value) {
+                                  transactionProduct(context, newTransaction).then((value) {
                                     setState(() {
                                       if (value != newTransaction) {
                                         pubTransactions.add(value);
@@ -181,7 +181,7 @@ class _ProductState extends State<Product> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          transactionData(context, pubTransactions[index]).then((value) {
+                          transactionProduct(context, pubTransactions[index]).then((value) {
                             setState(() {
                               pubTransactions[index] = value;
                             });
@@ -194,20 +194,27 @@ class _ProductState extends State<Product> {
                             children: [
                               text2(pubTransactions[index].name, isBold: true),
                               const SizedBox(height: 5),
-                              text3("\$${pubTransactions[index].price}"),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  text3("\$${pubTransactions[index].price}", isBold: true),
+                                  if (pubTransactions[index].priceSQFT != null) text3(" (\$${pubTransactions[index].priceSQFT}/sqft)", isBold: true),
+                                ],
+                              ),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].category),
+                              text3(pubTransactions[index].location),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].position),
+                              text3(pubTransactions[index].developer),
                               const SizedBox(height: 5),
-                              if (pubTransactions[index].imgUrl.isNotEmpty)
-                                Image.network(
-                                  pubTransactions[index].imgUrl[0],
-                                  frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
-                                    if (wasSynchronouslyLoaded) return child;
-                                    return AnimatedOpacity(opacity: frame == null ? 0 : 1, duration: const Duration(seconds: 1), curve: Curves.easeIn, child: child);
-                                  },
-                                ),
+                              text3(pubTransactions[index].launchDate.toString().substring(0, 10)),
+                              const SizedBox(height: 5),
+                              text3("Commission rate: ${pubTransactions[index].commission}%"),
+                              const SizedBox(height: 5),
+                              if (pubTransactions[index].description != null) text3(pubTransactions[index].description ?? ""),
+                              const SizedBox(height: 5),
+                              Column(
+                                children: pubTransactions[index].documents.map((e) => text3(e.fileName)).toList(),
+                              ),
                             ],
                           ),
                         ),
