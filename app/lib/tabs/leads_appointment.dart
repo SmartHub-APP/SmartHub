@@ -20,7 +20,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
   DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
   TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterProjectName = TextEditingController(text: "");
-  List<Appointment> leadAppointments = fakeAppointmentGenerator(10);
+  List<Appointment> leadAppointments = Appointment.create().fakeData(30);
 
   @override
   Widget build(BuildContext context) {
@@ -122,9 +122,9 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  appointmentData(context, newAppointment).then((value) {
+                                  appointmentData(context, Appointment.create()).then((value) {
                                     setState(() {
-                                      if (value != newAppointment) {
+                                      if (value != Appointment.create()) {
                                         leadAppointments.add(value);
                                       }
                                     });
@@ -218,7 +218,8 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                leadAppointments.sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
+                                leadAppointments
+                                    .sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
                               });
                             },
                           ),
@@ -239,7 +240,9 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 colIndex = colID;
                                 sortAscend = direction;
                                 leadAppointments.sort(
-                                  (a, b) => direction ? a.appointDate.toString().compareTo(b.appointDate.toString()) : b.appointDate.toString().compareTo(a.appointDate.toString()),
+                                  (a, b) => direction
+                                      ? a.appointDate.toString().compareTo(b.appointDate.toString())
+                                      : b.appointDate.toString().compareTo(a.appointDate.toString()),
                                 );
                               });
                             },

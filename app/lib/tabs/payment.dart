@@ -18,7 +18,7 @@ class _PaymentState extends State<Payment> {
   int searchStatus = 0;
   bool sortAscend = true;
   TextEditingController filterName = TextEditingController(text: "");
-  List<Transaction> transactions = fakeTransactionGenerator(10);
+  List<Transaction> transactions = Transaction.create().fakeData(10);
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +87,9 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionPayment(context, newTransaction).then((value) {
+                                  transactionPayment(context, Transaction.create()).then((value) {
                                     setState(() {
-                                      if (value != newTransaction) {
+                                      if (value != Transaction.create()) {
                                         transactions.add(value);
                                       }
                                     });
@@ -109,7 +109,7 @@ class _PaymentState extends State<Payment> {
                                 tooltip: context.tr('search'),
                                 onPressed: () {
                                   setState(() {
-                                    transactions = fakeTransactionGenerator(30);
+                                    transactions = Transaction.create().fakeData(30);
                                   });
                                 },
                               ),
@@ -204,7 +204,9 @@ class _PaymentState extends State<Payment> {
                                 colIndex = colID;
                                 sortAscend = direction;
                                 transactions.sort(
-                                  (a, b) => direction ? a.saleDate.toString().compareTo(b.saleDate.toString()) : b.saleDate.toString().compareTo(a.saleDate.toString()),
+                                  (a, b) => direction
+                                      ? a.saleDate.toString().compareTo(b.saleDate.toString())
+                                      : b.saleDate.toString().compareTo(a.saleDate.toString()),
                                 );
                               });
                             },
@@ -227,7 +229,9 @@ class _PaymentState extends State<Payment> {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                transactions.sort((a, b) => direction ? (a.commission * a.price).compareTo(b.commission * b.price) : (b.commission * b.price).compareTo(a.commission * a.price));
+                                transactions.sort((a, b) => direction
+                                    ? (a.commission * a.price).compareTo(b.commission * b.price)
+                                    : (b.commission * b.price).compareTo(a.commission * a.price));
                               });
                             },
                           ),
@@ -245,7 +249,9 @@ class _PaymentState extends State<Payment> {
                               DataCell(text3(data.id)),
                               DataCell(text3(ini.commissionStatus[data.payStatus])),
                               DataCell(text3(data.saleDate.toString().substring(0, 16))),
-                              DataCell(Container(padding: const EdgeInsets.all(10), child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!]))),
+                              DataCell(Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!]))),
                               DataCell(
                                 data.appoint == null
                                     ? const SizedBox()

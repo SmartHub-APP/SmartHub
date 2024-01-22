@@ -1,4 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
+
+import 'config.dart';
+import 'tool.dart';
 
 // ##### UI
 class Button {
@@ -192,6 +197,37 @@ class Appointment {
     required this.agent,
     required this.appointDate,
   });
+
+  factory Appointment.create() {
+    return Appointment(
+      onSelect: false,
+      status: 0,
+      projectName: '',
+      appointDate: ini.timeStart,
+      lead: Person(name: "", role: ini.preRoles.last),
+      agent: Person(name: "", role: ini.preRoles.last),
+    );
+  }
+
+  List<Appointment> fakeData(int amount) {
+    Random seed = Random();
+    return List.generate(amount, (index) {
+      return Appointment(
+        onSelect: false,
+        status: seed.nextInt(3) + 1,
+        projectName: randomString(5),
+        lead: randomPerson(),
+        agent: randomPerson(),
+        appointDate: DateTime(
+          seed.nextInt(23) + 2000,
+          seed.nextInt(12) + 1,
+          seed.nextInt(25) + 1,
+          seed.nextInt(12) + 1,
+          seed.nextInt(60) + 1,
+        ),
+      );
+    });
+  }
 }
 
 class Transaction {
@@ -227,6 +263,70 @@ class Transaction {
     this.description,
     this.appoint,
   });
+
+  factory Transaction.create() {
+    return Transaction(
+      onSelect: false,
+      price: 0,
+      priceSQFT: 0,
+      status: 2,
+      payStatus: 0,
+      commission: 0,
+      id: "",
+      unit: "",
+      name: "",
+      location: "",
+      developer: "",
+      description: "",
+      projectName: "",
+      saleDate: DateTime.now(),
+      launchDate: DateTime.now(),
+      agent: [],
+      clients: [],
+      documents: [],
+    );
+  }
+
+  List<Transaction> fakeData(int amount) {
+    Random seed = Random();
+    return List.generate(amount, (index) {
+      String rngString3 = "$index-${randomString(3)}";
+      String rngString10 = "$index-${randomString(10)}";
+      return Transaction(
+        onSelect: false,
+        id: rngString10,
+        status: seed.nextInt(5) + 1,
+        payStatus: seed.nextInt(3),
+        commission: seed.nextInt(30) + 1,
+        price: seed.nextInt(100000) + 10000,
+        priceSQFT: seed.nextInt(100) + 100,
+        name: "Name-$rngString3",
+        unit: "Unit-$rngString3",
+        location: "Location-$rngString3",
+        developer: "Developer-$rngString3",
+        projectName: "ProjectName-$rngString3",
+        description: "Description - $rngString10-$rngString10",
+        appoint: randomPerson(),
+        agent: List.generate(3, (index) => randomPerson()),
+        clients: List.generate(3, (index) => randomPerson()),
+        documents: List.generate(3, (index) => randomPic()),
+        saleDate: DateTime(
+          seed.nextInt(23) + 2000,
+          seed.nextInt(12) + 1,
+          seed.nextInt(25) + 1,
+          seed.nextInt(12) + 1,
+          seed.nextInt(60) + 1,
+        ),
+        launchDate: DateTime(
+          seed.nextInt(23) + 2000,
+          seed.nextInt(12) + 1,
+          seed.nextInt(25) + 1,
+          seed.nextInt(12) + 1,
+          seed.nextInt(60) + 1,
+        ),
+      );
+    });
+  }
 }
 
 class Person {

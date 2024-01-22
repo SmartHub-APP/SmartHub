@@ -27,7 +27,7 @@ class _DashboardState extends State<Dashboard> {
     DataPoint('9', 7),
     DataPoint('10', 4),
   ];
-  List<Transaction> recentTransactions = fakeTransactionGenerator(10);
+  List<Transaction> recentTransactions = Transaction.create().fakeData(30);
 
   @override
   Widget build(BuildContext context) {
