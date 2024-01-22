@@ -1,5 +1,5 @@
-import 'config.dart';
-import 'object.dart';
+import '../config.dart';
+import '../object.dart';
 import 'interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -52,7 +52,7 @@ class _TableViewState extends State<TableView> {
   Widget build(BuildContext context) {
     List<RowTitle> titles = [
       RowTitle(
-        width: 7.w,
+        width: 6.w,
         name: context.tr('customer_colName'),
         sort: (direction) {
           setState(() {
@@ -61,7 +61,7 @@ class _TableViewState extends State<TableView> {
         },
       ),
       RowTitle(
-        width: 7.w,
+        width: 10.w,
         name: context.tr('customer_colProject'),
         sort: (direction) {
           setState(() {
@@ -70,7 +70,7 @@ class _TableViewState extends State<TableView> {
         },
       ),
       RowTitle(
-        width: 8.w,
+        width: 6.w,
         name: context.tr('customer_colUnit'),
         sort: (direction) {
           setState(() {
@@ -235,7 +235,12 @@ class _TableViewState extends State<TableView> {
                   SizedBox(width: 0.5.w),
                   IconButton(
                     onPressed: () {
-                      transactionCustomer(context, widget.data[index]);
+                      transactionCustomer(context, widget.data[index]).then((value) {
+                        if (value != null) {
+                          widget.data[index] = value;
+                          setState(() {});
+                        }
+                      });
                     },
                     icon: const Icon(Icons.edit),
                   ),

@@ -1,7 +1,7 @@
 import 'api.dart';
 import 'config.dart';
 import 'object.dart';
-import 'interaction.dart';
+import 'component/interaction.dart';
 import 'tabs/login.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-import 'tabs/setting.dart';
+import 'component/setting.dart';
 
 // ##### Initialize
 bool autoLogin = false;

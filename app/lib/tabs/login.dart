@@ -1,7 +1,7 @@
 import '../api.dart';
 import '../config.dart';
 import '../main.dart';
-import '../interaction.dart';
+import '../component/interaction.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';

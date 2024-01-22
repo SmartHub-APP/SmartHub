@@ -1,5 +1,5 @@
 import '../config.dart';
-import '../interaction.dart';
+import '../component/interaction.dart';
 import '../object.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';

@@ -1,7 +1,7 @@
 import '../config.dart';
 import '../object.dart';
-import '../tableview.dart';
-import '../interaction.dart';
+import '../component/tableview.dart';
+import '../component/interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -130,11 +130,10 @@ class _CustomerState extends State<Customer> {
                                 tooltip: context.tr('add'),
                                 onPressed: () {
                                   transactionCustomer(context, Transaction.create()).then((value) {
-                                    setState(() {
-                                      if (value != Transaction.create()) {
-                                        selfTransactions.add(value);
-                                      }
-                                    });
+                                    if (value != null) {
+                                      selfTransactions.add(value);
+                                    }
+                                    setState(() {});
                                   });
                                 },
                               ),

@@ -1,6 +1,6 @@
-import 'tool.dart';
-import 'config.dart';
-import 'object.dart';
+import '../tool.dart';
+import '../config.dart';
+import '../object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -185,7 +185,7 @@ Future<DateTimeRange> selectDateRange(BuildContext context) async {
       DateTimeRange(start: ini.timeStart, end: DateTime.now());
 }
 
-Future<Transaction> transactionCustomer(BuildContext context, Transaction inputTrans) async {
+Future<Transaction?> transactionCustomer(BuildContext context, Transaction inputTrans) async {
   int currentIndex = 0;
   int editStatus = inputTrans.status;
   int editClaimed = inputTrans.payStatus;
@@ -623,7 +623,7 @@ Future<Transaction> transactionCustomer(BuildContext context, Transaction inputT
           agent: agents,
           documents: documents,
         )
-      : inputTrans;
+      : null;
 }
 
 Future<Transaction> transactionProduct(BuildContext context, Transaction inputTrans) async {
