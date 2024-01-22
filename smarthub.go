@@ -32,7 +32,7 @@ func main() {
     log.Println("## 4. Setup cdn folder")
     err := os.MkdirAll(SmartHubCFG.SH_CDN, os.ModePerm)
     if err != nil { log.Fatal("### Error: Create CDN archive error\n") }
-    log.Println("## 4. Setup cdn folder")
+    log.Println("## 4. Setup cdn folder success")
 
     log.Println("## 5. Create API router")
     SmartHubAPI.CreateRouter(SmartHubCFG, SmartHubDB)

@@ -30,25 +30,27 @@ class _LoginState extends State<Login> {
             backgroundColor: Colors.cyan,
             actions: [
               Center(child: text3("${context.tr('settingLanguage')} : ", color: Colors.white)),
-              Row(
-                  children: ini.languages.map((lang) {
-                return InkWell(
-                  onTap: () {
-                    context.setLocale(lang.ref);
+              DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  value: context.locale,
+                  dropdownColor: Colors.black54,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  iconSize: 30,
+                  onChanged: (Locale? newValue) {
+                    context.setLocale(newValue!);
                   },
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: uiStyle.roundCorner2,
-                    ),
-                    child: text3(lang.langName),
-                  ),
-                );
-              }).toList()),
+                  items: ini.languages.map((lang) {
+                    return DropdownMenuItem(
+                      value: lang.ref,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 1.w),
+                        alignment: Alignment.center,
+                        child: text3(lang.langName, color: Colors.white),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ],
           ),
           body: Center(
@@ -80,16 +82,13 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       if (inputAccount.text.isNotEmpty && inputPassword.text.isNotEmpty) {
                         setState(() {
-                          manager.user.account = inputAccount.text;
-                          manager.user.password = inputPassword.text;
-
                           EasyLoading.show(status: "${context.tr('login_tabName')} ...");
 
-                          try2Login().then((value) {
+                          try2Login(inputAccount.text, inputPassword.text).then((value) {
                             EasyLoading.dismiss();
 
                             if (value.isEmpty) {
-                              router.navigateTo(context, ini.url.tabData[0].route, transition: TransitionType.none);
+                              router.navigateTo(context, ini.urls[0].route, transition: TransitionType.none);
                             } else {
                               alertDialog(context, context.tr('error'), value, context.tr('ok'));
                             }

@@ -1,4 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
+
+import 'config.dart';
+import 'tool.dart';
 
 // ##### UI
 class Button {
@@ -36,41 +41,34 @@ class FrontStyle {
 // ##### Controller
 class SystemControl {
   String systemName;
-  String systemVersion;
   User user;
   Widget icon;
-  List<bool> tabPermissions;
+  TabPermission tabPermission;
 
-  SystemControl updateLogin(User newUser, List<bool> newPerm) {
+  SystemControl updateLogin(User newUser, TabPermission newPerm) {
     return SystemControl(
       systemName: systemName,
-      systemVersion: systemVersion,
       user: newUser,
       icon: icon,
-      tabPermissions: newPerm,
+      tabPermission: newPerm,
     );
   }
 
   SystemControl({
     required this.systemName,
-    required this.systemVersion,
     required this.user,
     required this.icon,
-    required this.tabPermissions,
+    required this.tabPermission,
   });
 }
 
 class User {
+  String name;
   String account;
-  String password;
-  String tokenAccess;
-  String tokenRefresh;
 
   User({
+    required this.name,
     required this.account,
-    required this.password,
-    required this.tokenAccess,
-    required this.tokenRefresh,
   });
 }
 
@@ -124,15 +122,6 @@ class TabPermission {
   int leadsAppointment;
   int payment;
 
-  factory TabPermission.fromJson(Map<String, dynamic> json) => TabPermission(
-        setting: json["setting"],
-        dashboard: json["dashboard"],
-        customer: json["customer"],
-        product: json["product"],
-        leadsAppointment: json["leadsAppointment"],
-        payment: json["payment"],
-      );
-
   TabPermission({
     required this.setting,
     required this.dashboard,
@@ -151,33 +140,33 @@ class TabPermission {
 /// 2 : internet unreachable
 /// ```
 class LoginResponse {
+  String userName;
   String tokenAccess;
   String tokenRefresh;
-  String message;
-  TabPermission permission;
+  String permission;
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-        tokenAccess: json["tokenAccess"],
-        tokenRefresh: json["tokenRefresh"],
-        message: json["message"],
-        permission: TabPermission.fromJson(json["permission"]),
+        userName: json["Username"],
+        permission: json["Permission"],
+        tokenAccess: json["AccessToken"],
+        tokenRefresh: json["RefreshToken"],
       );
 
-  List<bool> getPermList() {
-    List<bool> ret = [true];
-    ret.add(permission.customer > 0);
-    ret.add(permission.product > 0);
-    ret.add(permission.leadsAppointment > 0);
-    ret.add(permission.payment > 0);
-    ret.add(permission.setting > 0);
-
-    return ret;
+  TabPermission getPerm() {
+    return TabPermission(
+      setting: int.parse(permission[0]),
+      dashboard: int.parse(permission[1]),
+      customer: int.parse(permission[2]),
+      product: int.parse(permission[3]),
+      leadsAppointment: int.parse(permission[4]),
+      payment: int.parse(permission[5]),
+    );
   }
 
   LoginResponse({
+    required this.userName,
     required this.tokenAccess,
     required this.tokenRefresh,
-    required this.message,
     required this.permission,
   });
 }
@@ -192,46 +181,149 @@ class DataPoint {
 
 class Appointment {
   bool onSelect;
+  String projectName;
   int status;
   Person lead, agent;
   DateTime appointDate;
 
   Appointment({
     required this.onSelect,
+    required this.projectName,
     required this.status,
     required this.lead,
     required this.agent,
     required this.appointDate,
   });
+
+  factory Appointment.create() {
+    return Appointment(
+      onSelect: false,
+      status: 0,
+      projectName: '',
+      appointDate: ini.timeStart,
+      lead: Person(name: "", role: ini.preRoles.last),
+      agent: Person(name: "", role: ini.preRoles.last),
+    );
+  }
+
+  List<Appointment> fakeData(int amount) {
+    Random seed = Random();
+    return List.generate(amount, (index) {
+      return Appointment(
+        onSelect: false,
+        status: seed.nextInt(3) + 1,
+        projectName: randomString(5),
+        lead: randomPerson(),
+        agent: randomPerson(),
+        appointDate: DateTime(
+          seed.nextInt(23) + 2000,
+          seed.nextInt(12) + 1,
+          seed.nextInt(25) + 1,
+          seed.nextInt(12) + 1,
+          seed.nextInt(60) + 1,
+        ),
+      );
+    });
+  }
 }
 
 class Transaction {
   bool onSelect;
-  int price, status, isPaid;
-  double profit;
-  String id, name, category, position, description;
-  Person? appointment;
-  DateTime? saleDate;
-  List<String> imgUrl;
-  List<Person> agent, customer;
+  int price, status, payStatus;
+  int? priceSQFT;
+  double commission;
+  String id, unit, name, projectName, location, developer;
+  String? description;
+  Person? appoint;
+  DateTime saleDate, launchDate;
+  List<File> documents;
+  List<Person> clients, agent;
 
   Transaction({
     required this.onSelect,
-    required this.isPaid,
-    required this.price,
-    required this.status,
-    required this.profit,
-    required this.id,
     required this.name,
-    required this.category,
-    required this.position,
-    required this.description,
-    this.appointment,
-    this.saleDate,
+    required this.projectName,
+    required this.price,
+    required this.commission,
+    required this.payStatus,
+    required this.status,
+    required this.id,
+    required this.unit,
+    required this.saleDate,
     required this.agent,
-    required this.imgUrl,
-    required this.customer,
+    required this.documents,
+    required this.clients,
+    required this.location,
+    required this.developer,
+    required this.launchDate,
+    this.priceSQFT,
+    this.description,
+    this.appoint,
   });
+
+  factory Transaction.create() {
+    return Transaction(
+      onSelect: false,
+      price: 0,
+      priceSQFT: 0,
+      status: 2,
+      payStatus: 0,
+      commission: 0,
+      id: "",
+      unit: "",
+      name: "",
+      location: "",
+      developer: "",
+      description: "",
+      projectName: "",
+      saleDate: DateTime.now(),
+      launchDate: DateTime.now(),
+      agent: [],
+      clients: [],
+      documents: [],
+    );
+  }
+
+  List<Transaction> fakeData(int amount) {
+    Random seed = Random();
+    return List.generate(amount, (index) {
+      String rngString3 = "$index-${randomString(3)}";
+      String rngString10 = "$index-${randomString(10)}";
+      return Transaction(
+        onSelect: false,
+        id: rngString10,
+        status: seed.nextInt(5) + 1,
+        payStatus: seed.nextInt(3),
+        commission: seed.nextInt(30) + 1,
+        price: seed.nextInt(100000) + 10000,
+        priceSQFT: seed.nextInt(100) + 100,
+        name: "Name-$rngString3",
+        unit: "Unit-$rngString3",
+        location: "Location-$rngString3",
+        developer: "Developer-$rngString3",
+        projectName: "ProjectName-$rngString3",
+        description: "Description - $rngString10-$rngString10",
+        appoint: randomPerson(),
+        agent: List.generate(3, (index) => randomPerson()),
+        clients: List.generate(3, (index) => randomPerson()),
+        documents: List.generate(3, (index) => randomPic()),
+        saleDate: DateTime(
+          seed.nextInt(23) + 2000,
+          seed.nextInt(12) + 1,
+          seed.nextInt(25) + 1,
+          seed.nextInt(12) + 1,
+          seed.nextInt(60) + 1,
+        ),
+        launchDate: DateTime(
+          seed.nextInt(23) + 2000,
+          seed.nextInt(12) + 1,
+          seed.nextInt(25) + 1,
+          seed.nextInt(12) + 1,
+          seed.nextInt(60) + 1,
+        ),
+      );
+    });
+  }
 }
 
 class Person {
@@ -245,6 +337,12 @@ class Person {
   Person({required this.role, required this.name, this.email, this.phone, this.bankCode, this.bankAccount});
 }
 
+class File {
+  String fileName, fileHash;
+
+  File({required this.fileName, required this.fileHash});
+}
+
 class Role {
   String roleName;
   List<int> permission;
@@ -254,27 +352,35 @@ class Role {
 
 // ##### Rooted Setting
 class InitSetting {
-  API api;
-  Url url;
+  Api api;
+  String apiServer;
   DateTime timeStart;
   CacheName cacheName;
   List<String> transactionStatus;
   List<String> appointmentLeadStatus;
-  List<String> profitStatus;
+  List<String> commissionStatus;
+  List<Url> urls;
   List<Lang> languages;
   List<Role> preRoles;
 
   InitSetting({
     required this.api,
-    required this.url,
+    required this.apiServer,
+    required this.urls,
     required this.timeStart,
     required this.cacheName,
     required this.transactionStatus,
     required this.appointmentLeadStatus,
-    required this.profitStatus,
+    required this.commissionStatus,
     required this.languages,
     required this.preRoles,
   });
+}
+
+class Api {
+  String login;
+
+  Api({required this.login});
 }
 
 class Lang {
@@ -284,33 +390,11 @@ class Lang {
   Lang({required this.langName, required this.ref});
 }
 
-class API {
-  String server;
-  String login;
-  String dashboard;
-
-  API({
-    required this.server,
-    required this.login,
-    required this.dashboard,
-  });
-}
-
 class Url {
-  String login;
-  List<TabData> tabData;
-
-  Url({
-    required this.login,
-    required this.tabData,
-  });
-}
-
-class TabData {
   String route;
   dynamic content;
 
-  TabData({
+  Url({
     required this.route,
     required this.content,
   });

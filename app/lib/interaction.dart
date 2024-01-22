@@ -1,3 +1,4 @@
+import 'tool.dart';
 import 'config.dart';
 import 'object.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +8,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 FrontStyle uiStyle = FrontStyle(
-  leadWidth: Device.screenType == ScreenType.mobile ? 35.w : 18.w,
+  leadWidth: Device.screenType == ScreenType.mobile ? 25.w : 10.w,
   loginWidth: Device.screenType == ScreenType.mobile ? 80.w : 50.w,
   fontSize1: 16.sp,
   fontSize2: 15.sp,
-  fontSize3: 12.sp,
-  fontSize4: 9.sp,
+  fontSize3: 13.sp,
+  fontSize4: 12.sp,
   roundCorner: BorderRadius.circular(10),
   roundCorner2: BorderRadius.circular(8),
 );
@@ -26,7 +27,7 @@ String personInfoMsg(BuildContext context, Person p) {
 Text text1(String show, {bool isBold = false, Color color = Colors.black}) {
   return Text(
     show,
-    style: TextStyle(fontSize: uiStyle.fontSize1, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: color),
+    style: TextStyle(fontSize: uiStyle.fontSize2, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: color),
     overflow: TextOverflow.ellipsis,
   );
 }
@@ -55,14 +56,8 @@ Text text4(String show, {bool isBold = false, Color color = Colors.black}) {
   );
 }
 
-Widget leadingIcon = Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  crossAxisAlignment: CrossAxisAlignment.center,
-  children: [
-    text1(manager.systemName, color: Colors.white),
-    SizedBox(width: 1.w),
-    text3(manager.systemVersion, color: Colors.white),
-  ],
+Widget leadingIcon = Center(
+  child: text1(manager.systemName, color: Colors.white),
 );
 
 Widget userShow(BuildContext context, List<Person> users) {
@@ -83,6 +78,21 @@ Widget userShow(BuildContext context, List<Person> users) {
       ),
     ),
   );
+}
+
+String userShowText(List<Person> users) {
+  String ret = "";
+
+  if (users.isNotEmpty) {
+    ret = users[0].name;
+
+    if (users.length > 1) {
+      for (var user in users) {
+        ret += ", ${user.name}";
+      }
+    }
+  }
+  return ret;
 }
 
 alertDialog(BuildContext context, String header, message, button) {
@@ -175,22 +185,21 @@ Future<DateTimeRange> selectDateRange(BuildContext context) async {
       DateTimeRange(start: ini.timeStart, end: DateTime.now());
 }
 
-Future<Transaction> transactionData(BuildContext context, Transaction inputTrans) async {
+Future<Transaction> transactionCustomer(BuildContext context, Transaction inputTrans) async {
   int currentIndex = 0;
   int editStatus = inputTrans.status;
-  int editClaimed = inputTrans.isPaid;
+  int editClaimed = inputTrans.payStatus;
   bool canSave = false;
-  DateTime selectDate = inputTrans.saleDate ?? ini.timeStart;
-  TextEditingController editName = TextEditingController(text: inputTrans.name);
-  TextEditingController editCategory = TextEditingController(text: inputTrans.category);
-  TextEditingController editPosition = TextEditingController(text: inputTrans.position);
-  TextEditingController editDescription = TextEditingController(text: inputTrans.description);
+  DateTime selectDate = inputTrans.saleDate;
+  TextEditingController editUnit = TextEditingController(text: inputTrans.unit);
   TextEditingController editPrice = TextEditingController(text: inputTrans.price.toString());
-  TextEditingController editProfit = TextEditingController(text: inputTrans.profit.toString());
-  List<Person> appoint = inputTrans.appointment == null ? [] : [inputTrans.appointment!];
-  List<Person> userCustomers = inputTrans.customer;
-  List<Person> userAgents = inputTrans.agent;
-  List<String> picURLs = inputTrans.imgUrl;
+  TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
+  TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
+  TextEditingController editDescription = TextEditingController(text: inputTrans.description);
+  List<Person> agents = inputTrans.agent;
+  List<Person> clients = inputTrans.clients;
+  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<File> documents = inputTrans.documents;
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -207,27 +216,44 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                   child: Column(
                     children: [
                       SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colClient')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                userEdit(context, clients).then((value) {
+                                  setState(() {
+                                    clients = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, clients),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
                       TextField(
-                        controller: editName,
+                        controller: editProjectName,
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
-                          labelText: context.tr('customer_colName'),
+                          labelText: context.tr('customer_colProject'),
                         ),
                       ),
                       SizedBox(height: 2.h),
                       TextField(
-                        controller: editCategory,
+                        controller: editUnit,
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
-                          labelText: context.tr('customer_colClass'),
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      TextField(
-                        controller: editPosition,
-                        decoration: InputDecoration(
-                          border: const OutlineInputBorder(),
-                          labelText: context.tr('customer_colPosition'),
+                          labelText: context.tr('customer_colUnit'),
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -241,7 +267,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                       ),
                       SizedBox(height: 2.h),
                       TextField(
-                        controller: editProfit,
+                        controller: editCommission,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
@@ -255,7 +281,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                         maxLines: 10,
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
-                          labelText: context.tr('customer_colDescription'),
+                          labelText: context.tr('customer_colDescription_optional'),
                         ),
                       ),
                       SizedBox(height: 2.h),
@@ -285,30 +311,6 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                       SizedBox(height: 2.h),
                       Row(
                         children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('payment_colStatus')} : ")),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                              child: DropdownButton2(
-                                underline: const SizedBox(),
-                                iconStyleData: const IconStyleData(icon: SizedBox()),
-                                hint: Text(context.tr('payment_colStatus')),
-                                buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
-                                items: ini.profitStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    editClaimed = ini.profitStatus.indexWhere((element) => element == newValue);
-                                  });
-                                },
-                                value: ini.profitStatus[editClaimed],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        children: [
                           SizedBox(width: 10.w, child: text3("${context.tr('customer_colDate')} : ")),
                           Expanded(
                             child: TextButton(
@@ -321,36 +323,11 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: text3("${selectDate.year}/${selectDate.month}/${selectDate.day}"),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colClient')} : ")),
-                          Expanded(
-                            child: TextButton(
-                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                              onPressed: () {
-                                userEdit(context, userCustomers).then((value) {
-                                  setState(() {
-                                    userCustomers = value;
-                                  });
-                                });
-                              },
-                              child: Container(
-                                height: 7.5.h,
-                                alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                                child: userShow(context, userCustomers),
                               ),
                             ),
                           )
@@ -364,18 +341,18 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, userAgents).then((value) {
+                                userEdit(context, agents).then((value) {
                                   setState(() {
-                                    userAgents = value;
+                                    agents = value;
                                   });
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                                child: userShow(context, userAgents),
+                                child: userShow(context, agents),
                               ),
                             ),
                           )
@@ -396,7 +373,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -410,7 +387,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          text3("${context.tr('customer_colPicture')} : "),
+                          text3("${context.tr('customer_colDocument')} : "),
                           Expanded(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -426,7 +403,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                     tooltip: context.tr('delete'),
                                     onPressed: () {
                                       setState(() {
-                                        picURLs.removeAt(currentIndex);
+                                        documents.removeAt(currentIndex);
                                         if (currentIndex != 0) {
                                           currentIndex--;
                                         }
@@ -435,7 +412,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                   ),
                                 ),
                                 const SizedBox(width: 25),
-                                if (picURLs.isNotEmpty) text3("${currentIndex + 1} / ${picURLs.length}"),
+                                if (documents.isNotEmpty) text3("${currentIndex + 1} / ${documents.length}"),
                                 const SizedBox(width: 25),
                                 Container(
                                   decoration: BoxDecoration(
@@ -447,7 +424,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                     tooltip: context.tr('upload'),
                                     onPressed: () {
                                       setState(() {
-                                        picURLs.add(randomPic());
+                                        documents.add(randomPic());
                                       });
                                     },
                                   ),
@@ -461,8 +438,8 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                       Container(
                         height: 60.h,
                         decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                        child: picURLs.isEmpty
-                            ? Center(child: text2(context.tr('emptyPicture')))
+                        child: documents.isEmpty
+                            ? Center(child: text2(context.tr('emptyDocument')))
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
@@ -482,7 +459,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                   Expanded(
                                     flex: 8,
                                     child: Image.network(
-                                      picURLs[currentIndex],
+                                      documents[currentIndex].fileHash,
                                       frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
                                         if (wasSynchronouslyLoaded) return child;
                                         return AnimatedOpacity(
@@ -496,7 +473,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                                   ),
                                   Expanded(
                                     flex: 1,
-                                    child: currentIndex != picURLs.length - 1
+                                    child: currentIndex != documents.length - 1
                                         ? IconButton(
                                             icon: const Icon(Icons.arrow_forward_ios_outlined),
                                             onPressed: () {
@@ -527,10 +504,10 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                   tooltip: context.tr('clear'),
                   onPressed: () {
                     setState(() {
-                      editName.text = editCategory.text = editPrice.text = editProfit.text = editPosition.text = editDescription.text = "";
+                      editProjectName.text = editUnit.text = editPrice.text = editCommission.text = editDescription.text = "";
                       editStatus = editClaimed = 0;
                       selectDate = ini.timeStart;
-                      appoint = userCustomers = userAgents = [];
+                      appoint = clients = agents = [];
                     });
                   },
                 ),
@@ -561,32 +538,18 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                   icon: const Icon(Icons.save_alt_sharp),
                   tooltip: context.tr('save'),
                   onPressed: () {
-                    if (editName.text.isEmpty) {
-                      alertDialog(
-                        context,
-                        context.tr('error'),
-                        context.tr('emptyName'),
-                        context.tr('ok'),
-                      );
-                    } else if (editCategory.text.isEmpty) {
+                    if (editUnit.text.isEmpty) {
                       alertDialog(
                         context,
                         context.tr('error'),
                         context.tr('emptyClass'),
                         context.tr('ok'),
                       );
-                    } else if (editPosition.text.isEmpty) {
+                    } else if (editProjectName.text.isEmpty) {
                       alertDialog(
                         context,
                         context.tr('error'),
-                        context.tr('emptyPosition'),
-                        context.tr('ok'),
-                      );
-                    } else if (editDescription.text.isEmpty) {
-                      alertDialog(
-                        context,
-                        context.tr('error'),
-                        context.tr('emptyDescription'),
+                        context.tr('emptyName'),
                         context.tr('ok'),
                       );
                     } else if (editPrice.text.isEmpty) {
@@ -596,7 +559,7 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
                         context.tr('emptyPrice'),
                         context.tr('ok'),
                       );
-                    } else if (editProfit.text.isEmpty) {
+                    } else if (editCommission.text.isEmpty) {
                       alertDialog(
                         context,
                         context.tr('error'),
@@ -641,20 +604,906 @@ Future<Transaction> transactionData(BuildContext context, Transaction inputTrans
   return canSave
       ? Transaction(
           onSelect: inputTrans.onSelect,
-          price: int.parse(editPrice.text),
-          agent: userAgents,
-          status: editStatus,
-          isPaid: editClaimed,
-          profit: double.parse(editProfit.text),
           id: inputTrans.id,
-          name: editName.text,
-          category: editCategory.text,
-          position: editPosition.text,
+          price: int.parse(editPrice.text),
+          priceSQFT: inputTrans.priceSQFT,
+          status: editStatus,
+          payStatus: editClaimed,
+          commission: double.parse(editCommission.text),
+          projectName: editProjectName.text,
+          unit: editUnit.text,
+          name: inputTrans.name,
+          location: inputTrans.location,
+          developer: inputTrans.developer,
           description: editDescription.text,
-          customer: userCustomers,
-          appointment: appoint.isNotEmpty ? appoint[0] : null,
+          clients: clients,
           saleDate: selectDate,
-          imgUrl: picURLs,
+          launchDate: inputTrans.launchDate,
+          appoint: appoint.isNotEmpty ? appoint[0] : null,
+          agent: agents,
+          documents: documents,
+        )
+      : inputTrans;
+}
+
+Future<Transaction> transactionProduct(BuildContext context, Transaction inputTrans) async {
+  int currentIndex = 0;
+  int editStatus = inputTrans.status;
+  int editClaimed = inputTrans.payStatus;
+  bool canSave = false;
+  DateTime selectDate = inputTrans.saleDate;
+  TextEditingController editUnit = TextEditingController(text: inputTrans.unit);
+  TextEditingController editPrice = TextEditingController(text: inputTrans.price.toString());
+  TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
+  TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
+  TextEditingController editDescription = TextEditingController(text: inputTrans.description);
+  List<Person> agents = inputTrans.agent;
+  List<Person> clients = inputTrans.clients;
+  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<File> documents = inputTrans.documents;
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: uiStyle.roundCorner),
+            backgroundColor: Colors.white,
+            titlePadding: EdgeInsets.zero,
+            content: SizedBox(
+                width: 40.w,
+                height: 80.h,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colClient')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                userEdit(context, clients).then((value) {
+                                  setState(() {
+                                    clients = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, clients),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editProjectName,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colProject'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editUnit,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colUnit'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editPrice,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colPrice'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editCommission,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('payment_colPercent'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editDescription,
+                        minLines: 1,
+                        maxLines: 10,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colDescription_optional'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colStatus')} : ")),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                              child: DropdownButton2(
+                                underline: const SizedBox(),
+                                iconStyleData: const IconStyleData(icon: SizedBox()),
+                                hint: Text(context.tr('customer_selStatus')),
+                                buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
+                                items: ini.transactionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    editStatus = ini.transactionStatus.indexWhere((element) => element == newValue);
+                                  });
+                                },
+                                value: ini.transactionStatus[editStatus],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colDate')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                selectSingleDate(context, selectDate).then((value) {
+                                  setState(() {
+                                    selectDate = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.only(left: 1.w),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: text3("${selectDate.year}/${selectDate.month}/${selectDate.day}"),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colAgent')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                userEdit(context, agents).then((value) {
+                                  setState(() {
+                                    agents = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, agents),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colAppoint')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                userEdit(context, appoint, max: 1).then((value) {
+                                  setState(() {
+                                    appoint = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, appoint),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          text3("${context.tr('customer_colDocument')} : "),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: uiStyle.roundCorner2,
+                                  ),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.hide_image),
+                                    tooltip: context.tr('delete'),
+                                    onPressed: () {
+                                      setState(() {
+                                        documents.removeAt(currentIndex);
+                                        if (currentIndex != 0) {
+                                          currentIndex--;
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 25),
+                                if (documents.isNotEmpty) text3("${currentIndex + 1} / ${documents.length}"),
+                                const SizedBox(width: 25),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: uiStyle.roundCorner2,
+                                  ),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.upload_file),
+                                    tooltip: context.tr('upload'),
+                                    onPressed: () {
+                                      setState(() {
+                                        documents.add(randomPic());
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Container(
+                        height: 60.h,
+                        decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                        child: documents.isEmpty
+                            ? Center(child: text2(context.tr('emptyDocument')))
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: currentIndex != 0
+                                        ? IconButton(
+                                            icon: const Icon(Icons.arrow_back_ios_outlined),
+                                            onPressed: () {
+                                              setState(() {
+                                                currentIndex--;
+                                              });
+                                            },
+                                          )
+                                        : const SizedBox(),
+                                  ),
+                                  Expanded(
+                                    flex: 8,
+                                    child: Image.network(
+                                      documents[currentIndex].fileHash,
+                                      frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+                                        if (wasSynchronouslyLoaded) return child;
+                                        return AnimatedOpacity(
+                                          opacity: frame == null ? 0 : 1,
+                                          duration: const Duration(seconds: 1),
+                                          curve: Curves.easeIn,
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: currentIndex != documents.length - 1
+                                        ? IconButton(
+                                            icon: const Icon(Icons.arrow_forward_ios_outlined),
+                                            onPressed: () {
+                                              setState(() {
+                                                currentIndex++;
+                                              });
+                                            },
+                                          )
+                                        : const SizedBox(),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ],
+                  ),
+                )),
+            actionsAlignment: MainAxisAlignment.center,
+            actionsPadding: EdgeInsets.only(bottom: 3.h),
+            actions: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: uiStyle.roundCorner2,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.cleaning_services_rounded),
+                  tooltip: context.tr('clear'),
+                  onPressed: () {
+                    setState(() {
+                      editProjectName.text = editUnit.text = editPrice.text = editCommission.text = editDescription.text = "";
+                      editStatus = editClaimed = 0;
+                      selectDate = ini.timeStart;
+                      appoint = clients = agents = [];
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 1.w),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: uiStyle.roundCorner2,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  tooltip: context.tr('close'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              SizedBox(width: 1.w),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: uiStyle.roundCorner2,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.save_alt_sharp),
+                  tooltip: context.tr('save'),
+                  onPressed: () {
+                    if (editUnit.text.isEmpty) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyClass'),
+                        context.tr('ok'),
+                      );
+                    } else if (editProjectName.text.isEmpty) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyName'),
+                        context.tr('ok'),
+                      );
+                    } else if (editPrice.text.isEmpty) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyPrice'),
+                        context.tr('ok'),
+                      );
+                    } else if (editCommission.text.isEmpty) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyPrice'),
+                        context.tr('ok'),
+                      );
+                    } else if (editStatus == 0) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyStatus'),
+                        context.tr('ok'),
+                      );
+                    } else if (editClaimed == 0) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyPayStatus'),
+                        context.tr('ok'),
+                      );
+                    } else if (selectDate == ini.timeStart) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyDate') + ini.timeStart.toString().substring(0, 10),
+                        context.tr('ok'),
+                      );
+                    } else {
+                      canSave = true;
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+
+  return canSave
+      ? Transaction(
+          onSelect: inputTrans.onSelect,
+          id: inputTrans.id,
+          price: int.parse(editPrice.text),
+          priceSQFT: inputTrans.priceSQFT,
+          status: editStatus,
+          payStatus: editClaimed,
+          commission: double.parse(editCommission.text),
+          projectName: editProjectName.text,
+          unit: editUnit.text,
+          name: inputTrans.name,
+          location: inputTrans.location,
+          developer: inputTrans.developer,
+          description: editDescription.text,
+          clients: clients,
+          saleDate: selectDate,
+          launchDate: inputTrans.launchDate,
+          appoint: appoint.isNotEmpty ? appoint[0] : null,
+          agent: agents,
+          documents: documents,
+        )
+      : inputTrans;
+}
+
+Future<Transaction> transactionPayment(BuildContext context, Transaction inputTrans) async {
+  int currentIndex = 0;
+  int editStatus = inputTrans.status;
+  int editClaimed = inputTrans.payStatus;
+  bool canSave = false;
+  DateTime selectDate = inputTrans.saleDate;
+  TextEditingController editUnit = TextEditingController(text: inputTrans.unit);
+  TextEditingController editPrice = TextEditingController(text: inputTrans.price.toString());
+  TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
+  TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
+  TextEditingController editDescription = TextEditingController(text: inputTrans.description);
+  List<Person> agents = inputTrans.agent;
+  List<Person> clients = inputTrans.clients;
+  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<File> documents = inputTrans.documents;
+  await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: uiStyle.roundCorner),
+            backgroundColor: Colors.white,
+            titlePadding: EdgeInsets.zero,
+            content: SizedBox(
+                width: 40.w,
+                height: 80.h,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colClient')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                userEdit(context, clients).then((value) {
+                                  setState(() {
+                                    clients = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, clients),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editProjectName,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colProject'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editUnit,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colUnit'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editPrice,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colPrice'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editCommission,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('payment_colPercent'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      TextField(
+                        controller: editDescription,
+                        minLines: 1,
+                        maxLines: 10,
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: context.tr('customer_colDescription_optional'),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colStatus')} : ")),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                              child: DropdownButton2(
+                                underline: const SizedBox(),
+                                iconStyleData: const IconStyleData(icon: SizedBox()),
+                                hint: Text(context.tr('customer_selStatus')),
+                                buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
+                                items: ini.transactionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    editStatus = ini.transactionStatus.indexWhere((element) => element == newValue);
+                                  });
+                                },
+                                value: ini.transactionStatus[editStatus],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colDate')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                selectSingleDate(context, selectDate).then((value) {
+                                  setState(() {
+                                    selectDate = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.only(left: 1.w),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: text3("${selectDate.year}/${selectDate.month}/${selectDate.day}"),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colAgent')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                userEdit(context, agents).then((value) {
+                                  setState(() {
+                                    agents = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, agents),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('customer_colAppoint')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
+                                userEdit(context, appoint, max: 1).then((value) {
+                                  setState(() {
+                                    appoint = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, appoint),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          text3("${context.tr('customer_colDocument')} : "),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: uiStyle.roundCorner2,
+                                  ),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.hide_image),
+                                    tooltip: context.tr('delete'),
+                                    onPressed: () {
+                                      setState(() {
+                                        documents.removeAt(currentIndex);
+                                        if (currentIndex != 0) {
+                                          currentIndex--;
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 25),
+                                if (documents.isNotEmpty) text3("${currentIndex + 1} / ${documents.length}"),
+                                const SizedBox(width: 25),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: uiStyle.roundCorner2,
+                                  ),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.upload_file),
+                                    tooltip: context.tr('upload'),
+                                    onPressed: () {
+                                      setState(() {
+                                        documents.add(randomPic());
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Container(
+                        height: 60.h,
+                        decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                        child: documents.isEmpty
+                            ? Center(child: text2(context.tr('emptyDocument')))
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: currentIndex != 0
+                                        ? IconButton(
+                                            icon: const Icon(Icons.arrow_back_ios_outlined),
+                                            onPressed: () {
+                                              setState(() {
+                                                currentIndex--;
+                                              });
+                                            },
+                                          )
+                                        : const SizedBox(),
+                                  ),
+                                  Expanded(
+                                    flex: 8,
+                                    child: Image.network(
+                                      documents[currentIndex].fileHash,
+                                      frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
+                                        if (wasSynchronouslyLoaded) return child;
+                                        return AnimatedOpacity(
+                                          opacity: frame == null ? 0 : 1,
+                                          duration: const Duration(seconds: 1),
+                                          curve: Curves.easeIn,
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: currentIndex != documents.length - 1
+                                        ? IconButton(
+                                            icon: const Icon(Icons.arrow_forward_ios_outlined),
+                                            onPressed: () {
+                                              setState(() {
+                                                currentIndex++;
+                                              });
+                                            },
+                                          )
+                                        : const SizedBox(),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ],
+                  ),
+                )),
+            actionsAlignment: MainAxisAlignment.center,
+            actionsPadding: EdgeInsets.only(bottom: 3.h),
+            actions: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: uiStyle.roundCorner2,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.cleaning_services_rounded),
+                  tooltip: context.tr('clear'),
+                  onPressed: () {
+                    setState(() {
+                      editProjectName.text = editUnit.text = editPrice.text = editCommission.text = editDescription.text = "";
+                      editStatus = editClaimed = 0;
+                      selectDate = ini.timeStart;
+                      appoint = clients = agents = [];
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 1.w),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: uiStyle.roundCorner2,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  tooltip: context.tr('close'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              SizedBox(width: 1.w),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: uiStyle.roundCorner2,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.save_alt_sharp),
+                  tooltip: context.tr('save'),
+                  onPressed: () {
+                    if (editUnit.text.isEmpty) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyClass'),
+                        context.tr('ok'),
+                      );
+                    } else if (editProjectName.text.isEmpty) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyName'),
+                        context.tr('ok'),
+                      );
+                    } else if (editPrice.text.isEmpty) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyPrice'),
+                        context.tr('ok'),
+                      );
+                    } else if (editCommission.text.isEmpty) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyPrice'),
+                        context.tr('ok'),
+                      );
+                    } else if (editStatus == 0) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyStatus'),
+                        context.tr('ok'),
+                      );
+                    } else if (editClaimed == 0) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyPayStatus'),
+                        context.tr('ok'),
+                      );
+                    } else if (selectDate == ini.timeStart) {
+                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyDate') + ini.timeStart.toString().substring(0, 10),
+                        context.tr('ok'),
+                      );
+                    } else {
+                      canSave = true;
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+
+  return canSave
+      ? Transaction(
+          onSelect: inputTrans.onSelect,
+          id: inputTrans.id,
+          price: int.parse(editPrice.text),
+          priceSQFT: inputTrans.priceSQFT,
+          status: editStatus,
+          payStatus: editClaimed,
+          commission: double.parse(editCommission.text),
+          projectName: editProjectName.text,
+          unit: editUnit.text,
+          name: inputTrans.name,
+          location: inputTrans.location,
+          developer: inputTrans.developer,
+          description: editDescription.text,
+          clients: clients,
+          saleDate: selectDate,
+          launchDate: inputTrans.launchDate,
+          appoint: appoint.isNotEmpty ? appoint[0] : null,
+          agent: agents,
+          documents: documents,
         )
       : inputTrans;
 }
@@ -675,9 +1524,10 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
             shape: RoundedRectangleBorder(borderRadius: uiStyle.roundCorner),
             backgroundColor: Colors.white,
             titlePadding: EdgeInsets.zero,
-            content: SizedBox(
+            content: Container(
                 width: 20.w,
-                height: 50.h,
+                height: 45.h,
+                alignment: Alignment.center,
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -720,7 +1570,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -745,36 +1595,11 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: text3("${selectTime.hour.toString().padLeft(2, "0")}:${selectTime.minute.toString().padLeft(2, "0")}"),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        children: [
-                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colLeads')} : ")),
-                          Expanded(
-                            child: TextButton(
-                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                              onPressed: () {
-                                userEdit(context, lead, max: 1).then((value) {
-                                  setState(() {
-                                    lead = value;
-                                  });
-                                });
-                              },
-                              child: Container(
-                                height: 7.5.h,
-                                alignment: Alignment.centerLeft,
-                                padding: EdgeInsets.only(left: 1.w),
-                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                                child: userShow(context, lead),
                               ),
                             ),
                           )
@@ -788,6 +1613,31 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
+                                userEdit(context, lead, max: 1).then((value) {
+                                  setState(() {
+                                    lead = value;
+                                  });
+                                });
+                              },
+                              child: Container(
+                                height: 6.h,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.only(left: 1.w),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: userShow(context, lead),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      Row(
+                        children: [
+                          SizedBox(width: 10.w, child: text3("${context.tr('leadsAppointment_colLeads')} : ")),
+                          Expanded(
+                            child: TextButton(
+                              style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                              onPressed: () {
                                 userEdit(context, agent, max: 1).then((value) {
                                   setState(() {
                                     agent = value;
@@ -795,7 +1645,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                                 });
                               },
                               child: Container(
-                                height: 7.5.h,
+                                height: 6.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -896,6 +1746,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
           lead: lead[0],
           agent: agent[0],
           status: editStatus,
+          projectName: input.projectName,
           appointDate: DateTime(
             selectDate.year,
             selectDate.month,

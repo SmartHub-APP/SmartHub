@@ -1,18 +1,11 @@
 # Smarthub API book
 
 ## Information
-### Version
-- v1
-- latest
-### Author
-- Connection
+
 ### Usage
 1. Copy command
 2. Replae content between `{}`
 	- e.g. replace `{SERVER}` by ```123.123.123.123:123```
-
-## Outline
-1. Login
 
 ## Login
 ### URI

@@ -16,10 +16,6 @@ type SettingConfig struct {
     DB_Password     string  `json:"DB_Password"`
     DB_Address      string  `json:"DB_Address"`
     DB_Port         string  `json:"DB_Port"`
-    TB_User         string  `json:"TB_User"`
-    TB_Role         string  `json:"TB_Role"`
-    TB_Transaction  string  `json:"TB_Transaction"`
-    TB_Appointment  string  `json:"TB_Appointment"`
     API_Base        string  `json:"API_Base"`
     API_File        string  `json:"API_File"`
     API_Role        string  `json:"API_Role"`

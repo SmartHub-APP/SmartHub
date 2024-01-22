@@ -23,12 +23,18 @@ type LoginReponse struct {
 
 func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+    	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+    	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 		switch r.Method {
+            case "OPTIONS":
+    			w.WriteHeader(http.StatusOK)
+
+    			return
+
 			case "POST" :
                 var Req LoginRequest
-
-        		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-        		w.Header().Set("Access-Control-Allow-Methods", "POST")
 
                 err := json.NewDecoder(r.Body).Decode(&Req)
                 if err != nil {
@@ -45,14 +51,15 @@ func RouterLogin(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http
                 var Resp LoginReponse
 
                 if goRefresh {
-                    accessTK, refreshTK := SmartHubTool.GetTokens(Req.Account)
-                    rf := db.GetNameAndPerm(Req.Account)
+                    accessTK, refreshTK := SmartHubTool.GetTokens(msg)
+                    rf := db.GetNameAndPerm(msg)
 
                     Resp.Username, Resp.Permission = rf.Username, rf.Permission
                     Resp.AccessToken, Resp.RefreshToken = accessTK, refreshTK
 
                     jsonResponse, err := json.Marshal(Resp)
                     if err != nil {
+                        http.Error(w, err.Error(), http.StatusInternalServerError)
                         http.Error(w, err.Error(), http.StatusInternalServerError)
                         return
                     }
@@ -100,11 +107,9 @@ func DetermineWay(req LoginRequest) (bool, bool, string) {
             return true, false, "Refresh time expired"
         } else {
             if atExpire {
-                ret := atUID
-
-                if rtUID != "" { ret = rtUID }
-
-                return false, true, ret
+                return false, true, rtUID
+            } else {
+                return false, true, atUID
             }
         }
     }

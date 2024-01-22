@@ -1,7 +1,6 @@
 import '../config.dart';
 import '../object.dart';
 import '../interaction.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -15,11 +14,6 @@ class Customer extends StatefulWidget {
 }
 
 class _CustomerState extends State<Customer> {
-  int total = 0;
-  int numGet = 0;
-  int nowPage = 1;
-  int maxPage = 30;
-  int perPage = 50;
   int colIndex = 0;
   int searchStatus = 0;
   bool sortAscend = true;
@@ -63,14 +57,14 @@ class _CustomerState extends State<Customer> {
                                 controller: filterClass,
                                 decoration: InputDecoration(
                                   border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colClass'),
+                                  labelText: context.tr('customer_colUnit'),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
                               child: Container(
-                                height: 7.6.h,
+                                height: 6.h,
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: DropdownButton2(
                                   underline: const SizedBox(),
@@ -99,7 +93,7 @@ class _CustomerState extends State<Customer> {
                                   });
                                 },
                                 child: Container(
-                                  height: 7.6.h,
+                                  height: 6.h,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                   child: text3(
@@ -128,9 +122,9 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionData(context, newTransaction).then((value) {
+                                  transactionCustomer(context, Transaction.create()).then((value) {
                                     setState(() {
-                                      if (value != newTransaction) {
+                                      if (value != Transaction.create()) {
                                         selfTransactions.add(value);
                                       }
                                     });
@@ -150,7 +144,7 @@ class _CustomerState extends State<Customer> {
                                 tooltip: context.tr('search'),
                                 onPressed: () {
                                   setState(() {
-                                    selfTransactions = fakeTransactionGenerator(30);
+                                    selfTransactions = Transaction.create().fakeData(30);
                                   });
                                 },
                               ),
@@ -214,28 +208,30 @@ class _CustomerState extends State<Customer> {
                     width: 94.w,
                     child: SingleChildScrollView(
                       child: DataTable(
-                        dataRowMaxHeight: 10.h,
+                        columnSpacing: 2,
+                        horizontalMargin: 20,
                         sortColumnIndex: colIndex,
                         sortAscending: sortAscend,
                         showCheckboxColumn: true,
                         columns: [
                           DataColumn(
-                            label: text3(context.tr('customer_colName'), isBold: true),
+                            label: text3(context.tr('customer_colProject'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.name.compareTo(b.name) : b.name.compareTo(a.name));
+                                selfTransactions
+                                    .sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
                               });
                             },
                           ),
                           DataColumn(
-                            label: text3(context.tr('customer_colClass'), isBold: true),
+                            label: text3(context.tr('customer_colUnit'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.category.compareTo(b.category) : b.category.compareTo(a.category));
+                                selfTransactions.sort((a, b) => direction ? a.unit.compareTo(b.unit) : b.unit.compareTo(a.unit));
                               });
                             },
                           ),
@@ -266,16 +262,16 @@ class _CustomerState extends State<Customer> {
                                 colIndex = colID;
                                 sortAscend = direction;
                                 selfTransactions.sort(
-                                  (a, b) => direction ? a.saleDate.toString().compareTo(b.saleDate.toString()) : b.saleDate.toString().compareTo(a.saleDate.toString()),
+                                  (a, b) => direction
+                                      ? a.saleDate.toString().compareTo(b.saleDate.toString())
+                                      : b.saleDate.toString().compareTo(a.saleDate.toString()),
                                 );
                               });
                             },
                           ),
-                          /*
-                        DataColumn(label: text3(context.tr('customer_colClient'), isBold: true)),
-                        DataColumn(label: text3(context.tr('customer_colAgent'), isBold: true)),
-                        DataColumn(label: text3(context.tr('customer_colAppoint'), isBold: true)),*/
-                          DataColumn(label: text3(context.tr('edit'), isBold: true)),
+                          DataColumn(label: text3(context.tr('customer_colAgent'), isBold: true)),
+                          DataColumn(label: text3(context.tr('customer_colDescription'), isBold: true)),
+                          const DataColumn(label: SizedBox()),
                         ],
                         rows: selfTransactions.map((data) {
                           return DataRow(
@@ -286,23 +282,17 @@ class _CustomerState extends State<Customer> {
                               });
                             },
                             cells: [
-                              DataCell(text3(data.name)),
-                              DataCell(text3(data.category)),
-                              DataCell(text3(data.price.toString())),
-                              DataCell(text3(ini.transactionStatus[data.status])),
-                              DataCell(text3(data.saleDate == null ? "" : data.saleDate.toString().substring(0, 10))),
-                              /*DataCell(Container(padding: const EdgeInsets.all(10), child: userShow(context, data.customer))),
-                            DataCell(Container(padding: const EdgeInsets.all(10), child: userShow(context, data.agent))),
-                            DataCell(data.appointment == null
-                                ? const SizedBox()
-                                : Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: userShow(context, [data.appointment!]),
-                                  )),*/
+                              DataCell(SizedBox(width: 7.w, child: text3(data.projectName))),
+                              DataCell(SizedBox(width: 7.w, child: text3(data.unit))),
+                              DataCell(SizedBox(width: 7.w, child: text3(data.price.toString()))),
+                              DataCell(SizedBox(width: 9.w, child: text3(ini.transactionStatus[data.status]))),
+                              DataCell(SizedBox(width: 6.w, child: text3(data.saleDate.toString().substring(0, 10)))),
+                              DataCell(SizedBox(width: 10.w, child: text3(userShowText(data.agent)))),
+                              DataCell(SizedBox(width: 12.w, child: text3(data.description ?? ""))),
                               DataCell(
                                 IconButton(
                                   onPressed: () async {
-                                    await transactionData(context, data).then((value) {
+                                    await transactionCustomer(context, data).then((value) {
                                       setState(() {
                                         selfTransactions[selfTransactions.indexWhere((element) => element == data)] = value;
                                       });
@@ -318,89 +308,6 @@ class _CustomerState extends State<Customer> {
                         }).toList(),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 3.h),
-                          backgroundColor: nowPage > 1 ? Colors.transparent : Colors.blueGrey,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        onPressed: () {
-                          if (nowPage > 1) {
-                            setState(() {
-                              nowPage--;
-                            });
-                          }
-                        },
-                        child: SizedBox(
-                          width: 15.w,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.arrow_circle_left_outlined),
-                              SizedBox(width: 1.w),
-                              text3(context.tr('pagePast'), isBold: true),
-                            ],
-                          ),
-                        ),
-                      ),
-                      text3(sprintf(context.tr('customer_statistic'), [total, numGet, nowPage, maxPage, perPage])),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(width: 1.w),
-                            text3(context.tr('customer_go2Page'), isBold: true),
-                            DropdownButton2(
-                              underline: const SizedBox(),
-                              buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
-                              items: List.generate(
-                                maxPage,
-                                (pID) => (pID + 1).toString(),
-                              ).map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
-                              onChanged: (newValue) {
-                                setState(() {
-                                  nowPage = int.parse(newValue ?? "1");
-                                });
-                              },
-                              value: nowPage.toString(),
-                            ),
-                          ],
-                        ),
-                      ),
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 3.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            nowPage++;
-                          });
-                        },
-                        child: SizedBox(
-                          width: 15.w,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              text3(context.tr('pageNext'), isBold: true),
-                              SizedBox(width: 1.w),
-                              const Icon(Icons.arrow_circle_right_outlined),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ],
