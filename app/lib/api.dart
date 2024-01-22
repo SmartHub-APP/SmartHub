@@ -9,7 +9,7 @@ Future<String> try2Login(String account, password) async {
 
   try {
     http.Response response = await http.post(
-      Uri.parse(manager.apiServer + ini.api.login),
+      Uri.parse(ini.apiServer + ini.api.login),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode(<String, String>{
         'Account': account,

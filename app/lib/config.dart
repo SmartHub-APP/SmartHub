@@ -7,9 +7,8 @@ import 'tabs/leads_appointment.dart';
 import 'package:flutter/material.dart';
 
 InitSetting ini = InitSetting(
-  api: Api(
-    login: "/smarthub/login",
-  ),
+  apiServer: "http://mothra.life.nctu.edu.tw:25000/",
+  api: Api(login: "smarthub/login"),
   urls: [
     Url(route: "/dashboard", content: const Dashboard()),
     Url(route: "/customer", content: const Customer()),
@@ -36,7 +35,6 @@ InitSetting ini = InitSetting(
 
 SystemControl manager = SystemControl(
   systemName: 'SmartHub',
-  apiServer: "http://mothra.life.nctu.edu.tw:25000",
   user: User(account: '', name: ''),
   icon: const SizedBox(),
   tabPermission: TabPermission(setting: 0, dashboard: 0, customer: 0, product: 0, leadsAppointment: 0, payment: 0),

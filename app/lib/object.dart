@@ -40,7 +40,6 @@ class FrontStyle {
 
 // ##### Controller
 class SystemControl {
-  String apiServer;
   String systemName;
   User user;
   Widget icon;
@@ -51,7 +50,6 @@ class SystemControl {
       systemName: systemName,
       user: newUser,
       icon: icon,
-      apiServer: apiServer,
       tabPermission: newPerm,
     );
   }
@@ -60,7 +58,6 @@ class SystemControl {
     required this.systemName,
     required this.user,
     required this.icon,
-    required this.apiServer,
     required this.tabPermission,
   });
 }
@@ -356,6 +353,7 @@ class Role {
 // ##### Rooted Setting
 class InitSetting {
   Api api;
+  String apiServer;
   DateTime timeStart;
   CacheName cacheName;
   List<String> transactionStatus;
@@ -367,6 +365,7 @@ class InitSetting {
 
   InitSetting({
     required this.api,
+    required this.apiServer,
     required this.urls,
     required this.timeStart,
     required this.cacheName,
