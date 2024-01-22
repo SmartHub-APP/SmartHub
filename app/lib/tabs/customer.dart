@@ -212,75 +212,7 @@ class _CustomerState extends State<Customer> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: uiStyle.roundCorner2,
                     ),
-                    child: TableView(
-                      data: selfTransactions,
-                      titles: [
-                        RowTitle(
-                          name: context.tr('customer_colProject'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions
-                                  .sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          name: context.tr('customer_colUnit'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) => direction ? a.unit.compareTo(b.unit) : b.unit.compareTo(a.unit));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          name: context.tr('customer_colPrice'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) => direction ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          name: context.tr('customer_colStatus'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) => direction ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          name: context.tr('customer_colDate'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort(
-                                (a, b) => direction
-                                    ? a.saleDate.toString().compareTo(b.saleDate.toString())
-                                    : b.saleDate.toString().compareTo(a.saleDate.toString()),
-                              );
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          name: context.tr('customer_colAgent'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) =>
-                                  direction ? a.agent.toString().compareTo(b.agent.toString()) : b.agent.toString().compareTo(a.agent.toString()));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          name: context.tr('customer_colDescription'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) => direction
-                                  ? a.description.toString().compareTo(b.description.toString())
-                                  : b.description.toString().compareTo(a.description.toString()));
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                    child: TableView(data: selfTransactions, numColumn: 7),
                   ),
                 ),
                 SizedBox(height: 3.h),

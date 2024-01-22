@@ -1,3 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
+
+import 'config.dart';
 import 'object.dart';
 import 'interaction.dart';
 import 'package:flutter/material.dart';
@@ -14,102 +17,21 @@ class RowCtl {
 }
 
 class RowTitle {
+  double width;
   String name;
   Function(bool) sort;
 
   RowTitle({
+    required this.width,
     required this.name,
     required this.sort,
   });
 }
 
-/*
-[
-                        RowTitle(
-                          onSort: false,
-                          sortAscend: false,
-                          name: context.tr('customer_colProject'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions
-                                  .sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          onSort: false,
-                          sortAscend: false,
-                          name: context.tr('customer_colUnit'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) => direction ? a.unit.compareTo(b.unit) : b.unit.compareTo(a.unit));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          onSort: false,
-                          sortAscend: false,
-                          name: context.tr('customer_colPrice'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) => direction ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          onSort: false,
-                          sortAscend: false,
-                          name: context.tr('customer_colStatus'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) => direction ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          onSort: false,
-                          sortAscend: false,
-                          name: context.tr('customer_colDate'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort(
-                                    (a, b) => direction
-                                    ? a.saleDate.toString().compareTo(b.saleDate.toString())
-                                    : b.saleDate.toString().compareTo(a.saleDate.toString()),
-                              );
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          onSort: false,
-                          sortAscend: false,
-                          name: context.tr('customer_colAgent'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) =>
-                              direction ? a.agent.toString().compareTo(b.agent.toString()) : b.agent.toString().compareTo(a.agent.toString()));
-                            });
-                          },
-                        ),
-                        RowTitle(
-                          onSort: false,
-                          sortAscend: false,
-                          name: context.tr('customer_colDescription'),
-                          sort: (direction) {
-                            setState(() {
-                              selfTransactions.sort((a, b) => direction
-                                  ? a.description.toString().compareTo(b.description.toString())
-                                  : b.description.toString().compareTo(a.description.toString()));
-                            });
-                          },
-                        ),
-                      ],
-*/
-
 class TableView extends StatefulWidget {
-  const TableView({super.key, required this.data, required this.titles});
+  const TableView({super.key, required this.data, required this.numColumn});
 
-  final List<RowTitle> titles;
+  final int numColumn;
   final List<Transaction> data;
 
   @override
@@ -122,13 +44,83 @@ class _TableViewState extends State<TableView> {
 
   @override
   void initState() {
-    rowCtl = widget.titles.map((e) => RowCtl(onSort: false, sortAscend: false)).toList();
+    rowCtl = List.generate(widget.numColumn, (index) => RowCtl(onSort: false, sortAscend: false));
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    List<RowTitle> titles = [
+      RowTitle(
+        width: 10.w,
+        name: context.tr('customer_colProject'),
+        sort: (direction) {
+          setState(() {
+            widget.data.sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
+          });
+        },
+      ),
+      RowTitle(
+        width: 8.w,
+        name: context.tr('customer_colUnit'),
+        sort: (direction) {
+          setState(() {
+            widget.data.sort((a, b) => direction ? a.unit.compareTo(b.unit) : b.unit.compareTo(a.unit));
+          });
+        },
+      ),
+      RowTitle(
+        width: 6.w,
+        name: context.tr('customer_colPrice'),
+        sort: (direction) {
+          setState(() {
+            widget.data.sort((a, b) => direction ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
+          });
+        },
+      ),
+      RowTitle(
+        width: 10.w,
+        name: context.tr('customer_colStatus'),
+        sort: (direction) {
+          setState(() {
+            widget.data.sort((a, b) => direction ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
+          });
+        },
+      ),
+      RowTitle(
+        width: 7.w,
+        name: context.tr('customer_colDate'),
+        sort: (direction) {
+          setState(() {
+            widget.data.sort(
+              (a, b) => direction ? a.saleDate.toString().compareTo(b.saleDate.toString()) : b.saleDate.toString().compareTo(a.saleDate.toString()),
+            );
+          });
+        },
+      ),
+      RowTitle(
+        width: 12.w,
+        name: context.tr('customer_colAgent'),
+        sort: (direction) {
+          setState(() {
+            widget.data
+                .sort((a, b) => direction ? a.agent.toString().compareTo(b.agent.toString()) : b.agent.toString().compareTo(a.agent.toString()));
+          });
+        },
+      ),
+      RowTitle(
+        width: 20.w,
+        name: context.tr('customer_colDescription'),
+        sort: (direction) {
+          setState(() {
+            widget.data.sort((a, b) => direction
+                ? a.description.toString().compareTo(b.description.toString())
+                : b.description.toString().compareTo(a.description.toString()));
+          });
+        },
+      ),
+    ];
     return Column(
       children: [
         Row(
@@ -143,23 +135,23 @@ class _TableViewState extends State<TableView> {
                   }
                 });
               },
-              icon: allSelected ? const Icon(Icons.check_box_outlined) : const Icon(Icons.check_box_outline_blank),
+              icon: allSelected ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank),
             ),
             SizedBox(width: 0.5.w),
             Expanded(
               child: Wrap(
-                children: widget.titles.asMap().entries.map((e) {
+                children: titles.asMap().entries.map((e) {
                   return InkWell(
                     onTap: () {
                       setState(() {
                         if (!rowCtl[e.key].onSort) {
                           rowCtl[e.key].onSort = true;
                           rowCtl[e.key].sortAscend = true;
-                          widget.titles[e.key].sort(true);
+                          titles[e.key].sort(true);
                         } else {
                           if (rowCtl[e.key].sortAscend) {
                             rowCtl[e.key].sortAscend = false;
-                            widget.titles[e.key].sort(false);
+                            titles[e.key].sort(false);
                           } else {
                             rowCtl[e.key].onSort = false;
                           }
@@ -168,12 +160,11 @@ class _TableViewState extends State<TableView> {
                     },
                     child: Container(
                       height: 5.h,
-                      width: 10.w,
+                      width: titles[e.key].width,
                       alignment: Alignment.center,
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
                       child: Row(
                         children: [
-                          text3(widget.titles[e.key].name, isBold: true),
+                          text3(titles[e.key].name, isBold: true),
                           if (rowCtl[e.key].onSort) rowCtl[e.key].sortAscend ? const Icon(Icons.arrow_drop_up) : const Icon(Icons.arrow_drop_down),
                         ],
                       ),
@@ -184,109 +175,57 @@ class _TableViewState extends State<TableView> {
             ),
           ],
         ),
-        Container(color: Colors.blue, child: const Text("2")),
+        Expanded(
+          child: ListView.builder(
+            itemCount: widget.data.length,
+            itemBuilder: (context, index) {
+              return Row(
+                children: [
+                  SizedBox(width: 0.5.w),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.data[index].onSelect = !widget.data[index].onSelect;
+
+                        allSelected = true;
+                        for (var element in widget.data) {
+                          if (!element.onSelect) {
+                            allSelected = false;
+                          }
+                        }
+                      });
+                    },
+                    icon: widget.data[index].onSelect ? const Icon(Icons.check_box) : const Icon(Icons.check_box_outline_blank),
+                  ),
+                  SizedBox(width: 0.5.w),
+                  Expanded(
+                    child: Wrap(
+                      children: [
+                        text3(widget.data[index].projectName),
+                        text3(widget.data[index].unit),
+                        text3(widget.data[index].price.toString()),
+                        text3(ini.transactionStatus[widget.data[index].status]),
+                        text3(widget.data[index].saleDate.toString().substring(0, 10)),
+                        text3(userShowText(widget.data[index].agent)),
+                        text3(widget.data[index].description ?? ""),
+                      ]
+                          .asMap()
+                          .entries
+                          .map(
+                            (e) => SizedBox(
+                              width: titles[e.key].width,
+                              child: e.value,
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        )
       ],
     );
   }
 }
-/*
-* DataTable(
-                        columnSpacing: 2,
-                        horizontalMargin: 20,
-                        sortColumnIndex: colIndex,
-                        sortAscending: sortAscend,
-                        showCheckboxColumn: true,
-                        columns: [
-                          DataColumn(
-                            label: text3(context.tr('customer_colProject'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions
-                                    .sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('customer_colUnit'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.unit.compareTo(b.unit) : b.unit.compareTo(a.unit));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('customer_colPrice'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('customer_colStatus'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('customer_colDate'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort(
-                                  (a, b) => direction
-                                      ? a.saleDate.toString().compareTo(b.saleDate.toString())
-                                      : b.saleDate.toString().compareTo(a.saleDate.toString()),
-                                );
-                              });
-                            },
-                          ),
-                          DataColumn(label: text3(context.tr('customer_colAgent'), isBold: true)),
-                          DataColumn(label: text3(context.tr('customer_colDescription'), isBold: true)),
-                          const DataColumn(label: SizedBox()),
-                        ],
-                        rows: selfTransactions.map((data) {
-                          return DataRow(
-                            selected: data.onSelect,
-                            onSelectChanged: (selected) {
-                              setState(() {
-                                data.onSelect = selected ?? false;
-                              });
-                            },
-                            cells: [
-                              DataCell(SizedBox(width: 7.w, child: text3(data.projectName))),
-                              DataCell(SizedBox(width: 7.w, child: text3(data.unit))),
-                              DataCell(SizedBox(width: 7.w, child: text3(data.price.toString()))),
-                              DataCell(SizedBox(width: 9.w, child: text3(ini.transactionStatus[data.status]))),
-                              DataCell(SizedBox(width: 6.w, child: text3(data.saleDate.toString().substring(0, 10)))),
-                              DataCell(SizedBox(width: 10.w, child: text3(userShowText(data.agent)))),
-                              DataCell(SizedBox(width: 12.w, child: text3(data.description ?? ""))),
-                              DataCell(
-                                IconButton(
-                                  onPressed: () async {
-                                    await transactionCustomer(context, data).then((value) {
-                                      setState(() {
-                                        selfTransactions[selfTransactions.indexWhere((element) => element == data)] = value;
-                                      });
-                                    });
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(Icons.edit_note_outlined),
-                                  tooltip: context.tr('edit'),
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),*/
