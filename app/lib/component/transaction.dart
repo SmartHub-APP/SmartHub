@@ -1,6 +1,6 @@
+import '../tool.dart';
 import '../config.dart';
 import '../object.dart';
-import '../tool.dart';
 import 'person.dart';
 import 'interaction.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +54,7 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                                 });
                               },
                               child: Container(
-                                height: 6.h,
+                                height: 8.h,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -147,7 +147,7 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                                 });
                               },
                               child: Container(
-                                height: 6.h,
+                                height: 8.h,
                                 alignment: Alignment.centerLeft,
                                 padding: EdgeInsets.only(left: 1.w),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -172,7 +172,7 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                                 });
                               },
                               child: Container(
-                                height: 6.h,
+                                height: 8.h,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
@@ -197,7 +197,7 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                                 });
                               },
                               child: Container(
-                                height: 6.h,
+                                height: 8.h,
                                 alignment: Alignment.centerLeft,
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),

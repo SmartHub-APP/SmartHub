@@ -371,6 +371,10 @@ class Role {
   List<int> permission;
 
   Role({required this.roleName, required this.permission});
+
+  factory Role.guest() {
+    return Role(roleName: "Guest", permission: [0, 0, 0, 0, 0, 0]);
+  }
 }
 
 // ##### Rooted Setting

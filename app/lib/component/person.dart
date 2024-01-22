@@ -1,5 +1,5 @@
-import '../config.dart';
 import '../object.dart';
+import '../tool.dart';
 import 'interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -146,9 +146,11 @@ Future<Person> personEdit(BuildContext context, Person inputUser) async {
 Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers, {int max = -1}) async {
   bool save = false;
   List<Person> edit = List.of(inputUsers);
+  List<Person> search = [];
   TextEditingController newName = TextEditingController(text: "");
   TextEditingController newPhone = TextEditingController(text: "");
   TextEditingController newEmail = TextEditingController(text: "");
+  TextEditingController searchBar = TextEditingController(text: "");
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -157,81 +159,164 @@ Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers, {in
           return AlertDialog(
             shape: RoundedRectangleBorder(borderRadius: uiStyle.roundCorner),
             backgroundColor: Colors.white,
-            title: edit.length < max || max == -1
-                ? Column(
+            title: Container(
+              decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black, width: 2))),
+              padding: const EdgeInsets.only(bottom: 5),
+              child: Column(
+                children: [
+                  text2(context.tr('search')),
+                  SizedBox(height: 1.h),
+                  Row(
                     children: [
-                      TextField(
-                        controller: newName,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: const OutlineInputBorder(),
-                          labelText: context.tr('userName'),
+                      Expanded(
+                        child: TextField(
+                          controller: searchBar,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: const OutlineInputBorder(),
+                            labelText: context.tr('search'),
+                            icon: const Icon(Icons.people_alt_sharp),
+                          ),
                         ),
                       ),
-                      SizedBox(height: 2.h),
-                      TextField(
-                        controller: newPhone,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: const OutlineInputBorder(),
-                          labelText: context.tr('userPhone'),
+                      SizedBox(width: 0.5.w),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: uiStyle.roundCorner2,
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.search),
+                          tooltip: context.tr('search'),
+                          onPressed: () {
+                            setState(() {
+                              search = List.generate(3, (index) => randomPerson());
+                            });
+                          },
                         ),
                       ),
-                      SizedBox(height: 2.h),
-                      TextField(
-                        controller: newEmail,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: const OutlineInputBorder(),
-                          labelText: context.tr('userEmail'),
-                        ),
-                      ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Center(child: max == -1 ? text3("${context.tr('total')} : ${edit.length}") : text3("${edit.length} / $max")),
-                          SizedBox(width: 2.5.w),
-                          Container(
+                    ],
+                  ),
+                  SizedBox(height: 1.h),
+                  if (searchBar.text.isNotEmpty)
+                    search.isNotEmpty
+                        ? Container(
+                            width: 40.w,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(color: Colors.grey),
                               borderRadius: uiStyle.roundCorner2,
                             ),
-                            child: IconButton(
-                              icon: const Icon(Icons.add),
-                              tooltip: context.tr('add'),
-                              onPressed: () {
-                                if (newName.text.isNotEmpty) {
-                                  setState(() {
-                                    edit.add(
-                                      Person(
-                                        name: newName.text,
-                                        phone: newPhone.text == "" ? null : newPhone.text,
-                                        account: newEmail.text,
-                                        role: ini.preRoles.last,
+                            constraints: BoxConstraints(minHeight: 5.h, maxHeight: 60.h),
+                            child: SingleChildScrollView(
+                              padding: EdgeInsets.zero,
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(5),
+                                child: Wrap(
+                                  spacing: 4,
+                                  runSpacing: 4,
+                                  alignment: WrapAlignment.center,
+                                  children: search.map((label) {
+                                    return Tooltip(
+                                      message: personInfoMsg(context, label),
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            search.remove(label);
+                                            edit.add(label);
+                                          });
+                                        },
+                                        child: Chip(label: text3(label.name), avatar: const Icon(Icons.add)),
                                       ),
                                     );
-                                    newPhone.text = newEmail.text = newName.text = "";
-                                  });
-                                } else {
-                                  alertDialog(
-                                    context,
-                                    context.tr('error'),
-                                    context.tr('emptyName'),
-                                    context.tr('ok'),
-                                  );
-                                }
-                              },
+                                  }).toList(),
+                                ),
+                              ),
                             ),
+                          )
+                        : text3(context.tr('emptySearch')),
+                  const Divider(color: Colors.grey),
+                  text2(context.tr('add')),
+                  SizedBox(height: 1.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: newName,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: const OutlineInputBorder(),
+                            labelText: context.tr('userName'),
                           ),
-                        ],
+                        ),
+                      ),
+                      SizedBox(width: 1.w),
+                      Expanded(
+                        child: TextField(
+                          controller: newPhone,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: const OutlineInputBorder(),
+                            labelText: context.tr('userPhone'),
+                          ),
+                        ),
                       ),
                     ],
-                  )
-                : Center(child: text3("${edit.length} / $max")),
+                  ),
+                  SizedBox(height: 1.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: newEmail,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: const OutlineInputBorder(),
+                            labelText: context.tr('userEmail'),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 0.5.w),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: uiStyle.roundCorner2,
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.add),
+                          tooltip: context.tr('add'),
+                          onPressed: () {
+                            setState(() {
+                              if (newName.text.isEmpty) {
+                                alertDialog(context, context.tr('error'), context.tr('emptyUser'), context.tr('ok'));
+                              } else if (newEmail.text.isEmpty) {
+                                alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
+                              } else {
+                                edit.add(
+                                  Person(
+                                    name: newName.text,
+                                    phone: newPhone.text,
+                                    account: newEmail.text,
+                                    role: Role.guest(),
+                                  ),
+                                );
+                                newName.text = newPhone.text = newEmail.text = "";
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 1.h),
+                ],
+              ),
+            ),
             content: Container(
-              width: 20.w,
+              width: 40.w,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(color: Colors.grey),

@@ -181,3 +181,18 @@ Future<DateTimeRange> selectDateRange(BuildContext context) async {
       ) ??
       DateTimeRange(start: ini.timeStart, end: DateTime.now());
 }
+
+void showSnackBar(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: text2(message),
+      duration: const Duration(seconds: 1),
+      action: SnackBarAction(
+        label: context.tr('close'),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    ),
+  );
+}
