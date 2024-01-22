@@ -122,9 +122,9 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionCustomer(context, newTransaction).then((value) {
+                                  transactionCustomer(context, Transaction.create()).then((value) {
                                     setState(() {
-                                      if (value != newTransaction) {
+                                      if (value != Transaction.create()) {
                                         selfTransactions.add(value);
                                       }
                                     });
@@ -144,7 +144,7 @@ class _CustomerState extends State<Customer> {
                                 tooltip: context.tr('search'),
                                 onPressed: () {
                                   setState(() {
-                                    selfTransactions = fakeTransactionGenerator(30);
+                                    selfTransactions = Transaction.create().fakeData(30);
                                   });
                                 },
                               ),
@@ -220,7 +220,8 @@ class _CustomerState extends State<Customer> {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
+                                selfTransactions
+                                    .sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
                               });
                             },
                           ),
@@ -261,7 +262,9 @@ class _CustomerState extends State<Customer> {
                                 colIndex = colID;
                                 sortAscend = direction;
                                 selfTransactions.sort(
-                                  (a, b) => direction ? a.saleDate.toString().compareTo(b.saleDate.toString()) : b.saleDate.toString().compareTo(a.saleDate.toString()),
+                                  (a, b) => direction
+                                      ? a.saleDate.toString().compareTo(b.saleDate.toString())
+                                      : b.saleDate.toString().compareTo(a.saleDate.toString()),
                                 );
                               });
                             },

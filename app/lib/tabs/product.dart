@@ -16,7 +16,7 @@ class Product extends StatefulWidget {
 
 class _ProductState extends State<Product> {
   int searchStatus = 0;
-  List<Transaction> pubTransactions = fakeTransactionGenerator(10);
+  List<Transaction> pubTransactions = Transaction.create().fakeData(30);
   TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterClass = TextEditingController(text: "");
 
@@ -97,9 +97,9 @@ class _ProductState extends State<Product> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionProduct(context, newTransaction).then((value) {
+                                  transactionProduct(context, Transaction.create()).then((value) {
                                     setState(() {
-                                      if (value != newTransaction) {
+                                      if (value != Transaction.create()) {
                                         pubTransactions.add(value);
                                       }
                                     });
@@ -119,7 +119,7 @@ class _ProductState extends State<Product> {
                                 tooltip: context.tr('search'),
                                 onPressed: () {
                                   setState(() {
-                                    pubTransactions = fakeTransactionGenerator(30);
+                                    pubTransactions = Transaction.create().fakeData(30);
                                   });
                                 },
                               ),
