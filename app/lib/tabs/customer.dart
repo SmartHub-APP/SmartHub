@@ -2,6 +2,7 @@ import '../config.dart';
 import '../object.dart';
 import '../component/tableview.dart';
 import '../component/interaction.dart';
+import '../component/transactionEdit.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -129,7 +130,7 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionCustomer(context, Transaction.create()).then((value) {
+                                  transactionCustomer(context, Transaction.createCommission(10)).then((value) {
                                     if (value != null) {
                                       selfTransactions.add(value);
                                     }

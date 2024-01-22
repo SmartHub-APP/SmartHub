@@ -1,9 +1,11 @@
+import 'interaction.dart';
 import '../config.dart';
 import '../object.dart';
-import 'interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+import 'transactionEdit.dart';
 
 class RowCtl {
   bool onSort;

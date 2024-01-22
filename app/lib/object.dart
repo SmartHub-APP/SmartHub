@@ -284,6 +284,29 @@ class Transaction {
     );
   }
 
+  factory Transaction.createCommission(double defaultCommission) {
+    return Transaction(
+      onSelect: false,
+      price: 0,
+      priceSQFT: 0,
+      status: 2,
+      payStatus: 0,
+      commission: defaultCommission,
+      id: "",
+      unit: "",
+      name: "",
+      location: "",
+      developer: "",
+      description: "",
+      projectName: "",
+      saleDate: DateTime.now(),
+      launchDate: DateTime.now(),
+      agent: [],
+      clients: [],
+      documents: [],
+    );
+  }
+
   List<Transaction> fakeData(int amount) {
     Random seed = Random();
     return List.generate(amount, (index) {
