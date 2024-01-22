@@ -53,7 +53,16 @@ class _TableViewState extends State<TableView> {
   Widget build(BuildContext context) {
     List<RowTitle> titles = [
       RowTitle(
-        width: 10.w,
+        width: 7.w,
+        name: context.tr('customer_colName'),
+        sort: (direction) {
+          setState(() {
+            widget.data.sort((a, b) => direction ? a.name.compareTo(b.name) : b.name.compareTo(a.name));
+          });
+        },
+      ),
+      RowTitle(
+        width: 7.w,
         name: context.tr('customer_colProject'),
         sort: (direction) {
           setState(() {
@@ -110,7 +119,7 @@ class _TableViewState extends State<TableView> {
         },
       ),
       RowTitle(
-        width: 20.w,
+        width: 16.w,
         name: context.tr('customer_colDescription'),
         sort: (direction) {
           setState(() {
@@ -199,26 +208,29 @@ class _TableViewState extends State<TableView> {
                   ),
                   SizedBox(width: 0.5.w),
                   Expanded(
-                    child: Wrap(
-                      children: [
-                        text3(widget.data[index].projectName),
-                        text3(widget.data[index].unit),
-                        text3(widget.data[index].price.toString()),
-                        text3(ini.transactionStatus[widget.data[index].status]),
-                        text3(widget.data[index].saleDate.toString().substring(0, 10)),
-                        text3(userShowText(widget.data[index].agent)),
-                        text3(widget.data[index].description ?? ""),
-                      ]
-                          .asMap()
-                          .entries
-                          .map(
-                            (e) => SizedBox(
-                              width: titles[e.key].width,
-                              child: e.value,
-                            ),
-                          )
-                          .toList(),
-                    ),
+                    child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 1.h),
+                        child: Wrap(
+                          children: [
+                            text3(widget.data[index].name),
+                            text3(widget.data[index].projectName),
+                            text3(widget.data[index].unit),
+                            text3(widget.data[index].price.toString()),
+                            text3(ini.transactionStatus[widget.data[index].status]),
+                            text3(widget.data[index].saleDate.toString().substring(0, 10)),
+                            text3(userShowText(widget.data[index].agent)),
+                            text3(widget.data[index].description ?? ""),
+                          ]
+                              .asMap()
+                              .entries
+                              .map(
+                                (e) => SizedBox(
+                                  width: titles[e.key].width,
+                                  child: e.value,
+                                ),
+                              )
+                              .toList(),
+                        )),
                   ),
                 ],
               );

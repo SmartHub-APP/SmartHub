@@ -212,7 +212,7 @@ class _CustomerState extends State<Customer> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: uiStyle.roundCorner2,
                     ),
-                    child: TableView(data: selfTransactions, numColumn: 7),
+                    child: TableView(data: selfTransactions, numColumn: 8),
                   ),
                 ),
                 SizedBox(height: 3.h),
