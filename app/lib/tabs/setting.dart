@@ -17,9 +17,10 @@ settingDialog(BuildContext context) {
             alignment: Alignment.centerLeft,
             width: 40.w,
             height: 7.h,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: Colors.black,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+              border: Border.all(color: Colors.white70, width: 2),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
             ),
             child: Center(child: text2(context.tr('setting'), color: Colors.white)),
           ),

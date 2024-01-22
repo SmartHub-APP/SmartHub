@@ -140,6 +140,7 @@ class _RoutePageState extends State<RoutePage> with SingleTickerProviderStateMix
                 if (manager.tabPermission.payment > 0) Tab(text: context.tr('payment_tabName')),
               ],
             ),
+            actionsIconTheme: const IconThemeData(color: Colors.white),
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),

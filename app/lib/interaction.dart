@@ -12,8 +12,8 @@ FrontStyle uiStyle = FrontStyle(
   loginWidth: Device.screenType == ScreenType.mobile ? 80.w : 50.w,
   fontSize1: 16.sp,
   fontSize2: 15.sp,
-  fontSize3: 13.sp,
-  fontSize4: 12.sp,
+  fontSize3: 12.sp,
+  fontSize4: 11.sp,
   roundCorner: BorderRadius.circular(10),
   roundCorner2: BorderRadius.circular(8),
 );
