@@ -1,10 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
-
 import 'config.dart';
 import 'object.dart';
 import 'interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RowCtl {
   bool onSort;
@@ -109,7 +108,7 @@ class _TableViewState extends State<TableView> {
         },
       ),
       RowTitle(
-        width: 12.w,
+        width: 10.w,
         name: context.tr('customer_colAgent'),
         sort: (direction) {
           setState(() {
@@ -209,29 +208,38 @@ class _TableViewState extends State<TableView> {
                   SizedBox(width: 0.5.w),
                   Expanded(
                     child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 1.h),
-                        child: Wrap(
-                          children: [
-                            text3(widget.data[index].name),
-                            text3(widget.data[index].projectName),
-                            text3(widget.data[index].unit),
-                            text3(widget.data[index].price.toString()),
-                            text3(ini.transactionStatus[widget.data[index].status]),
-                            text3(widget.data[index].saleDate.toString().substring(0, 10)),
-                            text3(userShowText(widget.data[index].agent)),
-                            text3(widget.data[index].description ?? ""),
-                          ]
-                              .asMap()
-                              .entries
-                              .map(
-                                (e) => SizedBox(
-                                  width: titles[e.key].width,
-                                  child: e.value,
-                                ),
-                              )
-                              .toList(),
-                        )),
+                      padding: EdgeInsets.symmetric(vertical: 1.h),
+                      child: Wrap(
+                        children: [
+                          text3(widget.data[index].name),
+                          text3(widget.data[index].projectName),
+                          text3(widget.data[index].unit),
+                          text3(widget.data[index].price.toString()),
+                          text3(ini.transactionStatus[widget.data[index].status]),
+                          text3(widget.data[index].saleDate.toString().substring(0, 10)),
+                          text3(userShowText(widget.data[index].agent)),
+                          text3(widget.data[index].description ?? ""),
+                        ]
+                            .asMap()
+                            .entries
+                            .map(
+                              (e) => SizedBox(
+                                width: titles[e.key].width,
+                                child: e.value,
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
                   ),
+                  SizedBox(width: 0.5.w),
+                  IconButton(
+                    onPressed: () {
+                      transactionCustomer(context, widget.data[index]);
+                    },
+                    icon: const Icon(Icons.edit),
+                  ),
+                  SizedBox(width: 0.5.w),
                 ],
               );
             },
