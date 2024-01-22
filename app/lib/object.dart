@@ -201,8 +201,8 @@ class Appointment {
       status: 0,
       projectName: '',
       appointDate: ini.timeStart,
-      lead: Person(name: "", role: ini.preRoles.last),
-      agent: Person(name: "", role: ini.preRoles.last),
+      lead: Person(name: "", account: '', role: ini.preRoles.last),
+      agent: Person(name: "", account: '', role: ini.preRoles.last),
     );
   }
 
@@ -352,12 +352,12 @@ class Transaction {
 class Person {
   Role role;
   String name;
-  String? email;
+  String account;
   String? phone;
   String? bankCode;
   String? bankAccount;
 
-  Person({required this.role, required this.name, this.email, this.phone, this.bankCode, this.bankAccount});
+  Person({required this.role, required this.name, required this.account, this.phone, this.bankCode, this.bankAccount});
 }
 
 class File {

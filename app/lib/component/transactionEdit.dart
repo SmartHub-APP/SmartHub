@@ -1,12 +1,13 @@
 import '../config.dart';
 import '../object.dart';
 import '../tool.dart';
+import 'person.dart';
 import 'interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Future<Transaction?> transactionCustomer(BuildContext context, Transaction inputTrans) async {
   int currentIndex = 0;
