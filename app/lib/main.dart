@@ -110,7 +110,7 @@ class _RoutePageState extends State<RoutePage> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     return ResponsiveSizer(
       builder: (context, orientation, screenType) {
-        manager.icon = text1(manager.systemName, color: Colors.white);
+        manager.icon = text2(manager.systemName, color: Colors.white);
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.black,
@@ -120,7 +120,10 @@ class _RoutePageState extends State<RoutePage> with SingleTickerProviderStateMix
             title: TabBar(
               isScrollable: true,
               controller: _tabController,
+              dividerColor: Colors.transparent,
               indicator: const UnderlineTabIndicator(),
+              unselectedLabelColor: Colors.white,
+              labelStyle: TextStyle(fontSize: 12.sp, color: Colors.white),
               onTap: (tabIndex) {
                 router.navigateTo(context, showTabs[tabIndex].route, transition: TransitionType.none);
               },

@@ -27,7 +27,7 @@ String personInfoMsg(BuildContext context, Person p) {
 Text text1(String show, {bool isBold = false, Color color = Colors.black}) {
   return Text(
     show,
-    style: TextStyle(fontSize: uiStyle.fontSize2, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: color),
+    style: TextStyle(fontSize: uiStyle.fontSize1, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: color),
     overflow: TextOverflow.ellipsis,
   );
 }
