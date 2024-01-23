@@ -12,8 +12,8 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
   bool canSave = false;
   DateTime selectDate = input.appointDate;
   TimeOfDay selectTime = TimeOfDay(hour: input.appointDate.hour, minute: input.appointDate.minute);
-  List<Person> lead = [input.lead];
-  List<Person> agent = [input.agent];
+  List<Member> lead = input.lead == null ? [] : [input.lead!];
+  List<Member> agent = input.agent == null ? [] : [input.agent!];
   await showDialog(
     context: context,
     builder: (BuildContext context) {

@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers) async {
+Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) async {
   bool save = false;
-  List<Person> edit = List.of(inputUsers);
-  List<Person> search = [];
+  List<Member> edit = List.of(inputUsers);
+  List<Member> search = [];
   TextEditingController newName = TextEditingController(text: "");
   TextEditingController newPhone = TextEditingController(text: "");
   TextEditingController newEmail = TextEditingController(text: "");
@@ -158,7 +158,8 @@ Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers) asy
                                 alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
                               } else {
                                 edit.add(
-                                  Person(
+                                  Member(
+                                    id: -1,
                                     name: newName.text,
                                     phone: newPhone.text,
                                     account: newEmail.text,

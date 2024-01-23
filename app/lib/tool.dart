@@ -14,10 +14,11 @@ String randomString(int len) {
   return String.fromCharCodes(List.generate(len, (index) => seed.nextInt(33) + 89));
 }
 
-Person randomPerson() {
+Member randomPerson() {
   Random seed = Random();
   bool withBank = seed.nextBool();
-  return Person(
+  return Member(
+    id: -1,
     name: randomString(5),
     role: ini.preRoles.last,
     account: randomString(10),

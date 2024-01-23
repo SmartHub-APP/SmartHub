@@ -270,8 +270,18 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                               DataCell(text3(data.projectName)),
                               DataCell(text3(ini.appointmentLeadStatus[data.status])),
                               DataCell(text3(data.appointDate.toString().substring(0, 16))),
-                              DataCell(Container(padding: const EdgeInsets.all(10), child: userShow(context, [data.lead]))),
-                              DataCell(Container(padding: const EdgeInsets.all(10), child: userShow(context, [data.agent]))),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: userShow(context, data.lead == null ? [] : [data.lead!]),
+                                ),
+                              ),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: userShow(context, data.agent == null ? [] : [data.agent!]),
+                                ),
+                              ),
                               DataCell(
                                 IconButton(
                                   onPressed: () async {

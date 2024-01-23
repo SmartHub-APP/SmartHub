@@ -20,9 +20,9 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
   TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
   TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
-  List<Person> agents = inputTrans.agent;
-  List<Person> clients = inputTrans.clients;
-  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<Member> agents = inputTrans.agent;
+  List<Member> clients = inputTrans.clients;
+  List<Member> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
   List<File> documents = inputTrans.documents;
   await showDialog(
     context: context,
@@ -461,9 +461,9 @@ Future<Transaction> transactionProduct(BuildContext context, Transaction inputTr
   TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
   TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
-  List<Person> agents = inputTrans.agent;
-  List<Person> clients = inputTrans.clients;
-  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<Member> agents = inputTrans.agent;
+  List<Member> clients = inputTrans.clients;
+  List<Member> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
   List<File> documents = inputTrans.documents;
   await showDialog(
     context: context,
@@ -902,9 +902,9 @@ Future<Transaction> transactionPayment(BuildContext context, Transaction inputTr
   TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
   TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
-  List<Person> agents = inputTrans.agent;
-  List<Person> clients = inputTrans.clients;
-  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<Member> agents = inputTrans.agent;
+  List<Member> clients = inputTrans.clients;
+  List<Member> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
   List<File> documents = inputTrans.documents;
   await showDialog(
     context: context,

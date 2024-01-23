@@ -15,7 +15,7 @@ FrontStyle uiStyle = FrontStyle(
   roundCorner2: BorderRadius.circular(8),
 );
 
-String personInfoMsg(BuildContext context, Person p) {
+String personInfoMsg(BuildContext context, Member p) {
   return "${p.phone == null ? "" : "${context.tr('phone')} : ${p.phone}\n"}${context.tr('email')} : ${p.account}";
 }
 
@@ -55,7 +55,7 @@ Widget leadingIcon = Center(
   child: text1(manager.systemName, color: Colors.white),
 );
 
-Widget userShow(BuildContext context, List<Person> users) {
+Widget userShow(BuildContext context, List<Member> users) {
   return SingleChildScrollView(
     padding: EdgeInsets.zero,
     child: SizedBox(
@@ -75,7 +75,7 @@ Widget userShow(BuildContext context, List<Person> users) {
   );
 }
 
-String userShowText(List<Person> users) {
+String userShowText(List<Member> users) {
   String ret = "";
 
   if (users.isNotEmpty) {

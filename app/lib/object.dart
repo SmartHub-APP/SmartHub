@@ -181,16 +181,16 @@ class Appointment {
   bool onSelect;
   String projectName;
   int status;
-  Person lead, agent;
+  Member? lead, agent;
   DateTime appointDate;
 
   Appointment({
     required this.onSelect,
-    required this.projectName,
     required this.status,
-    required this.lead,
-    required this.agent,
+    required this.projectName,
     required this.appointDate,
+    this.lead,
+    this.agent,
   });
 
   factory Appointment.create() {
@@ -199,8 +199,6 @@ class Appointment {
       status: 0,
       projectName: '',
       appointDate: ini.timeStart,
-      lead: Person(name: "", account: '', role: ini.preRoles.last),
-      agent: Person(name: "", account: '', role: ini.preRoles.last),
     );
   }
 
@@ -232,10 +230,10 @@ class Transaction {
   double commission;
   String id, unit, name, projectName, location, developer;
   String? description;
-  Person? appoint;
+  Member? appoint;
   DateTime saleDate, launchDate;
   List<File> documents;
-  List<Person> clients, agent;
+  List<Member> clients, agent;
 
   Transaction({
     required this.onSelect,
@@ -347,15 +345,41 @@ class Transaction {
   }
 }
 
-class Person {
+class Member {
+  int id;
   Role role;
   String name;
   String account;
   String? phone;
+  String? company;
+  String? jobTitle;
   String? bankCode;
   String? bankAccount;
 
-  Person({required this.role, required this.name, required this.account, this.phone, this.bankCode, this.bankAccount});
+  factory Member.fromJson(Map<String, dynamic> json) => Member(
+        id: json["id"],
+        role: Role(permission: [], roleName: "test"),
+        //ini.preRoles[int.parse(json["role"])],
+        name: json["name"],
+        company: json["company"],
+        jobTitle: json["jobTitle"],
+        account: json["account"],
+        phone: json["phone"],
+        bankCode: json["bankCode"],
+        bankAccount: json["bankAccount"],
+      );
+
+  Member({
+    required this.role,
+    required this.name,
+    required this.account,
+    this.phone,
+    this.bankCode,
+    this.bankAccount,
+    this.company,
+    this.jobTitle,
+    required this.id,
+  });
 }
 
 class File {
@@ -404,8 +428,9 @@ class InitSetting {
 
 class Api {
   String login;
+  String member;
 
-  Api({required this.login});
+  Api({required this.login, required this.member});
 }
 
 class Lang {
