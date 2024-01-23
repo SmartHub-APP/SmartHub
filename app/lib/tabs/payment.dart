@@ -1,7 +1,8 @@
 import '../config.dart';
 import '../object.dart';
-import '../interaction.dart';
+import '../component/interaction.dart';
 import 'package:flutter/material.dart';
+import '../component/transaction.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';

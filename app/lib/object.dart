@@ -201,8 +201,8 @@ class Appointment {
       status: 0,
       projectName: '',
       appointDate: ini.timeStart,
-      lead: Person(name: "", role: ini.preRoles.last),
-      agent: Person(name: "", role: ini.preRoles.last),
+      lead: Person(name: "", account: '', role: ini.preRoles.last),
+      agent: Person(name: "", account: '', role: ini.preRoles.last),
     );
   }
 
@@ -284,6 +284,29 @@ class Transaction {
     );
   }
 
+  factory Transaction.createCommission(double defaultCommission) {
+    return Transaction(
+      onSelect: false,
+      price: 0,
+      priceSQFT: 0,
+      status: 2,
+      payStatus: 0,
+      commission: defaultCommission,
+      id: "",
+      unit: "",
+      name: "",
+      location: "",
+      developer: "",
+      description: "",
+      projectName: "",
+      saleDate: DateTime.now(),
+      launchDate: DateTime.now(),
+      agent: [],
+      clients: [],
+      documents: [],
+    );
+  }
+
   List<Transaction> fakeData(int amount) {
     Random seed = Random();
     return List.generate(amount, (index) {
@@ -329,12 +352,12 @@ class Transaction {
 class Person {
   Role role;
   String name;
-  String? email;
+  String account;
   String? phone;
   String? bankCode;
   String? bankAccount;
 
-  Person({required this.role, required this.name, this.email, this.phone, this.bankCode, this.bankAccount});
+  Person({required this.role, required this.name, required this.account, this.phone, this.bankCode, this.bankAccount});
 }
 
 class File {
@@ -348,6 +371,10 @@ class Role {
   List<int> permission;
 
   Role({required this.roleName, required this.permission});
+
+  factory Role.guest() {
+    return Role(roleName: "Guest", permission: [0, 0, 0, 0, 0, 0]);
+  }
 }
 
 // ##### Rooted Setting

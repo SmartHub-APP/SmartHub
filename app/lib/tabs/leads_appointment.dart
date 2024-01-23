@@ -1,6 +1,7 @@
 import '../config.dart';
 import '../object.dart';
-import '../interaction.dart';
+import '../component/appointment.dart';
+import '../component/interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -43,21 +44,27 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Expanded(
-                              child: TextField(
-                                controller: filterName,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colName'),
+                              child: SizedBox(
+                                height: 6.h,
+                                child: TextField(
+                                  controller: filterName,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colName'),
+                                  ),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
-                              child: TextField(
-                                controller: filterProjectName,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colProject'),
+                              child: SizedBox(
+                                height: 6.h,
+                                child: TextField(
+                                  controller: filterProjectName,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colProject'),
+                                  ),
                                 ),
                               ),
                             ),

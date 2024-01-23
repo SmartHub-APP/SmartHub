@@ -20,8 +20,8 @@ Person randomPerson() {
   return Person(
     name: randomString(5),
     role: ini.preRoles.last,
+    account: randomString(10),
     phone: seed.nextBool() ? randomString(10) : null,
-    email: seed.nextBool() ? randomString(10) : null,
     bankCode: withBank ? (seed.nextInt(900) + 100).toString() : null,
     bankAccount: withBank ? randomString(10) : null,
   );
