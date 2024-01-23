@@ -1,9 +1,7 @@
-import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
-
-import 'config.dart';
 import 'tool.dart';
+import 'config.dart';
+import 'dart:math';
+import 'package:flutter/cupertino.dart';
 
 // ##### UI
 class Button {

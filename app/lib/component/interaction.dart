@@ -67,7 +67,7 @@ Widget userShow(BuildContext context, List<Person> users) {
         children: users.asMap().entries.map((u) {
           return Tooltip(
             message: personInfoMsg(context, u.value),
-            child: Chip(label: text3(u.value.name)),
+            child: Chip(label: text4(u.value.name), labelPadding: EdgeInsets.zero),
           );
         }).toList(),
       ),

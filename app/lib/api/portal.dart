@@ -1,5 +1,5 @@
-import 'config.dart';
-import 'object.dart';
+import '../config.dart';
+import '../object.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
