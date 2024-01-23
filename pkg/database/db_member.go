@@ -23,8 +23,7 @@ type Member struct {
 
 type MemberInfo struct {
 	ID          int    `json:"ID"`
-	RoleName    string `json:"RoleName"`
-	Permission  string `json:"Permission"`
+	Role        Role   `json:"Role"`
 	Name        string `json:"Name"`
 	Company     string `json:"Company"`
 	JobTitle    string `json:"JobTitle"`
@@ -104,8 +103,8 @@ func (DB *SmartHubDB) MemberGET(query, scheme string) ([]MemberInfo, string) {
 
 		Hits.Scan(
 			&R.ID,
-			&R.RoleName,
-			&R.Permission,
+			&R.Role.Name,
+			&R.Role.Permission,
 			&R.Name,
 			&R.Company,
 			&R.JobTitle,
