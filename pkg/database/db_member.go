@@ -7,46 +7,56 @@ import (
 )
 
 type Member struct {
-	ID          int    `json:"id"`
-	Status      int    `json:"status"`
-	RoleID      int    `json:"role_id"`
-	Company     string `json:"company"`
-	JobTitle    string `json:"job_title"`
-	Name        string `json:"name"`
-	Account     string `json:"account"`
-	Password    string `json:"password"`
-	BankCode    string `json:"bank_code"`
-	BankAccount string `json:"bank_account"`
-	CreateTime  string `json:"create_time"`
+	ID          int    `json:"ID"`
+	Status      int    `json:"Status"`
+	RoleID      int    `json:"RoleID"`
+	Company     string `json:"Company"`
+	JobTitle    string `json:"JobTitle"`
+	Name        string `json:"Name"`
+	Account     string `json:"Account"`
+	Password    string `json:"Password"`
+	Phone       string `json:"Phone"`
+	BankCode    string `json:"BankCode"`
+	BankAccount string `json:"BankAccount"`
+	CreateTime  string `json:"CreateTime"`
 }
 
-/*
-SELECT *
+type MemberInfo struct {
+	ID          int    `json:"ID"`
+	RoleName    string `json:"RoleName"`
+	Permission  string `json:"Permission"`
+	Name        string `json:"Name"`
+	Company     string `json:"Company"`
+	JobTitle    string `json:"JobTitle"`
+	Account     string `json:"Account"`
+	Phone       string `json:"Phone"`
+	BankCode    string `json:"BankCode"`
+	BankAccount string `json:"BankAccount"`
+}
+
+var sqlMemberGet = `
+SELECT 
+Member.ID,
+Role.Name AS RoleName,
+Role.Permission AS Permission,
+Member.Name,
+Member.Company,
+Member.JobTitle,
+Member.Account,
+Member.Phone,
+Member.BankCode,
+Member.BankAccount
 FROM Member
-WHERE
-
-	(role_id = [指定的role_id] OR [指定的role_id] IS NULL)
-	AND (company LIKE '%[指定的特定字元1]%' OR '%[指定的特定字元1]%' IS NULL OR [指定的特定字元1] = '')
-	AND (account LIKE '%[指定的特定字元2]%' OR '%[指定的特定字元2]%' IS NULL OR [指定的特定字元2] = '')
-	AND (job_title LIKE '%[指定的特定字元3]%' OR '%[指定的特定字元3]%' IS NULL OR [指定的特定字元3] = '')
-	AND (name LIKE '%[指定的特定字元4]%' OR '%[指定的特定字元4]%' IS NULL OR [指定的特定字元4] = '');
-
-SELECT *
-FROM Member
-WHERE
-
-	(role_id = OR IS NULL)
-	AND (company LIKE '%[指定的特定字元1]%' OR '%[指定的特定字元1]%' IS NULL OR [指定的特定字元1] = '')
-	AND (account LIKE '%[指定的特定字元2]%' OR '%[指定的特定字元2]%' IS NULL OR [指定的特定字元2] = '')
-	AND (job_title LIKE '%[指定的特定字元3]%' OR '%[指定的特定字元3]%' IS NULL OR [指定的特定字元3] = '')
-	AND (name LIKE '%[指定的特定字元4]%' OR '%[指定的特定字元4]%' IS NULL OR [指定的特定字元4] = '');
-*/
-var sqlMemberGet = `SELECT * FROM Member WHERE (Status != 0) %s;`
-var sqlMemberGetQuery = `AND (
-	LOWER(Company) LIKE '%%%s%%' OR
-	LOWER(Account) LIKE '%%%s%%' OR
-	LOWER(JobTitle) LIKE '%%%s%%' OR
-	LOWER(Name) LIKE '%%%s%%')`
+JOIN Role ON Member.RoleID = Role.ID
+WHERE (Member.Status != 0) %s;
+`
+var sqlMemberGetQuery = `
+AND (
+	LOWER(Member.Company) LIKE '%%%s%%' OR
+	LOWER(Member.Account) LIKE '%%%s%%' OR
+	LOWER(Member.JobTitle) LIKE '%%%s%%' OR
+	LOWER(Member.Name) LIKE '%%%s%%')
+`
 var sqlMemberPOST = `
 INSERT INTO Member (Status, Name, Account, Password, RoleID, BankCode, BankAccount, Company, JobTitle)
 VALUES ('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s');
@@ -58,13 +68,13 @@ WHERE ID="%d";
 `
 var sqlMemberDELETE = `DELETE FROM Member WHERE ID IN (%s);`
 
-func (DB *SmartHubDB) MemberGET(query, scheme string) ([]Member, string) {
+func (DB *SmartHubDB) MemberGET(query, scheme string) ([]MemberInfo, string) {
 	sRoleID, err := strconv.Atoi(scheme)
 	if query == "" || sRoleID < -1 || err != nil {
-		return []Member{}, "error input"
+		return []MemberInfo{}, "error input"
 	}
 
-	Members := []Member{}
+	Members := []MemberInfo{}
 
 	syntax := ""
 
@@ -72,13 +82,13 @@ func (DB *SmartHubDB) MemberGET(query, scheme string) ([]Member, string) {
 		syntax += fmt.Sprintf(" AND (RoleID = %d)", sRoleID)
 	}
 
-	if loqweQuery := strings.ToLower(query); loqweQuery != "**" {
+	if lowerQuery := strings.ToLower(query); lowerQuery != "**" {
 		syntax += fmt.Sprintf(
 			sqlMemberGetQuery,
-			loqweQuery,
-			loqweQuery,
-			loqweQuery,
-			loqweQuery,
+			lowerQuery,
+			lowerQuery,
+			lowerQuery,
+			lowerQuery,
 		)
 	}
 
@@ -86,24 +96,23 @@ func (DB *SmartHubDB) MemberGET(query, scheme string) ([]Member, string) {
 	defer Hits.Close()
 
 	if err != nil {
-		return []Member{}, "Query failed"
+		return []MemberInfo{}, "Query failed"
 	}
 
 	for Hits.Next() {
-		var R Member
+		var R MemberInfo
 
 		Hits.Scan(
 			&R.ID,
-			&R.Status,
+			&R.RoleName,
+			&R.Permission,
+			&R.Name,
 			&R.Company,
 			&R.JobTitle,
-			&R.Name,
 			&R.Account,
-			&R.Password,
-			&R.RoleID,
+			&R.Phone,
 			&R.BankCode,
 			&R.BankAccount,
-			&R.CreateTime,
 		)
 
 		Members = append(Members, R)
