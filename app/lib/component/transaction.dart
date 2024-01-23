@@ -190,7 +190,7 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, appoint, max: 1).then((value) {
+                                userEdit(context, appoint).then((value) {
                                   setState(() {
                                     appoint = value;
                                   });
@@ -631,7 +631,7 @@ Future<Transaction> transactionProduct(BuildContext context, Transaction inputTr
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, appoint, max: 1).then((value) {
+                                userEdit(context, appoint).then((value) {
                                   setState(() {
                                     appoint = value;
                                   });
@@ -1072,7 +1072,7 @@ Future<Transaction> transactionPayment(BuildContext context, Transaction inputTr
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, appoint, max: 1).then((value) {
+                                userEdit(context, appoint).then((value) {
                                   setState(() {
                                     appoint = value;
                                   });

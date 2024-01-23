@@ -16,9 +16,7 @@ FrontStyle uiStyle = FrontStyle(
 );
 
 String personInfoMsg(BuildContext context, Person p) {
-  String phone = p.phone == null ? "" : "${context.tr('phone')} : ${p.phone}\n";
-
-  return "$phone${context.tr('email')} : ${p.account}";
+  return "${p.phone == null ? "" : "${context.tr('phone')} : ${p.phone}\n"}${context.tr('email')} : ${p.account}";
 }
 
 Text text1(String show, {bool isBold = false, Color color = Colors.black}) {
@@ -84,7 +82,7 @@ String userShowText(List<Person> users) {
     ret = users[0].name;
 
     if (users.length > 1) {
-      for (var user in users) {
+      for (var user in users.sublist(1)) {
         ret += ", ${user.name}";
       }
     }

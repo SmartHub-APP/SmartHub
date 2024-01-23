@@ -114,8 +114,8 @@ class _TableViewState extends State<TableView> {
         name: context.tr('customer_colAgent'),
         sort: (direction) {
           setState(() {
-            widget.data
-                .sort((a, b) => direction ? a.agent.toString().compareTo(b.agent.toString()) : b.agent.toString().compareTo(a.agent.toString()));
+            widget.data.sort((a, b) =>
+                direction ? userShowText(a.agent).compareTo(userShowText(b.agent)) : userShowText(b.agent).compareTo(userShowText(a.agent)));
           });
         },
       ),
@@ -154,17 +154,21 @@ class _TableViewState extends State<TableView> {
                   return InkWell(
                     onTap: () {
                       setState(() {
-                        if (!rowCtl[e.key].onSort) {
-                          rowCtl[e.key].onSort = true;
-                          rowCtl[e.key].sortAscend = true;
-                          titles[e.key].sort(true);
-                        } else {
+                        if (rowCtl[e.key].onSort) {
                           if (rowCtl[e.key].sortAscend) {
                             rowCtl[e.key].sortAscend = false;
                             titles[e.key].sort(false);
                           } else {
                             rowCtl[e.key].onSort = false;
                           }
+                        } else {
+                          for (var element in rowCtl) {
+                            element.onSort = false;
+                            element.sortAscend = false;
+                          }
+                          rowCtl[e.key].onSort = true;
+                          rowCtl[e.key].sortAscend = true;
+                          titles[e.key].sort(true);
                         }
                       });
                     },
