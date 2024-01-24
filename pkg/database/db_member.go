@@ -124,8 +124,6 @@ func (DB *SmartHubDB) MemberPOST(m Member) string {
 	sql := fmt.Sprintf(
 		sqlMemberPOST,
 		m.Status,
-		m.Company,
-		m.JobTitle,
 		m.Name,
 		m.Account,
 		m.Password,
@@ -153,9 +151,9 @@ func (DB *SmartHubDB) MemberPUT(m Member) string {
 		m.RoleID,
 		m.BankCode,
 		m.BankAccount,
-		m.ID,
 		m.Company,
 		m.JobTitle,
+		m.ID,
 	)
 
 	if _, err := DB.ctl.Exec(sql); err != nil {
