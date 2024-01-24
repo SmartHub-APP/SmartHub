@@ -103,7 +103,9 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                             if (searchBar.text.isNotEmpty) {
                               getMemberList(searchBar.text, "-1").then((value) {
                                 setState(() {
+                                  print(value.length);
                                   search = value;
+                                  print(search.length);
                                 });
                               });
                             } else {
@@ -207,16 +209,26 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                               } else if (newEmail.text.isEmpty) {
                                 alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
                               } else {
-                                edit.add(
-                                  Member(
-                                    id: -1,
-                                    name: newName.text,
-                                    phone: newPhone.text,
-                                    account: newEmail.text,
-                                    role: Role.guest(),
-                                  ),
+                                Member newMember = Member(
+                                  id: -1,
+                                  status: 1,
+                                  name: newName.text,
+                                  phone: newPhone.text,
+                                  account: newEmail.text,
+                                  company: "",
+                                  jobTitle: "",
+                                  bankCode: "",
+                                  bankAccount: "",
+                                  role: Role.guest(),
                                 );
-                                newName.text = newPhone.text = newEmail.text = "";
+                                postMember(newMember, "").then((value) {
+                                  if (value) {
+                                    edit.add(newMember);
+                                    newName.text = newPhone.text = newEmail.text = "";
+                                  } else {
+                                    alertDialog(context, context.tr('error'), context.tr('userFailed'), context.tr('ok'));
+                                  }
+                                });
                               }
                             });
                           },

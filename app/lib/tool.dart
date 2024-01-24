@@ -19,6 +19,7 @@ Member randomPerson() {
   bool withBank = seed.nextBool();
   return Member(
     id: -1,
+    status: 1,
     name: randomString(5),
     role: ini.preRoles.last,
     account: randomString(10),

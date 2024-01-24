@@ -35,6 +35,7 @@
   "userBankCode": "Input bank code (optional)",
   "userBankAccount": "Input bank code account (optional)",
   "userExist": "User already exist",
+  "userFailed": "Failed to create user",
   "emptyQuery": "Keyword cannot be empty",
   "emptySearch": "No data found",
   "emptyUser": "User name cannot be empty",

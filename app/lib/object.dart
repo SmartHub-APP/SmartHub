@@ -347,6 +347,7 @@ class Transaction {
 
 class Member {
   int id;
+  int status;
   Role role;
   String name;
   String account;
@@ -356,20 +357,49 @@ class Member {
   String? bankCode;
   String? bankAccount;
 
-  factory Member.fromJson(Map<String, dynamic> json) => Member(
-        id: json["ID"],
-        role: Role.fromJson(json["Role"]),
-        name: json["Name"],
-        account: json["Account"],
-        phone: json["Phone"],
-        bankCode: json["BankCode"],
-        bankAccount: json["BankAccount"],
-        company: json["Company"],
-        jobTitle: json["JobTitle"],
-      );
+  Map<String, dynamic> toJson() => {
+        "ID": id,
+        "Status": status,
+        "Role": role.toJson(),
+        "Name": name,
+        "Account": account,
+        "Phone": phone,
+        "BankCode": bankCode,
+        "BankAccount": bankAccount,
+        "Company": company,
+        "JobTitle": jobTitle,
+      };
+
+  Map<String, dynamic> toJsonCreate() => {
+        "RoleID": role.id,
+        "Status": status,
+        "Name": name,
+        "Account": account,
+        "Phone": phone,
+        "BankCode": bankCode,
+        "BankAccount": bankAccount,
+        "Company": company,
+        "JobTitle": jobTitle,
+      };
+
+  factory Member.fromJson(Map<String, dynamic> json) {
+    return Member(
+      id: json["ID"] ?? -1,
+      role: Role.fromJson(json["Role"]),
+      status: json["Status"] ?? 0,
+      name: json["Name"] ?? "",
+      account: json["Account"] ?? "",
+      phone: json["Phone"] ?? "",
+      bankCode: json["BankCode"] ?? "",
+      bankAccount: json["BankAccount"] ?? "",
+      company: json["Company"] ?? "",
+      jobTitle: json["JobTitle"] ?? "",
+    );
+  }
 
   Member({
     required this.id,
+    required this.status,
     required this.role,
     required this.name,
     required this.account,
@@ -394,13 +424,23 @@ class Role {
 
   Role({required this.id, required this.name, required this.permission});
 
+  Map<String, dynamic> toJson() => {
+        "ID": id,
+        "Name": name,
+        "Permission": permission,
+      };
+
   factory Role.guest() {
-    return Role(id: -1, name: "Guest", permission: [0, 0, 0, 0, 0, 0]);
+    return Role(id: 0, name: "Guest", permission: [0, 0, 0, 0, 0, 0]);
   }
 
   factory Role.fromJson(Map<String, dynamic> json) {
-    return Role(id: json["ID"], name: json["Name"], permission: [] //List<int>.from(json["Permission"].map((x) => x)),
-        );
+    print("### json ${json["Permission"]}"); //List<int>.from(json["Permission"].map((x) => x)),
+    return Role(
+      id: json["ID"] ?? -1,
+      name: json["Name"] ?? "",
+      permission: [],
+    );
   }
 }
 

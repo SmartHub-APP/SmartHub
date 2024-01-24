@@ -28,3 +28,23 @@ Future<List<Member>> getMemberList(String query, String scheme) async {
     return [];
   }
 }
+
+Future<bool> postMember(Member m, String password) async {
+  if (m.phone == null || m.company == null || m.jobTitle == null || m.bankCode == null || m.bankAccount == null) {
+    return false;
+  }
+
+  SharedPreferences cache = await SharedPreferences.getInstance();
+
+  try {
+    http.Response response = await http.post(
+      Uri.parse(ini.apiServer + ini.api.member),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode(m.toJsonCreate()),
+    );
+
+    return response.statusCode == 201;
+  } catch (_) {
+    return false;
+  }
+}
