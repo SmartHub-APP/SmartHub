@@ -1,14 +1,62 @@
-import 'interaction.dart';
-import '../object.dart';
-import '../api/member.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:easy_localization/easy_localization.dart';
+
+import '../api/member.dart';
+import '../object.dart';
+import 'interaction.dart';
+
+Widget memberTile(
+  bool expandMode,
+  Member m,
+  BuildContext context,
+  Function() onTap, {
+  bool isDelete = false,
+  bool advanced = false,
+}) {
+  String personIntro = "${m.company ?? ""}, ${m.jobTitle ?? ""}";
+  String msg = "${context.tr('email')} : ${m.account}\n${context.tr('phone')} :  ${m.phone}";
+
+  if (advanced) {
+    msg += "\n${context.tr('bankCode')} : ${m.bankCode}\n${context.tr('bankAccount')} : ${m.bankAccount}";
+  }
+
+  return Tooltip(
+    message: msg,
+    textStyle: const TextStyle(fontSize: 12, color: Colors.white),
+    decoration: BoxDecoration(color: Colors.black, borderRadius: uiStyle.roundCorner2),
+    child: Container(
+      padding: expandMode ? EdgeInsets.zero : const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black),
+        borderRadius: uiStyle.roundCorner2,
+      ),
+      child: expandMode
+          ? TextButton.icon(
+              icon: isDelete ? const Icon(Icons.delete) : const Icon(Icons.add),
+              onPressed: onTap,
+              label: Column(
+                children: [
+                  personIntro.length > 2 ? text4(personIntro) : const SizedBox(),
+                  text3(m.name),
+                ],
+              ),
+            )
+          : Column(
+              children: [
+                personIntro.length > 2 ? text4(personIntro) : const SizedBox(),
+                text3(m.name),
+              ],
+            ),
+    ),
+  );
+}
 
 Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) async {
   bool save = false;
   List<Member> edit = List.of(inputUsers);
-  List<MemberGET> search = [];
+  List<Member> search = [];
   TextEditingController newName = TextEditingController(text: "");
   TextEditingController newPhone = TextEditingController(text: "");
   TextEditingController newEmail = TextEditingController(text: "");
@@ -52,11 +100,15 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                           icon: const Icon(Icons.search),
                           tooltip: context.tr('search'),
                           onPressed: () {
-                            getMemberList(searchBar.text, "-1").then((value) {
-                              setState(() {
-                                search = value;
+                            if (searchBar.text.isNotEmpty) {
+                              getMemberList(searchBar.text, "-1").then((value) {
+                                setState(() {
+                                  search = value;
+                                });
                               });
-                            });
+                            } else {
+                              alertDialog(context, context.tr('error'), context.tr('emptyQuery'), context.tr('ok'));
+                            }
                           },
                         ),
                       ),
@@ -76,27 +128,24 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                             child: SingleChildScrollView(
                               padding: EdgeInsets.zero,
                               child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(5),
-                                child: Wrap(
-                                  spacing: 4,
-                                  runSpacing: 4,
-                                  alignment: WrapAlignment.center,
-                                  children: search.map((label) {
-                                    return Tooltip(
-                                      child: InkWell(
-                                        onTap: () {
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(5),
+                                  constraints: BoxConstraints(minHeight: 5.h, maxHeight: 30.h),
+                                  child: SingleChildScrollView(
+                                    child: Wrap(
+                                      spacing: 4,
+                                      runSpacing: 4,
+                                      alignment: WrapAlignment.center,
+                                      children: search.map((m) {
+                                        return memberTile(true, m, context, () {
                                           setState(() {
-                                            search.remove(label);
-                                            //edit.add(label);
+                                            search.remove(m);
+                                            edit.add(m);
                                           });
-                                        },
-                                        child: Chip(label: text3(label.name), avatar: const Icon(Icons.add)),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
+                                        });
+                                      }).toList(),
+                                    ),
+                                  )),
                             ),
                           )
                         : text3(context.tr('emptySearch')),
@@ -197,17 +246,11 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                     runSpacing: 4,
                     alignment: WrapAlignment.center,
                     children: edit.map((label) {
-                      return Tooltip(
-                        message: personInfoMsg(context, label),
-                        child: Chip(
-                          label: text3(label.name),
-                          onDeleted: () {
-                            setState(() {
-                              edit.remove(label);
-                            });
-                          },
-                        ),
-                      );
+                      return memberTile(true, label, context, () {
+                        setState(() {
+                          edit.remove(label);
+                        });
+                      });
                     }).toList(),
                   ),
                 ),

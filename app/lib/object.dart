@@ -350,49 +350,13 @@ class Member {
   Role role;
   String name;
   String account;
-  String? phone;
   String? company;
   String? jobTitle;
+  String? phone;
   String? bankCode;
   String? bankAccount;
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
-        id: json["id"],
-        role: Role.fromJson(json["role"]),
-        name: json["name"],
-        company: json["company"],
-        jobTitle: json["jobTitle"],
-        account: json["account"],
-        phone: json["phone"],
-        bankCode: json["bankCode"],
-        bankAccount: json["bankAccount"],
-      );
-
-  Member({
-    required this.role,
-    required this.name,
-    required this.account,
-    this.phone,
-    this.bankCode,
-    this.bankAccount,
-    this.company,
-    this.jobTitle,
-    required this.id,
-  });
-}
-
-class MemberGET {
-  int id;
-  Role role;
-  String name;
-  String account;
-  String? company;
-  String? jobTitle;
-  String? phone;
-  String? bankCode;
-  String? bankAccount;
-
-  factory MemberGET.fromJson(Map<String, dynamic> json) => MemberGET(
         id: json["ID"],
         role: Role.fromJson(json["Role"]),
         name: json["Name"],
@@ -404,7 +368,7 @@ class MemberGET {
         jobTitle: json["JobTitle"],
       );
 
-  MemberGET({
+  Member({
     required this.id,
     required this.role,
     required this.name,

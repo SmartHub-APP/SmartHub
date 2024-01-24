@@ -1,3 +1,4 @@
+import 'member.dart';
 import '../config.dart';
 import '../object.dart';
 import 'package:flutter/material.dart';
@@ -14,10 +15,6 @@ FrontStyle uiStyle = FrontStyle(
   roundCorner: BorderRadius.circular(10),
   roundCorner2: BorderRadius.circular(8),
 );
-
-String personInfoMsg(BuildContext context, Member p) {
-  return "${p.phone == null ? "" : "${context.tr('phone')} : ${p.phone}\n"}${context.tr('email')} : ${p.account}";
-}
 
 Text text1(String show, {bool isBold = false, Color color = Colors.black}) {
   return Text(
@@ -65,10 +62,7 @@ Widget userShow(BuildContext context, List<Member> users) {
         runSpacing: 4,
         alignment: WrapAlignment.start,
         children: users.asMap().entries.map((u) {
-          return Tooltip(
-            message: personInfoMsg(context, u.value),
-            child: Chip(label: text4(u.value.name), labelPadding: EdgeInsets.zero),
-          );
+          return memberTile(false, u.value, context, () {});
         }).toList(),
       ),
     ),
