@@ -1,152 +1,62 @@
-import '../object.dart';
-import '../tool.dart';
-import 'interaction.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:easy_localization/easy_localization.dart';
 
-Future<Person> personEdit(BuildContext context, Person inputUser) async {
-  bool save = false;
-  TextEditingController newName = TextEditingController(text: inputUser.name);
-  TextEditingController newPhone = TextEditingController(text: inputUser.phone);
-  TextEditingController newEmail = TextEditingController(text: inputUser.account);
-  TextEditingController newBankCode = TextEditingController(text: inputUser.bankCode);
-  TextEditingController newBankAccount = TextEditingController(text: inputUser.bankAccount);
-  await showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(borderRadius: uiStyle.roundCorner),
-            backgroundColor: Colors.white,
-            content: SizedBox(
-              width: 20.w,
-              height: 45.h,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+import '../api/member.dart';
+import '../object.dart';
+import 'interaction.dart';
+
+Widget memberTile(
+  bool expandMode,
+  Member m,
+  BuildContext context,
+  Function() onTap, {
+  bool isDelete = false,
+  bool advanced = false,
+}) {
+  String personIntro = "${m.company ?? ""}, ${m.jobTitle ?? ""}";
+  String msg = "${context.tr('email')} : ${m.account}\n${context.tr('phone')} :  ${m.phone}";
+
+  if (advanced) {
+    msg += "\n${context.tr('bankCode')} : ${m.bankCode}\n${context.tr('bankAccount')} : ${m.bankAccount}";
+  }
+
+  return Tooltip(
+    message: msg,
+    textStyle: const TextStyle(fontSize: 12, color: Colors.white),
+    decoration: BoxDecoration(color: Colors.black, borderRadius: uiStyle.roundCorner2),
+    child: Container(
+      padding: expandMode ? EdgeInsets.zero : const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.black),
+        borderRadius: uiStyle.roundCorner2,
+      ),
+      child: expandMode
+          ? TextButton.icon(
+              icon: isDelete ? const Icon(Icons.delete) : const Icon(Icons.add),
+              onPressed: onTap,
+              label: Column(
                 children: [
-                  TextField(
-                    controller: newName,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      border: const OutlineInputBorder(),
-                      labelText: context.tr('userName'),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  TextField(
-                    controller: newPhone,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      border: const OutlineInputBorder(),
-                      labelText: context.tr('userPhone'),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  TextField(
-                    controller: newEmail,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      border: const OutlineInputBorder(),
-                      labelText: context.tr('userEmail'),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  TextField(
-                    controller: newBankCode,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      border: const OutlineInputBorder(),
-                      labelText: context.tr('userBankCode'),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  TextField(
-                    controller: newBankAccount,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      border: const OutlineInputBorder(),
-                      labelText: context.tr('userBankAccount'),
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
+                  personIntro.length > 2 ? text4(personIntro) : const SizedBox(),
+                  text3(m.name),
                 ],
               ),
+            )
+          : Column(
+              children: [
+                personIntro.length > 2 ? text4(personIntro) : const SizedBox(),
+                text3(m.name),
+              ],
             ),
-            actionsAlignment: MainAxisAlignment.center,
-            actionsPadding: EdgeInsets.only(bottom: 3.h),
-            actions: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: uiStyle.roundCorner2,
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.cleaning_services_rounded),
-                  tooltip: context.tr('clear'),
-                  onPressed: () {
-                    setState(() {
-                      newName.text = newPhone.text = newEmail.text = newBankCode.text = newBankAccount.text = "";
-                    });
-                  },
-                ),
-              ),
-              SizedBox(width: 1.w),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: uiStyle.roundCorner2,
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.close),
-                  tooltip: context.tr('close'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-              SizedBox(width: 1.w),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: uiStyle.roundCorner2,
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.save_alt_sharp),
-                  tooltip: context.tr('save'),
-                  onPressed: () {
-                    save = true;
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-      );
-    },
+    ),
   );
-
-  return save
-      ? Person(
-          name: newName.text,
-          phone: newPhone.text,
-          account: newEmail.text,
-          bankCode: newBankCode.text,
-          bankAccount: newBankAccount.text,
-          role: inputUser.role,
-        )
-      : inputUser;
 }
 
-Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers, {int max = -1}) async {
+Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) async {
   bool save = false;
-  List<Person> edit = List.of(inputUsers);
-  List<Person> search = [];
+  List<Member> edit = List.of(inputUsers);
+  List<Member> search = [];
   TextEditingController newName = TextEditingController(text: "");
   TextEditingController newPhone = TextEditingController(text: "");
   TextEditingController newEmail = TextEditingController(text: "");
@@ -190,9 +100,17 @@ Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers, {in
                           icon: const Icon(Icons.search),
                           tooltip: context.tr('search'),
                           onPressed: () {
-                            setState(() {
-                              search = List.generate(3, (index) => randomPerson());
-                            });
+                            if (searchBar.text.isNotEmpty) {
+                              getMemberList(searchBar.text, "-1").then((value) {
+                                setState(() {
+                                  print(value.length);
+                                  search = value;
+                                  print(search.length);
+                                });
+                              });
+                            } else {
+                              alertDialog(context, context.tr('error'), context.tr('emptyQuery'), context.tr('ok'));
+                            }
                           },
                         ),
                       ),
@@ -212,28 +130,24 @@ Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers, {in
                             child: SingleChildScrollView(
                               padding: EdgeInsets.zero,
                               child: Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(5),
-                                child: Wrap(
-                                  spacing: 4,
-                                  runSpacing: 4,
-                                  alignment: WrapAlignment.center,
-                                  children: search.map((label) {
-                                    return Tooltip(
-                                      message: personInfoMsg(context, label),
-                                      child: InkWell(
-                                        onTap: () {
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(5),
+                                  constraints: BoxConstraints(minHeight: 5.h, maxHeight: 30.h),
+                                  child: SingleChildScrollView(
+                                    child: Wrap(
+                                      spacing: 4,
+                                      runSpacing: 4,
+                                      alignment: WrapAlignment.center,
+                                      children: search.map((m) {
+                                        return memberTile(true, m, context, () {
                                           setState(() {
-                                            search.remove(label);
-                                            edit.add(label);
+                                            search.remove(m);
+                                            edit.add(m);
                                           });
-                                        },
-                                        child: Chip(label: text3(label.name), avatar: const Icon(Icons.add)),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
+                                        });
+                                      }).toList(),
+                                    ),
+                                  )),
                             ),
                           )
                         : text3(context.tr('emptySearch')),
@@ -295,15 +209,26 @@ Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers, {in
                               } else if (newEmail.text.isEmpty) {
                                 alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
                               } else {
-                                edit.add(
-                                  Person(
-                                    name: newName.text,
-                                    phone: newPhone.text,
-                                    account: newEmail.text,
-                                    role: Role.guest(),
-                                  ),
+                                Member newMember = Member(
+                                  id: -1,
+                                  status: 1,
+                                  name: newName.text,
+                                  phone: newPhone.text,
+                                  account: newEmail.text,
+                                  company: "",
+                                  jobTitle: "",
+                                  bankCode: "",
+                                  bankAccount: "",
+                                  role: Role.guest(),
                                 );
-                                newName.text = newPhone.text = newEmail.text = "";
+                                postMember(newMember, "").then((value) {
+                                  if (value) {
+                                    edit.add(newMember);
+                                    newName.text = newPhone.text = newEmail.text = "";
+                                  } else {
+                                    alertDialog(context, context.tr('error'), context.tr('userFailed'), context.tr('ok'));
+                                  }
+                                });
                               }
                             });
                           },
@@ -333,17 +258,11 @@ Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers, {in
                     runSpacing: 4,
                     alignment: WrapAlignment.center,
                     children: edit.map((label) {
-                      return Tooltip(
-                        message: personInfoMsg(context, label),
-                        child: Chip(
-                          label: text3(label.name),
-                          onDeleted: () {
-                            setState(() {
-                              edit.remove(label);
-                            });
-                          },
-                        ),
-                      );
+                      return memberTile(true, label, context, () {
+                        setState(() {
+                          edit.remove(label);
+                        });
+                      });
                     }).toList(),
                   ),
                 ),
@@ -363,7 +282,7 @@ Future<List<Person>> userEdit(BuildContext context, List<Person> inputUsers, {in
                   tooltip: context.tr('clear'),
                   onPressed: () {
                     setState(() {
-                      edit.clear();
+                      newName.text = newPhone.text = newEmail.text = searchBar.text = "";
                     });
                   },
                 ),

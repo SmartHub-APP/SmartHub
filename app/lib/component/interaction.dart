@@ -1,3 +1,4 @@
+import 'member.dart';
 import '../config.dart';
 import '../object.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +15,6 @@ FrontStyle uiStyle = FrontStyle(
   roundCorner: BorderRadius.circular(10),
   roundCorner2: BorderRadius.circular(8),
 );
-
-String personInfoMsg(BuildContext context, Person p) {
-  String phone = p.phone == null ? "" : "${context.tr('phone')} : ${p.phone}\n";
-
-  return "$phone${context.tr('email')} : ${p.account}";
-}
 
 Text text1(String show, {bool isBold = false, Color color = Colors.black}) {
   return Text(
@@ -57,7 +52,7 @@ Widget leadingIcon = Center(
   child: text1(manager.systemName, color: Colors.white),
 );
 
-Widget userShow(BuildContext context, List<Person> users) {
+Widget userShow(BuildContext context, List<Member> users) {
   return SingleChildScrollView(
     padding: EdgeInsets.zero,
     child: SizedBox(
@@ -67,24 +62,21 @@ Widget userShow(BuildContext context, List<Person> users) {
         runSpacing: 4,
         alignment: WrapAlignment.start,
         children: users.asMap().entries.map((u) {
-          return Tooltip(
-            message: personInfoMsg(context, u.value),
-            child: Chip(label: text3(u.value.name)),
-          );
+          return memberTile(false, u.value, context, () {});
         }).toList(),
       ),
     ),
   );
 }
 
-String userShowText(List<Person> users) {
+String userShowText(List<Member> users) {
   String ret = "";
 
   if (users.isNotEmpty) {
     ret = users[0].name;
 
     if (users.length > 1) {
-      for (var user in users) {
+      for (var user in users.sublist(1)) {
         ret += ", ${user.name}";
       }
     }

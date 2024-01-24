@@ -1,8 +1,8 @@
+import 'member.dart';
+import 'interaction.dart';
 import '../tool.dart';
 import '../config.dart';
 import '../object.dart';
-import 'person.dart';
-import 'interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -20,9 +20,9 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
   TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
   TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
-  List<Person> agents = inputTrans.agent;
-  List<Person> clients = inputTrans.clients;
-  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<Member> agents = inputTrans.agent;
+  List<Member> clients = inputTrans.clients;
+  List<Member> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
   List<File> documents = inputTrans.documents;
   await showDialog(
     context: context,
@@ -190,7 +190,7 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, appoint, max: 1).then((value) {
+                                userEdit(context, appoint).then((value) {
                                   setState(() {
                                     appoint = value;
                                   });
@@ -461,9 +461,9 @@ Future<Transaction> transactionProduct(BuildContext context, Transaction inputTr
   TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
   TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
-  List<Person> agents = inputTrans.agent;
-  List<Person> clients = inputTrans.clients;
-  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<Member> agents = inputTrans.agent;
+  List<Member> clients = inputTrans.clients;
+  List<Member> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
   List<File> documents = inputTrans.documents;
   await showDialog(
     context: context,
@@ -631,7 +631,7 @@ Future<Transaction> transactionProduct(BuildContext context, Transaction inputTr
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, appoint, max: 1).then((value) {
+                                userEdit(context, appoint).then((value) {
                                   setState(() {
                                     appoint = value;
                                   });
@@ -902,9 +902,9 @@ Future<Transaction> transactionPayment(BuildContext context, Transaction inputTr
   TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
   TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
-  List<Person> agents = inputTrans.agent;
-  List<Person> clients = inputTrans.clients;
-  List<Person> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<Member> agents = inputTrans.agent;
+  List<Member> clients = inputTrans.clients;
+  List<Member> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
   List<File> documents = inputTrans.documents;
   await showDialog(
     context: context,
@@ -1072,7 +1072,7 @@ Future<Transaction> transactionPayment(BuildContext context, Transaction inputTr
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, appoint, max: 1).then((value) {
+                                userEdit(context, appoint).then((value) {
                                   setState(() {
                                     appoint = value;
                                   });

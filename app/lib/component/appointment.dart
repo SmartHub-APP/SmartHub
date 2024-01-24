@@ -1,7 +1,7 @@
 import 'interaction.dart';
 import '../config.dart';
 import '../object.dart';
-import '../component/person.dart';
+import '../component/member.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -12,8 +12,8 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
   bool canSave = false;
   DateTime selectDate = input.appointDate;
   TimeOfDay selectTime = TimeOfDay(hour: input.appointDate.hour, minute: input.appointDate.minute);
-  List<Person> lead = [input.lead];
-  List<Person> agent = [input.agent];
+  List<Member> lead = input.lead == null ? [] : [input.lead!];
+  List<Member> agent = input.agent == null ? [] : [input.agent!];
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -112,7 +112,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, lead, max: 1).then((value) {
+                                userEdit(context, lead).then((value) {
                                   setState(() {
                                     lead = value;
                                   });
@@ -137,7 +137,7 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, agent, max: 1).then((value) {
+                                userEdit(context, agent).then((value) {
                                   setState(() {
                                     agent = value;
                                   });
