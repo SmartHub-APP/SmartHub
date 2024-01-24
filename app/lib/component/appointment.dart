@@ -1,7 +1,7 @@
 import 'interaction.dart';
 import '../config.dart';
 import '../object.dart';
-import '../component/person.dart';
+import '../component/member.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';

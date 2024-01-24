@@ -358,8 +358,7 @@ class Member {
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
         id: json["id"],
-        role: Role(permission: [], roleName: "test"),
-        //ini.preRoles[int.parse(json["role"])],
+        role: Role.fromJson(json["role"]),
         name: json["name"],
         company: json["company"],
         jobTitle: json["jobTitle"],
@@ -382,6 +381,42 @@ class Member {
   });
 }
 
+class MemberGET {
+  int id;
+  Role role;
+  String name;
+  String account;
+  String? company;
+  String? jobTitle;
+  String? phone;
+  String? bankCode;
+  String? bankAccount;
+
+  factory MemberGET.fromJson(Map<String, dynamic> json) => MemberGET(
+        id: json["ID"],
+        role: Role.fromJson(json["Role"]),
+        name: json["Name"],
+        account: json["Account"],
+        phone: json["Phone"],
+        bankCode: json["BankCode"],
+        bankAccount: json["BankAccount"],
+        company: json["Company"],
+        jobTitle: json["JobTitle"],
+      );
+
+  MemberGET({
+    required this.id,
+    required this.role,
+    required this.name,
+    required this.account,
+    this.phone,
+    this.bankCode,
+    this.bankAccount,
+    this.company,
+    this.jobTitle,
+  });
+}
+
 class File {
   String fileName, fileHash;
 
@@ -389,13 +424,19 @@ class File {
 }
 
 class Role {
-  String roleName;
+  int id;
+  String name;
   List<int> permission;
 
-  Role({required this.roleName, required this.permission});
+  Role({required this.id, required this.name, required this.permission});
 
   factory Role.guest() {
-    return Role(roleName: "Guest", permission: [0, 0, 0, 0, 0, 0]);
+    return Role(id: -1, name: "Guest", permission: [0, 0, 0, 0, 0, 0]);
+  }
+
+  factory Role.fromJson(Map<String, dynamic> json) {
+    return Role(id: json["ID"], name: json["Name"], permission: [] //List<int>.from(json["Permission"].map((x) => x)),
+        );
   }
 }
 

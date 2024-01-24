@@ -1,6 +1,6 @@
 import 'interaction.dart';
 import '../object.dart';
-import '../tool.dart';
+import '../api/member.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -8,7 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) async {
   bool save = false;
   List<Member> edit = List.of(inputUsers);
-  List<Member> search = [];
+  List<MemberGET> search = [];
   TextEditingController newName = TextEditingController(text: "");
   TextEditingController newPhone = TextEditingController(text: "");
   TextEditingController newEmail = TextEditingController(text: "");
@@ -52,8 +52,10 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                           icon: const Icon(Icons.search),
                           tooltip: context.tr('search'),
                           onPressed: () {
-                            setState(() {
-                              search = List.generate(3, (index) => randomPerson());
+                            getMemberList(searchBar.text, "-1").then((value) {
+                              setState(() {
+                                search = value;
+                              });
                             });
                           },
                         ),
@@ -82,12 +84,11 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                                   alignment: WrapAlignment.center,
                                   children: search.map((label) {
                                     return Tooltip(
-                                      message: personInfoMsg(context, label),
                                       child: InkWell(
                                         onTap: () {
                                           setState(() {
                                             search.remove(label);
-                                            edit.add(label);
+                                            //edit.add(label);
                                           });
                                         },
                                         child: Chip(label: text3(label.name), avatar: const Icon(Icons.add)),

@@ -1,4 +1,4 @@
-import 'person.dart';
+import 'member.dart';
 import 'interaction.dart';
 import '../tool.dart';
 import '../config.dart';
