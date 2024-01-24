@@ -3,7 +3,6 @@ package api
 import (
 	SmartHubDatabase "SmartHub/pkg/database"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -39,12 +38,11 @@ func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *htt
 			}
 
 		case "POST":
-			fmt.Println("POST")
 			var Req SmartHubDatabase.Member
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
-				http.Error(w, "Failed to decode request", http.StatusBadRequest)
+				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
 

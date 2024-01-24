@@ -203,16 +203,12 @@ func ValidMemberInsert(i Member) (bool, Member) {
 
 	trimName := strings.TrimSpace(i.Name)
 	trimAccount := strings.TrimSpace(i.Account)
-	trimPassword := strings.TrimSpace(i.Password)
 
-	if i.Status == 0 || i.RoleID == 0 {
-		return false, RET
-	}
-	if trimName == "" || trimAccount == "" || trimPassword == "" {
+	if trimName == "" || trimAccount == "" {
 		return false, RET
 	}
 
-	RET.Name, RET.Account, RET.Password = trimName, trimAccount, trimPassword
+	RET.Name, RET.Account = trimName, trimAccount
 
 	return true, RET
 }
