@@ -3,18 +3,17 @@ package api
 import (
 	SmartHubDatabase "SmartHub/pkg/database"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
 func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-		w.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 		switch r.Method {
-		case "OPTIONS":
-			w.WriteHeader(http.StatusOK)
-
 		case "GET":
 			query := r.URL.Query().Get("q")
 			scheme := r.URL.Query().Get("s")
@@ -40,6 +39,7 @@ func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *htt
 			}
 
 		case "POST":
+			fmt.Println("POST")
 			var Req SmartHubDatabase.Member
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
@@ -108,7 +108,6 @@ func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *htt
 			}
 
 		default:
-			http.Error(w, "No such method", http.StatusMethodNotAllowed)
 		}
 	}
 }
