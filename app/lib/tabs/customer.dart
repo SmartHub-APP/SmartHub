@@ -1,6 +1,8 @@
 import '../config.dart';
 import '../object.dart';
-import '../interaction.dart';
+import '../component/tableview.dart';
+import '../component/interaction.dart';
+import '../component/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -43,21 +45,27 @@ class _CustomerState extends State<Customer> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Expanded(
-                              child: TextField(
-                                controller: filterName,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colName'),
+                              child: SizedBox(
+                                height: 6.h,
+                                child: TextField(
+                                  controller: filterName,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colName'),
+                                  ),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
-                              child: TextField(
-                                controller: filterClass,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colUnit'),
+                              child: SizedBox(
+                                height: 6.h,
+                                child: TextField(
+                                  controller: filterClass,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colUnit'),
+                                  ),
                                 ),
                               ),
                             ),
@@ -122,12 +130,11 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionCustomer(context, Transaction.create()).then((value) {
-                                    setState(() {
-                                      if (value != Transaction.create()) {
-                                        selfTransactions.add(value);
-                                      }
-                                    });
+                                  transactionCustomer(context, Transaction.createCommission(10)).then((value) {
+                                    if (value != null) {
+                                      selfTransactions.add(value);
+                                    }
+                                    setState(() {});
                                   });
                                 },
                               ),
@@ -205,111 +212,10 @@ class _CustomerState extends State<Customer> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: uiStyle.roundCorner2,
                     ),
-                    width: 94.w,
-                    child: SingleChildScrollView(
-                      child: DataTable(
-                        columnSpacing: 2,
-                        horizontalMargin: 20,
-                        sortColumnIndex: colIndex,
-                        sortAscending: sortAscend,
-                        showCheckboxColumn: true,
-                        columns: [
-                          DataColumn(
-                            label: text3(context.tr('customer_colProject'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions
-                                    .sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('customer_colUnit'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.unit.compareTo(b.unit) : b.unit.compareTo(a.unit));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('customer_colPrice'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('customer_colStatus'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort((a, b) => direction ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('customer_colDate'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                selfTransactions.sort(
-                                  (a, b) => direction
-                                      ? a.saleDate.toString().compareTo(b.saleDate.toString())
-                                      : b.saleDate.toString().compareTo(a.saleDate.toString()),
-                                );
-                              });
-                            },
-                          ),
-                          DataColumn(label: text3(context.tr('customer_colAgent'), isBold: true)),
-                          DataColumn(label: text3(context.tr('customer_colDescription'), isBold: true)),
-                          const DataColumn(label: SizedBox()),
-                        ],
-                        rows: selfTransactions.map((data) {
-                          return DataRow(
-                            selected: data.onSelect,
-                            onSelectChanged: (selected) {
-                              setState(() {
-                                data.onSelect = selected ?? false;
-                              });
-                            },
-                            cells: [
-                              DataCell(SizedBox(width: 7.w, child: text3(data.projectName))),
-                              DataCell(SizedBox(width: 7.w, child: text3(data.unit))),
-                              DataCell(SizedBox(width: 7.w, child: text3(data.price.toString()))),
-                              DataCell(SizedBox(width: 9.w, child: text3(ini.transactionStatus[data.status]))),
-                              DataCell(SizedBox(width: 6.w, child: text3(data.saleDate.toString().substring(0, 10)))),
-                              DataCell(SizedBox(width: 10.w, child: text3(userShowText(data.agent)))),
-                              DataCell(SizedBox(width: 12.w, child: text3(data.description ?? ""))),
-                              DataCell(
-                                IconButton(
-                                  onPressed: () async {
-                                    await transactionCustomer(context, data).then((value) {
-                                      setState(() {
-                                        selfTransactions[selfTransactions.indexWhere((element) => element == data)] = value;
-                                      });
-                                    });
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(Icons.edit_note_outlined),
-                                  tooltip: context.tr('edit'),
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
+                    child: TableView(data: selfTransactions, numColumn: 8),
                   ),
                 ),
+                SizedBox(height: 3.h),
               ],
             ),
           ),

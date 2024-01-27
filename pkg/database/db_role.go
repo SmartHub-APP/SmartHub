@@ -5,9 +5,9 @@ import (
 )
 
 type Role struct {
-	ID int
-    Name string
-	Perm string
+	ID         int    `json:"ID"`
+	Name       string `json:"Name"`
+	Permission int    `json:"Permission"`
 }
 
 var sqlRoleGet = `SELECT * FROM Role;`
@@ -26,14 +26,16 @@ func (DB *SmartHubDB) RoleGET() ([]Role, string) {
 	var Roles []Role
 
 	Hits, err := DB.ctl.Query(sqlRoleGet)
-    defer Hits.Close()
+	defer Hits.Close()
 
-	if err != nil { return []Role{}, "Query failed" }
+	if err != nil {
+		return []Role{}, "Query failed"
+	}
 
 	for Hits.Next() {
 		var R Role
 
-		Hits.Scan(&R.ID, &R.Name, &R.Perm)
+		Hits.Scan(&R.ID, &R.Name, &R.Permission)
 
 		Roles = append(Roles, R)
 	}
@@ -42,13 +44,17 @@ func (DB *SmartHubDB) RoleGET() ([]Role, string) {
 }
 
 func (DB *SmartHubDB) RolePOST(name, perm string) string {
-	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePOST, name, perm)); err != nil { return "Query failed" }
+	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePOST, name, perm)); err != nil {
+		return "Query failed"
+	}
 
 	return ""
 }
 
 func (DB *SmartHubDB) RolePUT(name, perm string, id int) string {
-	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePUT, name, perm, id)); err != nil { return "Query failed" }
+	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePUT, name, perm, id)); err != nil {
+		return "Query failed"
+	}
 
 	return ""
 }
@@ -56,9 +62,13 @@ func (DB *SmartHubDB) RolePUT(name, perm string, id int) string {
 func (DB *SmartHubDB) RoleDELETE(IDs []int) string {
 	query := ""
 
-	for _, id := range IDs { query += fmt.Sprintf(",%d", id) }
+	for _, id := range IDs {
+		query += fmt.Sprintf(",%d", id)
+	}
 
-	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRoleDELETE, query[1:])); err != nil { return "Query failed" }
+	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRoleDELETE, query[1:])); err != nil {
+		return "Query failed"
+	}
 
 	return ""
 }

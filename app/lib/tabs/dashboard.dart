@@ -1,6 +1,6 @@
 import '../config.dart';
 import '../object.dart';
-import '../interaction.dart';
+import '../component/interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
