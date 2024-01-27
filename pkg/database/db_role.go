@@ -7,7 +7,7 @@ import (
 type Role struct {
 	ID         int    `json:"ID"`
 	Name       string `json:"Name"`
-	Permission string `json:"Permission"`
+	Permission int    `json:"Permission"`
 }
 
 var sqlRoleGet = `SELECT * FROM Role;`
