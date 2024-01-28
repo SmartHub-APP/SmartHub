@@ -46,7 +46,7 @@ func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *htt
 				return
 			}
 
-			if errorMsg, after := db.ValidMemberInsert(Req); errorMsg != "" {
+			if errorMsg, after := db.ValidMemberInsert(Req); errorMsg == "" {
 				Req = after
 			} else {
 				http.Error(w, errorMsg, http.StatusBadRequest)
