@@ -46,10 +46,10 @@ func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *htt
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidMemberInsert(Req); ok {
+			if errorMsg, after := db.ValidMemberInsert(Req); errorMsg != "" {
 				Req = after
 			} else {
-				http.Error(w, "Missed field", http.StatusBadRequest)
+				http.Error(w, errorMsg, http.StatusBadRequest)
 				return
 			}
 
