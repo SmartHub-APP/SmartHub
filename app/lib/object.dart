@@ -420,7 +420,7 @@ class File {
 class Role {
   int id;
   String name;
-  List<int> permission;
+  int permission;
 
   Role({required this.id, required this.name, required this.permission});
 
@@ -431,15 +431,14 @@ class Role {
       };
 
   factory Role.guest() {
-    return Role(id: 0, name: "Guest", permission: [0, 0, 0, 0, 0, 0]);
+    return Role(id: 0, name: "Guest", permission: 0);
   }
 
   factory Role.fromJson(Map<String, dynamic> json) {
-    print("### json ${json["Permission"]}"); //List<int>.from(json["Permission"].map((x) => x)),
     return Role(
-      id: json["ID"] ?? -1,
-      name: json["Name"] ?? "",
-      permission: [],
+      id: json["ID"] ?? 0,
+      name: json["Name"] ?? "Guest",
+      permission: json["Permission"] ?? 0,
     );
   }
 }

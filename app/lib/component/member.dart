@@ -15,10 +15,11 @@ Widget memberTile(
   bool advanced = false,
 }) {
   String personIntro = "${m.company ?? ""}, ${m.jobTitle ?? ""}";
-  String msg = "${context.tr('email')} : ${m.account}\n${context.tr('phone')} :  ${m.phone}";
+  String msg = "${context.tr('email')} : ${m.account}\n${context.tr('phone')} :  ${(m.phone ?? "").isEmpty ? "N/A" : m.phone}";
 
   if (advanced) {
-    msg += "\n${context.tr('bankCode')} : ${m.bankCode}\n${context.tr('bankAccount')} : ${m.bankAccount}";
+    msg += "\n${context.tr('bankCode')} : ${(m.bankCode ?? "").isEmpty ? "N/A" : m.bankCode}\n"
+        "${context.tr('bankAccount')} : ${(m.bankAccount ?? "").isEmpty ? "N/A" : m.bankAccount}";
   }
 
   return Tooltip(
@@ -103,9 +104,7 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                             if (searchBar.text.isNotEmpty) {
                               getMemberList(searchBar.text, "-1").then((value) {
                                 setState(() {
-                                  print(value.length);
                                   search = value;
-                                  print(search.length);
                                 });
                               });
                             } else {
@@ -141,8 +140,12 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                                       children: search.map((m) {
                                         return memberTile(true, m, context, () {
                                           setState(() {
-                                            search.remove(m);
-                                            edit.add(m);
+                                            if (alreadyIn(m.account, edit)) {
+                                              alertDialog(context, context.tr('error'), context.tr('userExist'), context.tr('ok'));
+                                            } else {
+                                              search.remove(m);
+                                              edit.add(m);
+                                            }
                                           });
                                         });
                                       }).toList(),
@@ -208,6 +211,8 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                                 alertDialog(context, context.tr('error'), context.tr('emptyUser'), context.tr('ok'));
                               } else if (newEmail.text.isEmpty) {
                                 alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
+                              } else if (alreadyIn(newEmail.text, edit)) {
+                                alertDialog(context, context.tr('error'), context.tr('userExist'), context.tr('ok'));
                               } else {
                                 Member newMember = Member(
                                   id: -1,
@@ -222,11 +227,13 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                                   role: Role.guest(),
                                 );
                                 postMember(newMember, "").then((value) {
-                                  if (value) {
-                                    edit.add(newMember);
-                                    newName.text = newPhone.text = newEmail.text = "";
+                                  if (value.isEmpty) {
+                                    setState(() {
+                                      edit.add(newMember);
+                                      newName.text = newPhone.text = newEmail.text = "";
+                                    });
                                   } else {
-                                    alertDialog(context, context.tr('error'), context.tr('userFailed'), context.tr('ok'));
+                                    alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                   }
                                 });
                               }
@@ -258,11 +265,17 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                     runSpacing: 4,
                     alignment: WrapAlignment.center,
                     children: edit.map((label) {
-                      return memberTile(true, label, context, () {
-                        setState(() {
-                          edit.remove(label);
-                        });
-                      });
+                      return memberTile(
+                        true,
+                        label,
+                        context,
+                        () {
+                          setState(() {
+                            edit.remove(label);
+                          });
+                        },
+                        isDelete: true,
+                      );
                     }).toList(),
                   ),
                 ),
@@ -326,4 +339,13 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
   );
 
   return save ? edit : inputUsers;
+}
+
+bool alreadyIn(String account, List<Member> users) {
+  for (Member m in users) {
+    if (m.account == account) {
+      return true;
+    }
+  }
+  return false;
 }
