@@ -21,7 +21,7 @@ Member randomPerson() {
     id: -1,
     status: 1,
     name: randomString(5),
-    role: ini.preRoles.last,
+    role: RoleDefault.guest.toRole(),
     account: randomString(10),
     phone: seed.nextBool() ? randomString(10) : null,
     bankCode: withBank ? (seed.nextInt(900) + 100).toString() : null,

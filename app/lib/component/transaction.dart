@@ -1,6 +1,5 @@
 import 'member.dart';
 import 'interaction.dart';
-import '../tool.dart';
 import '../config.dart';
 import '../object.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +48,7 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, clients).then((value) {
+                                userEdit(context, clients, RoleDefault.guest.id.toString()).then((value) {
                                   setState(() {
                                     clients = value;
                                   });
@@ -167,7 +166,7 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, agents).then((value) {
+                                userEdit(context, agents, RoleDefault.agent.id.toString()).then((value) {
                                   setState(() {
                                     agents = value;
                                   });
@@ -192,7 +191,7 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
                             child: TextButton(
                               style: TextButton.styleFrom(padding: EdgeInsets.zero),
                               onPressed: () {
-                                userEdit(context, appoint).then((value) {
+                                userEdit(context, appoint, RoleDefault.agent.id.toString()).then((value) {
                                   setState(() {
                                     appoint = value;
                                   });
@@ -229,6 +228,7 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
                               decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                               child: documents.isEmpty
                                   ? Container(
+                                      height: 8.h,
                                       alignment: Alignment.center,
                                       padding: const EdgeInsets.all(5),
                                       child: text2(context.tr('emptyDocument')),
