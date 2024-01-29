@@ -430,10 +430,6 @@ class Role {
         "Permission": permission,
       };
 
-  factory Role.guest() {
-    return Role(id: 0, name: "Guest", permission: 0);
-  }
-
   factory Role.fromJson(Map<String, dynamic> json) {
     return Role(
       id: json["ID"] ?? 0,
@@ -454,7 +450,6 @@ class InitSetting {
   List<String> commissionStatus;
   List<Url> urls;
   List<Lang> languages;
-  List<Role> preRoles;
 
   InitSetting({
     required this.api,
@@ -466,7 +461,6 @@ class InitSetting {
     required this.appointmentLeadStatus,
     required this.commissionStatus,
     required this.languages,
-    required this.preRoles,
   });
 }
 

@@ -1,5 +1,6 @@
 import '../config.dart';
 import '../object.dart';
+import '../component/payment.dart';
 import '../component/interaction.dart';
 import '../component/transaction.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class _PaymentState extends State<Payment> {
   int colIndex = 0;
   int searchStatus = 0;
   bool sortAscend = true;
+  TextEditingController filterAgent = TextEditingController(text: "");
   TextEditingController filterName = TextEditingController(text: "");
   List<Transaction> transactions = Transaction.create().fakeData(10);
 
@@ -42,18 +44,34 @@ class _PaymentState extends State<Payment> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Expanded(
-                              child: TextField(
-                                controller: filterName,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colName'),
+                              child: SizedBox(
+                                height: 7.h,
+                                child: TextField(
+                                  controller: filterAgent,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('payment_colAgent'),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 1.w),
+                            Expanded(
+                              child: SizedBox(
+                                height: 7.h,
+                                child: TextField(
+                                  controller: filterName,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colProject'),
+                                  ),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
                               child: Container(
-                                height: 7.6.h,
+                                height: 7.h,
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: DropdownButton2(
                                   underline: const SizedBox(),
@@ -88,9 +106,9 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionPayment(context, Transaction.create()).then((value) {
+                                  transactionEdit(context, Transaction.create(), 3).then((value) {
                                     setState(() {
-                                      if (value != Transaction.create()) {
+                                      if (value != Transaction.create() && value != null) {
                                         transactions.add(value);
                                       }
                                     });
@@ -130,6 +148,37 @@ class _PaymentState extends State<Payment> {
                                     searchStatus = 0;
                                     filterName.text = '';
                                   });
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 1.w),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: uiStyle.roundCorner2,
+                              ),
+                              child: IconButton(
+                                icon: const Icon(Icons.payment_sharp),
+                                tooltip: context.tr('payment_make'),
+                                onPressed: () {
+                                  List<Transaction> selects = [];
+                                  for (var i in transactions) {
+                                    if (i.onSelect) {
+                                      selects.add(i);
+                                    }
+                                  }
+                                  if (selects.isNotEmpty) {
+                                    makePayment(context, selects).then((value) {
+                                      if (value) {
+                                        setState(() {
+                                          for (var i in selects) {
+                                            i.payStatus = 1;
+                                          }
+                                        });
+                                      }
+                                    });
+                                  }
                                 },
                               ),
                             ),
@@ -179,12 +228,12 @@ class _PaymentState extends State<Payment> {
                         showCheckboxColumn: true,
                         columns: [
                           DataColumn(
-                            label: text3(context.tr('payment_colID'), isBold: true),
+                            label: text3(context.tr('payment_colPrice'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                transactions.sort((a, b) => direction ? a.id.compareTo(b.id) : b.id.compareTo(a.id));
+                                transactions.sort((a, b) => direction ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
                               });
                             },
                           ),
@@ -213,7 +262,6 @@ class _PaymentState extends State<Payment> {
                             },
                           ),
                           DataColumn(label: text3(context.tr('payment_colAgent'), isBold: true)),
-                          DataColumn(label: text3(context.tr('payment_colBankInfo'), isBold: true)),
                           DataColumn(
                             label: text3(context.tr('payment_colPercent'), isBold: true),
                             onSort: (int colID, bool direction) {
@@ -247,29 +295,25 @@ class _PaymentState extends State<Payment> {
                               });
                             },
                             cells: [
-                              DataCell(text3(data.id)),
+                              DataCell(text3("\$ ${data.price}")),
                               DataCell(text3(ini.commissionStatus[data.payStatus])),
                               DataCell(text3(data.saleDate.toString().substring(0, 16))),
-                              DataCell(Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!]))),
                               DataCell(
-                                data.appoint == null
-                                    ? const SizedBox()
-                                    : Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [text3(data.appoint!.bankCode ?? ""), text3(data.appoint!.bankAccount ?? "")],
-                                      ),
+                                Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!])),
                               ),
                               DataCell(text3("${data.commission} %")),
                               DataCell(text3((data.commission * data.price * 0.01).toStringAsFixed(3))),
                               DataCell(
                                 IconButton(
                                   onPressed: () async {
-                                    await transactionPayment(context, data).then((value) {
-                                      setState(() {
-                                        transactions[transactions.indexWhere((element) => element == data)] = value;
-                                      });
+                                    await transactionEdit(context, data, 3).then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          transactions[transactions.indexWhere((element) => element == data)] = value;
+                                        });
+                                      }
                                     });
                                     setState(() {});
                                   },
