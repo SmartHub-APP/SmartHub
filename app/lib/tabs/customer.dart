@@ -46,7 +46,7 @@ class _CustomerState extends State<Customer> {
                           children: [
                             Expanded(
                               child: SizedBox(
-                                height: 6.h,
+                                height: 7.h,
                                 child: TextField(
                                   controller: filterName,
                                   decoration: InputDecoration(
@@ -59,7 +59,7 @@ class _CustomerState extends State<Customer> {
                             SizedBox(width: 1.w),
                             Expanded(
                               child: SizedBox(
-                                height: 6.h,
+                                height: 7.h,
                                 child: TextField(
                                   controller: filterClass,
                                   decoration: InputDecoration(
@@ -72,7 +72,7 @@ class _CustomerState extends State<Customer> {
                             SizedBox(width: 1.w),
                             Expanded(
                               child: Container(
-                                height: 6.h,
+                                height: 7.h,
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: DropdownButton2(
                                   underline: const SizedBox(),
@@ -101,7 +101,7 @@ class _CustomerState extends State<Customer> {
                                   });
                                 },
                                 child: Container(
-                                  height: 6.h,
+                                  height: 7.h,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                   child: text3(

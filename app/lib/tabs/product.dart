@@ -42,28 +42,34 @@ class _ProductState extends State<Product> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Expanded(
-                              child: TextField(
-                                controller: filterName,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colName'),
+                              child: SizedBox(
+                                height: 7.h,
+                                child: TextField(
+                                  controller: filterName,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colName'),
+                                  ),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
-                              child: TextField(
-                                controller: filterClass,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colUnit'),
+                              child: SizedBox(
+                                height: 7.h,
+                                child: TextField(
+                                  controller: filterClass,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colUnit'),
+                                  ),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
                               child: Container(
-                                height: 7.6.h,
+                                height: 7.h,
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: DropdownButton2(
                                   underline: const SizedBox(),
