@@ -169,7 +169,15 @@ class _PaymentState extends State<Payment> {
                                     }
                                   }
                                   if (selects.isNotEmpty) {
-                                    makePayment(context, selects);
+                                    makePayment(context, selects).then((value) {
+                                      if (value) {
+                                        setState(() {
+                                          for (var i in selects) {
+                                            i.payStatus = 1;
+                                          }
+                                        });
+                                      }
+                                    });
                                   }
                                 },
                               ),

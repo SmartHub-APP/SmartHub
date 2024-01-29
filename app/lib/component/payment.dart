@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-makePayment(BuildContext context, List<Transaction> selects) async {
+Future<bool> makePayment(BuildContext context, List<Transaction> selects) async {
+  bool isSuccess = false;
   List<Member> payTo = selects.map((e) => e.agent[0]).toList();
   if (payTo.length != 1) {
     alertDialog(context, context.tr('error'), context.tr('payment_error'), context.tr('ok'));
@@ -66,7 +67,10 @@ makePayment(BuildContext context, List<Transaction> selects) async {
                   child: IconButton(
                     icon: const Icon(Icons.payments_rounded),
                     tooltip: context.tr('payment_done'),
-                    onPressed: () {},
+                    onPressed: () {
+                      isSuccess = true;
+                      Navigator.pop(context);
+                    },
                   ),
                 ),
               ],
@@ -76,4 +80,6 @@ makePayment(BuildContext context, List<Transaction> selects) async {
       },
     );
   }
+
+  return isSuccess;
 }
