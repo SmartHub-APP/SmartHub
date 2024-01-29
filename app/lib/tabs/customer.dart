@@ -130,7 +130,7 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionCustomer(context, Transaction.createCommission(10)).then((value) {
+                                  transactionEdit(context, Transaction.createCommission(10), 1).then((value) {
                                     if (value != null) {
                                       selfTransactions.add(value);
                                     }

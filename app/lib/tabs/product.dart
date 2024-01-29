@@ -104,10 +104,10 @@ class _ProductState extends State<Product> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionProduct(context, Transaction.create()).then((value) {
+                                  transactionEdit(context, Transaction.create(), 2).then((value) {
                                     setState(() {
-                                      if (value != Transaction.create()) {
-                                        pubTransactions.add(value);
+                                      if (value != Transaction.create() || value != null) {
+                                        pubTransactions.add(value!);
                                       }
                                     });
                                   });
@@ -188,9 +188,11 @@ class _ProductState extends State<Product> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          transactionProduct(context, pubTransactions[index]).then((value) {
+                          transactionEdit(context, pubTransactions[index], 2).then((value) {
                             setState(() {
-                              pubTransactions[index] = value;
+                              if (value != Transaction.create() || value != null) {
+                                pubTransactions[index] = value!;
+                              }
                             });
                           });
                         },

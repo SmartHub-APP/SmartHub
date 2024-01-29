@@ -91,10 +91,10 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionPayment(context, Transaction.create()).then((value) {
+                                  transactionEdit(context, Transaction.create(), 3).then((value) {
                                     setState(() {
-                                      if (value != Transaction.create()) {
-                                        transactions.add(value);
+                                      if (value != Transaction.create() || value != null) {
+                                        transactions.add(value!);
                                       }
                                     });
                                   });
@@ -269,10 +269,12 @@ class _PaymentState extends State<Payment> {
                               DataCell(
                                 IconButton(
                                   onPressed: () async {
-                                    await transactionPayment(context, data).then((value) {
-                                      setState(() {
-                                        transactions[transactions.indexWhere((element) => element == data)] = value;
-                                      });
+                                    await transactionEdit(context, data, 3).then((value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          transactions[transactions.indexWhere((element) => element == data)] = value;
+                                        });
+                                      }
                                     });
                                     setState(() {});
                                   },
