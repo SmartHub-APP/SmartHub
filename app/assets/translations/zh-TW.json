@@ -97,7 +97,7 @@
   "leadsAppointment_colLeads": "潛在客戶",
   "leadsAppointment_colAgent": "接洽房仲",
   "payment_tabName": "支出",
-  "payment_colID": "交易代碼",
+  "payment_colPrice": "價格",
   "payment_colStatus": "付款狀態",
   "payment_colSoldDate": "售出日",
   "payment_colAgent": "房仲",

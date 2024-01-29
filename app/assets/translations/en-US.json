@@ -97,7 +97,7 @@
   "leadsAppointment_colLeads": "Leads",
   "leadsAppointment_colAgent": "Agent",
   "payment_tabName": "Payment",
-  "payment_colID": "Transaction ID",
+  "payment_colPrice": "Price",
   "payment_colStatus": "Payment status",
   "payment_colSoldDate": "Sold date",
   "payment_colAgent": "Agent",

@@ -18,6 +18,7 @@ class _PaymentState extends State<Payment> {
   int colIndex = 0;
   int searchStatus = 0;
   bool sortAscend = true;
+  TextEditingController filterAgent = TextEditingController(text: "");
   TextEditingController filterName = TextEditingController(text: "");
   List<Transaction> transactions = Transaction.create().fakeData(10);
 
@@ -45,10 +46,23 @@ class _PaymentState extends State<Payment> {
                               child: SizedBox(
                                 height: 7.h,
                                 child: TextField(
+                                  controller: filterAgent,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('payment_colAgent'),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 1.w),
+                            Expanded(
+                              child: SizedBox(
+                                height: 7.h,
+                                child: TextField(
                                   controller: filterName,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
-                                    labelText: context.tr('customer_colName'),
+                                    labelText: context.tr('customer_colProject'),
                                   ),
                                 ),
                               ),
@@ -182,12 +196,12 @@ class _PaymentState extends State<Payment> {
                         showCheckboxColumn: true,
                         columns: [
                           DataColumn(
-                            label: text3(context.tr('payment_colID'), isBold: true),
+                            label: text3(context.tr('payment_colPrice'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                transactions.sort((a, b) => direction ? a.id.compareTo(b.id) : b.id.compareTo(a.id));
+                                transactions.sort((a, b) => direction ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
                               });
                             },
                           ),
@@ -216,7 +230,6 @@ class _PaymentState extends State<Payment> {
                             },
                           ),
                           DataColumn(label: text3(context.tr('payment_colAgent'), isBold: true)),
-                          DataColumn(label: text3(context.tr('payment_colBankInfo'), isBold: true)),
                           DataColumn(
                             label: text3(context.tr('payment_colPercent'), isBold: true),
                             onSort: (int colID, bool direction) {
@@ -250,19 +263,13 @@ class _PaymentState extends State<Payment> {
                               });
                             },
                             cells: [
-                              DataCell(text3(data.id)),
+                              DataCell(text3("\$ ${data.price}")),
                               DataCell(text3(ini.commissionStatus[data.payStatus])),
                               DataCell(text3(data.saleDate.toString().substring(0, 16))),
-                              DataCell(Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!]))),
                               DataCell(
-                                data.appoint == null
-                                    ? const SizedBox()
-                                    : Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [text3(data.appoint!.bankCode ?? ""), text3(data.appoint!.bankAccount ?? "")],
-                                      ),
+                                Container(
+                                    padding: const EdgeInsets.all(10),
+                                    child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!])),
                               ),
                               DataCell(text3("${data.commission} %")),
                               DataCell(text3((data.commission * data.price * 0.01).toStringAsFixed(3))),
