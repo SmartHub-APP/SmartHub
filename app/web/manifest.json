@@ -1,6 +1,6 @@
 {
-    "name": "erp_front",
-    "short_name": "erp_front",
+    "name": "smarthub",
+    "short_name": "smarthub",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

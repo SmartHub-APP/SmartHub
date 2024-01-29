@@ -241,7 +241,7 @@ class _TableViewState extends State<TableView> {
                   SizedBox(width: 0.5.w),
                   IconButton(
                     onPressed: () {
-                      transactionCustomer(context, widget.data[index]).then((value) {
+                      transactionEdit(context, widget.data[index], 1).then((value) {
                         if (value != null) {
                           widget.data[index] = value;
                           setState(() {});

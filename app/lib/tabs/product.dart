@@ -42,28 +42,34 @@ class _ProductState extends State<Product> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Expanded(
-                              child: TextField(
-                                controller: filterName,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colName'),
+                              child: SizedBox(
+                                height: 7.h,
+                                child: TextField(
+                                  controller: filterName,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colName'),
+                                  ),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
-                              child: TextField(
-                                controller: filterClass,
-                                decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  labelText: context.tr('customer_colUnit'),
+                              child: SizedBox(
+                                height: 7.h,
+                                child: TextField(
+                                  controller: filterClass,
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                    labelText: context.tr('customer_colUnit'),
+                                  ),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
                               child: Container(
-                                height: 7.6.h,
+                                height: 7.h,
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: DropdownButton2(
                                   underline: const SizedBox(),
@@ -98,12 +104,14 @@ class _ProductState extends State<Product> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionProduct(context, Transaction.create()).then((value) {
-                                    setState(() {
-                                      if (value != Transaction.create()) {
-                                        pubTransactions.add(value);
-                                      }
-                                    });
+                                  transactionEdit(context, Transaction.create(), 2).then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        if (value != Transaction.create() && value != null) {
+                                          pubTransactions.add(value!);
+                                        }
+                                      });
+                                    }
                                   });
                                 },
                               ),
@@ -182,39 +190,54 @@ class _ProductState extends State<Product> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          transactionProduct(context, pubTransactions[index]).then((value) {
-                            setState(() {
-                              pubTransactions[index] = value;
-                            });
+                          transactionEdit(context, pubTransactions[index], 1).then((value) {
+                            if (value != null) {
+                              setState(() {
+                                if (value != Transaction.create() && value != null) {
+                                  pubTransactions[index] = value;
+                                }
+                              });
+                            }
                           });
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              text2(pubTransactions[index].name, isBold: true),
+                              text3("${context.tr('product_colName')} :\n"
+                                  "    ${pubTransactions[index].name}"),
                               const SizedBox(height: 5),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  text3("\$${pubTransactions[index].price}", isBold: true),
-                                  if (pubTransactions[index].priceSQFT != null) text3(" (\$${pubTransactions[index].priceSQFT}/sqft)", isBold: true),
+                                  text3("${context.tr('product_colPrice')} :\n"
+                                      "    \$${pubTransactions[index].price}"),
+                                  if (pubTransactions[index].priceSQFT != null) text3(" (\$${pubTransactions[index].priceSQFT}/sqft)"),
                                 ],
                               ),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].location),
+                              text3("${context.tr('product_colLocation')} :\n"
+                                  "    ${pubTransactions[index].location}"),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].developer),
+                              text3("${context.tr('product_colDeveloper')} :\n"
+                                  "    ${pubTransactions[index].developer}"),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].launchDate.toString().substring(0, 10)),
+                              text3("${context.tr('product_colLaunchingData')} :\n"
+                                  "    ${pubTransactions[index].launchDate.toString().substring(0, 10)}"),
                               const SizedBox(height: 5),
-                              text3("Commission rate: ${pubTransactions[index].commission}%"),
+                              text3("${context.tr('product_colCommission')} :\n"
+                                  "    ${pubTransactions[index].commission}%"),
                               const SizedBox(height: 5),
-                              if (pubTransactions[index].description != null) text3(pubTransactions[index].description ?? ""),
+                              if (pubTransactions[index].description != null)
+                                text3("${context.tr('product_colDescription')} :\n"
+                                    "    ${pubTransactions[index].description ?? ""}"),
                               const SizedBox(height: 5),
+                              if (pubTransactions[index].documents.isNotEmpty) text3("${context.tr('product_colDocument')} :"),
                               Column(
-                                children: pubTransactions[index].documents.map((e) => text3(e.fileName)).toList(),
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: pubTransactions[index].documents.map((e) => text3("    ${e.fileName}")).toList(),
                               ),
                             ],
                           ),

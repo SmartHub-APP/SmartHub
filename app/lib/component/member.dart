@@ -1,10 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'interaction.dart';
+import '../config.dart';
+import '../object.dart';
+import '../api/member.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-
-import '../api/member.dart';
-import '../object.dart';
-import 'interaction.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Widget memberTile(
   bool expandMode,
@@ -54,7 +54,7 @@ Widget memberTile(
   );
 }
 
-Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) async {
+Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers, String scheme) async {
   bool save = false;
   List<Member> edit = List.of(inputUsers);
   List<Member> search = [];
@@ -102,7 +102,7 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                           tooltip: context.tr('search'),
                           onPressed: () {
                             if (searchBar.text.isNotEmpty) {
-                              getMemberList(searchBar.text, "-1").then((value) {
+                              getMemberList(searchBar.text, scheme).then((value) {
                                 setState(() {
                                   search = value;
                                 });
@@ -224,7 +224,7 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers) asy
                                   jobTitle: "",
                                   bankCode: "",
                                   bankAccount: "",
-                                  role: Role.guest(),
+                                  role: RoleDefault.guest.toRole(),
                                 );
                                 postMember(newMember, "").then((value) {
                                   if (value.isEmpty) {
