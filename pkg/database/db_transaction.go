@@ -38,13 +38,32 @@ type TransactionGetRequest struct {
 	SaleDateEnd     string `json:"SaleDateEnd"`
 }
 
+type TransactionEdit struct {
+	Name        string  `json:"Name"`
+	ProjectName string  `json:"ProjectName"`
+	Price       float64 `json:"Price"`
+	PriceSQFT   float64 `json:"PriceSQFT"`
+	Commission  float64 `json:"Commission"`
+	Status      int     `json:"Status"`
+	PayStatus   int     `json:"PayStatus"`
+	Unit        string  `json:"Unit"`
+	Location    string  `json:"Location"`
+	Developer   string  `json:"Developer"`
+	Description string  `json:"Description"`
+	Appoint     string  `json:"Appoint"`
+	Client      string  `json:"Client"`
+	Agent       string  `json:"Agent"`
+	SaleDate    string  `json:"SaleDate"`
+	LaunchDate  string  `json:"LaunchDate"`
+}
+
 var sqlTransactionGet = `SELECT * FROM Transaction %s;`
 
 var sqlTransactionPOST = `
 INSERT INTO Transaction (Name, ProjectName, Price, PriceSQFT, Commission,
 	Status, PayStatus, Unit, Location, Developer, Description, Appoint,
 	Client, Agent, SaleDate, LaunchDate)
-VALUES (%s, %s, %f, %f, %f, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+VALUES ('%s', '%s', "%f", "%f", "%f", "%d", "%d", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s");
 `
 var sqlTransactionPUT = `
 UPDATE Transaction
@@ -124,13 +143,15 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]Transaction, 
 	return Transactions, ""
 }
 
-func (DB *SmartHubDB) TransactionPOST(m Transaction) string {
+func (DB *SmartHubDB) TransactionPOST(m TransactionEdit) string {
 	sql := fmt.Sprintf(
 		sqlTransactionPOST,
 		m.Name, m.ProjectName, m.Price, m.PriceSQFT, m.Commission,
 		m.Status, m.PayStatus, m.Unit, m.Location, m.Developer,
 		m.Description, m.Appoint, m.Client, m.Agent, m.SaleDate, m.LaunchDate,
 	)
+
+	fmt.Println(sql)
 
 	if _, err := DB.ctl.Exec(sql); err != nil {
 		return "Query failed"
@@ -139,7 +160,7 @@ func (DB *SmartHubDB) TransactionPOST(m Transaction) string {
 	return ""
 }
 
-func (DB *SmartHubDB) TransactionPUT(m Transaction) string {
+func (DB *SmartHubDB) TransactionPUT(m TransactionEdit) string {
 	sql := fmt.Sprintf(
 		sqlTransactionPUT,
 		m.Name, m.ProjectName, m.Price, m.PriceSQFT, m.Commission,
@@ -170,8 +191,27 @@ func (DB *SmartHubDB) TransactionDELETE(IDs []int) string {
 	return ""
 }
 
-func ValidTransaction(i Transaction) (bool, Transaction) {
+func ValidTransaction(i TransactionEdit) (bool, TransactionEdit) {
 	RET := i
+
+	if RET.Name == "" || RET.ProjectName == "" {
+		return false, RET
+	}
+	if RET.Price < 0 || RET.PriceSQFT < 0 {
+		return false, RET
+	}
+	if RET.Commission < 0 || RET.Status < 0 || RET.PayStatus < 0 {
+		return false, RET
+	}
+	if RET.Unit == "" || RET.Location == "" || RET.Developer == "" {
+		return false, RET
+	}
+	if RET.Description == "" || RET.Appoint == "" || RET.Client == "" {
+		return false, RET
+	}
+	if RET.Agent == "" || RET.SaleDate == "" || RET.LaunchDate == "" {
+		return false, RET
+	}
 
 	return true, RET
 }

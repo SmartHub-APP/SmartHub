@@ -54,7 +54,7 @@ clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Aut
 1. GET
 clear; curl -X GET -H "Content-Type: application/json" -d '{"Name":"", "ProjectName":"", "Status":"", "PayStatus":"", "Unit":"", "LaunchDateStart":"", "LaunchDateEnd":"", "SaleDateStart":"", "SaleDateEnd":""}' http://140.113.120.235:25000/smarthub/transaction
 2. POST
-clear; curl -X POST -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '{"Status":1,"RoleID":2,"Name":"NameTest1","Account":"AccountTest1","Password":"PasswordTest1","BankCode":"546","BankAccount":"5465"}' http://140.113.120.235:25000/smarthub/transaction -v
+clear; curl -X POST -H "Content-Type: application/json" -d '{"Name":"test","ProjectName":"test","Price":1000000,"PriceSQFT":500,"Commission":20.87,"Status":2,"PayStatus":2,"Unit":"test","Location":"test","Developer":"test","Description":"test","Appoint":"1;2","Client":"1","Agent":"3","SaleDate":"2020-01-01","LaunchDate":"2025-01-01"}' http://140.113.120.235:25000/smarthub/transaction
 3. PUT
 clear; curl -X PUT -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '{"ID":6,"Status":1,"RoleID":2,"Name":"HAHAHA","Account":"123123123","Password":"94879487","BankCode":"456","BankAccount":"789"}' http://140.113.120.235:25000/smarthub/transaction -v
 4. DELETE
