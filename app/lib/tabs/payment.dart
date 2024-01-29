@@ -1,5 +1,6 @@
 import '../config.dart';
 import '../object.dart';
+import '../component/payment.dart';
 import '../component/interaction.dart';
 import '../component/transaction.dart';
 import 'package:flutter/material.dart';
@@ -107,8 +108,8 @@ class _PaymentState extends State<Payment> {
                                 onPressed: () {
                                   transactionEdit(context, Transaction.create(), 3).then((value) {
                                     setState(() {
-                                      if (value != Transaction.create() || value != null) {
-                                        transactions.add(value!);
+                                      if (value != Transaction.create() && value != null) {
+                                        transactions.add(value);
                                       }
                                     });
                                   });
@@ -147,6 +148,29 @@ class _PaymentState extends State<Payment> {
                                     searchStatus = 0;
                                     filterName.text = '';
                                   });
+                                },
+                              ),
+                            ),
+                            SizedBox(width: 1.w),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: uiStyle.roundCorner2,
+                              ),
+                              child: IconButton(
+                                icon: const Icon(Icons.payment_sharp),
+                                tooltip: context.tr('payment_make'),
+                                onPressed: () {
+                                  List<Transaction> selects = [];
+                                  for (var i in transactions) {
+                                    if (i.onSelect) {
+                                      selects.add(i);
+                                    }
+                                  }
+                                  if (selects.isNotEmpty) {
+                                    makePayment(context, selects);
+                                  }
                                 },
                               ),
                             ),

@@ -105,11 +105,13 @@ class _ProductState extends State<Product> {
                                 tooltip: context.tr('add'),
                                 onPressed: () {
                                   transactionEdit(context, Transaction.create(), 2).then((value) {
-                                    setState(() {
-                                      if (value != Transaction.create() || value != null) {
-                                        pubTransactions.add(value!);
-                                      }
-                                    });
+                                    if (value != null) {
+                                      setState(() {
+                                        if (value != Transaction.create() && value != null) {
+                                          pubTransactions.add(value!);
+                                        }
+                                      });
+                                    }
                                   });
                                 },
                               ),
@@ -188,12 +190,14 @@ class _ProductState extends State<Product> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          transactionEdit(context, pubTransactions[index], 2).then((value) {
-                            setState(() {
-                              if (value != Transaction.create() && value != null) {
-                                pubTransactions[index] = value!;
-                              }
-                            });
+                          transactionEdit(context, pubTransactions[index], 1).then((value) {
+                            if (value != null) {
+                              setState(() {
+                                if (value != Transaction.create() && value != null) {
+                                  pubTransactions[index] = value;
+                                }
+                              });
+                            }
                           });
                         },
                         child: Container(
