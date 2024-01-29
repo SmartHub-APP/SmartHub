@@ -57,15 +57,17 @@ AND (
 	LOWER(Member.Name) LIKE '%%%s%%')
 `
 var sqlMemberPOST = `
-INSERT INTO Member (Status, Name, Account, Password, RoleID, BankCode, BankAccount, Company, JobTitle)
-VALUES ('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s');
+INSERT INTO Member (Status, Name, Account, Password, RoleID, BankCode, BankAccount, Company, JobTitle, Phone)
+VALUES ('%d', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s');
 `
 var sqlMemberPUT = `
 UPDATE Member
-SET Status="%d", Name="%s", Account="%s", Password="%s", RoleID="%d", BankCode="%s", BankAccount="%s", Company="%s", JobTitle="%s"
+SET Status="%d", Name="%s", Account="%s", Password="%s", RoleID="%d",
+BankCode="%s", BankAccount="%s", Company="%s", JobTitle="%s", Phone="%s"
 WHERE ID="%d";
 `
 var sqlMemberDELETE = `DELETE FROM Member WHERE ID IN (%s);`
+var sqlMemberCheck = `SELECT ID FROM Member WHERE Account="%s";`
 
 func (DB *SmartHubDB) MemberGET(query, scheme string) ([]MemberInfo, string) {
 	sRoleID, err := strconv.Atoi(scheme)
@@ -132,6 +134,7 @@ func (DB *SmartHubDB) MemberPOST(m Member) string {
 		m.BankAccount,
 		m.Company,
 		m.JobTitle,
+		m.Phone,
 	)
 
 	if _, err := DB.ctl.Exec(sql); err != nil {
@@ -153,6 +156,7 @@ func (DB *SmartHubDB) MemberPUT(m Member) string {
 		m.BankAccount,
 		m.Company,
 		m.JobTitle,
+		m.Phone,
 		m.ID,
 	)
 
@@ -198,17 +202,34 @@ func ValidMember(i Member) (bool, Member) {
 	return true, RET
 }
 
-func ValidMemberInsert(i Member) (bool, Member) {
+func (DB *SmartHubDB) ValidMemberInsert(i Member) (string, Member) {
 	RET := i
 
 	trimName := strings.TrimSpace(i.Name)
 	trimAccount := strings.TrimSpace(i.Account)
 
 	if trimName == "" || trimAccount == "" {
-		return false, RET
+		return "Missing field", RET
 	}
 
 	RET.Name, RET.Account = trimName, trimAccount
 
-	return true, RET
+	alreadyExist := -1
+	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlMemberCheck, trimAccount))
+	defer Hits.Close()
+
+	if err != nil {
+		return "Query failed", RET
+	}
+
+	for Hits.Next() {
+		Hits.Scan(&alreadyExist)
+		break
+	}
+
+	if alreadyExist != -1 {
+		return "Account already exist", RET
+	}
+
+	return "", RET
 }

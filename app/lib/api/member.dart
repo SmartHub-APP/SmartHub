@@ -29,9 +29,9 @@ Future<List<Member>> getMemberList(String query, String scheme) async {
   }
 }
 
-Future<bool> postMember(Member m, String password) async {
+Future<String> postMember(Member m, String password) async {
   if (m.phone == null || m.company == null || m.jobTitle == null || m.bankCode == null || m.bankAccount == null) {
-    return false;
+    return "Missing Field";
   }
 
   SharedPreferences cache = await SharedPreferences.getInstance();
@@ -43,8 +43,8 @@ Future<bool> postMember(Member m, String password) async {
       body: jsonEncode(m.toJsonCreate()),
     );
 
-    return response.statusCode == 201;
+    return response.statusCode == 201 ? "" : response.body;
   } catch (_) {
-    return false;
+    return "Network Error";
   }
 }
