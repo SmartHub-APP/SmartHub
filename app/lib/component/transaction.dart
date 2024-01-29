@@ -339,7 +339,7 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
                         context.tr('emptyStatus'),
                         context.tr('ok'),
                       );
-                    } else if (mode == 2 && editClaimed == 0) {
+                    } else if (mode == 3 && editClaimed == 0) {
                       alertDialog(
                         context,
                         context.tr('error'),
@@ -374,7 +374,7 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
           price: int.parse(editPrice.text),
           priceSQFT: inputTrans.priceSQFT,
           status: editStatus,
-          payStatus: (mode == 2) ? inputTrans.payStatus : editClaimed,
+          payStatus: (mode == 3) ? inputTrans.payStatus : editClaimed,
           commission: double.parse(editCommission.text),
           projectName: editProjectName.text,
           unit: editUnit.text,

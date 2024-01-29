@@ -190,7 +190,7 @@ class _ProductState extends State<Product> {
                         onTap: () {
                           transactionEdit(context, pubTransactions[index], 2).then((value) {
                             setState(() {
-                              if (value != Transaction.create() || value != null) {
+                              if (value != Transaction.create() && value != null) {
                                 pubTransactions[index] = value!;
                               }
                             });
@@ -200,29 +200,40 @@ class _ProductState extends State<Product> {
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              text2(pubTransactions[index].name, isBold: true),
+                              text3("${context.tr('product_colName')} :\n"
+                                  "    ${pubTransactions[index].name}"),
                               const SizedBox(height: 5),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  text3("\$${pubTransactions[index].price}", isBold: true),
-                                  if (pubTransactions[index].priceSQFT != null) text3(" (\$${pubTransactions[index].priceSQFT}/sqft)", isBold: true),
+                                  text3("${context.tr('product_colPrice')} :\n"
+                                      "    \$${pubTransactions[index].price}"),
+                                  if (pubTransactions[index].priceSQFT != null) text3(" (\$${pubTransactions[index].priceSQFT}/sqft)"),
                                 ],
                               ),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].location),
+                              text3("${context.tr('product_colLocation')} :\n"
+                                  "    ${pubTransactions[index].location}"),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].developer),
+                              text3("${context.tr('product_colDeveloper')} :\n"
+                                  "    ${pubTransactions[index].developer}"),
                               const SizedBox(height: 5),
-                              text3(pubTransactions[index].launchDate.toString().substring(0, 10)),
+                              text3("${context.tr('product_colLaunchingData')} :\n"
+                                  "    ${pubTransactions[index].launchDate.toString().substring(0, 10)}"),
                               const SizedBox(height: 5),
-                              text3("Commission rate: ${pubTransactions[index].commission}%"),
+                              text3("${context.tr('product_colCommission')} :\n"
+                                  "    ${pubTransactions[index].commission}%"),
                               const SizedBox(height: 5),
-                              if (pubTransactions[index].description != null) text3(pubTransactions[index].description ?? ""),
+                              if (pubTransactions[index].description != null)
+                                text3("${context.tr('product_colDescription')} :\n"
+                                    "    ${pubTransactions[index].description ?? ""}"),
                               const SizedBox(height: 5),
+                              if (pubTransactions[index].documents.isNotEmpty) text3("${context.tr('product_colDocument')} :"),
                               Column(
-                                children: pubTransactions[index].documents.map((e) => text3(e.fileName)).toList(),
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: pubTransactions[index].documents.map((e) => text3("    ${e.fileName}")).toList(),
                               ),
                             ],
                           ),
