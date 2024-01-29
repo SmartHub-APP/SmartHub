@@ -51,7 +51,7 @@
   "emptyPosition": "Position cannot be None",
   "emptyDescription": "Description cannot be None",
   "emptyDate": "Date cannot be ",
-  "emptyDocument": "Please upload image",
+  "emptyDocument": "Please upload document",
   "login_tabName": "Login",
   "login_account": "Account",
   "login_password": "Password",

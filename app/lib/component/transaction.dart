@@ -10,9 +10,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 Future<Transaction?> transactionCustomer(BuildContext context, Transaction inputTrans) async {
-  int currentIndex = 0;
   int editStatus = inputTrans.status;
-  int editClaimed = inputTrans.payStatus;
   bool canSave = false;
   DateTime selectDate = inputTrans.saleDate;
   TextEditingController editUnit = TextEditingController(text: inputTrans.unit);
@@ -209,108 +207,48 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                       ),
                       SizedBox(height: 2.h),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          text3("${context.tr('customer_colDocument')} : "),
-                          Expanded(
+                          SizedBox(
+                            width: 10.w,
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: uiStyle.roundCorner2,
-                                  ),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.hide_image),
-                                    tooltip: context.tr('delete'),
-                                    onPressed: () {
-                                      setState(() {
-                                        documents.removeAt(currentIndex);
-                                        if (currentIndex != 0) {
-                                          currentIndex--;
-                                        }
-                                      });
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 25),
-                                if (documents.isNotEmpty) text3("${currentIndex + 1} / ${documents.length}"),
-                                const SizedBox(width: 25),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: uiStyle.roundCorner2,
-                                  ),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.upload_file),
-                                    tooltip: context.tr('upload'),
-                                    onPressed: () {
-                                      setState(() {
-                                        documents.add(randomPic());
-                                      });
-                                    },
-                                  ),
-                                ),
+                                text3("${context.tr('customer_colDocument')} : "),
+                                IconButton(icon: const Icon(Icons.upload_file), onPressed: () {}),
+                                const SizedBox(width: 5),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 2.h),
-                      Container(
-                        height: 60.h,
-                        decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                        child: documents.isEmpty
-                            ? Center(child: text2(context.tr('emptyDocument')))
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: currentIndex != 0
-                                        ? IconButton(
-                                            icon: const Icon(Icons.arrow_back_ios_outlined),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                              child: documents.isEmpty
+                                  ? Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.all(5),
+                                      child: text2(context.tr('emptyDocument')),
+                                    )
+                                  : ListView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: documents.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          title: text4(documents[index].fileName),
+                                          trailing: IconButton(
+                                            icon: const Icon(Icons.delete),
                                             onPressed: () {
-                                              setState(() {
-                                                currentIndex--;
-                                              });
+                                              documents.removeAt(index);
+                                              setState(() {});
                                             },
-                                          )
-                                        : const SizedBox(),
-                                  ),
-                                  Expanded(
-                                    flex: 8,
-                                    child: Image.network(
-                                      documents[currentIndex].fileHash,
-                                      frameBuilder: (BuildContext context, Widget child, int? frame, bool wasSynchronouslyLoaded) {
-                                        if (wasSynchronouslyLoaded) return child;
-                                        return AnimatedOpacity(
-                                          opacity: frame == null ? 0 : 1,
-                                          duration: const Duration(seconds: 1),
-                                          curve: Curves.easeIn,
-                                          child: child,
+                                          ),
                                         );
                                       },
                                     ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: currentIndex != documents.length - 1
-                                        ? IconButton(
-                                            icon: const Icon(Icons.arrow_forward_ios_outlined),
-                                            onPressed: () {
-                                              setState(() {
-                                                currentIndex++;
-                                              });
-                                            },
-                                          )
-                                        : const SizedBox(),
-                                  ),
-                                ],
-                              ),
-                      ),
+                            ),
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 )),
@@ -329,7 +267,7 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                   onPressed: () {
                     setState(() {
                       editProjectName.text = editUnit.text = editPrice.text = editCommission.text = editDescription.text = "";
-                      editStatus = editClaimed = 0;
+                      editStatus = 0;
                       selectDate = ini.timeStart;
                       appoint = clients = agents = [];
                     });
@@ -397,13 +335,6 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
                         context.tr('emptyStatus'),
                         context.tr('ok'),
                       );
-                    } else if (editClaimed == 0) {
-                      alertDialog(
-                        context,
-                        context.tr('error'),
-                        context.tr('emptyPayStatus'),
-                        context.tr('ok'),
-                      );
                     } else if (selectDate == ini.timeStart) {
                       alertDialog(
                         context,
@@ -432,7 +363,7 @@ Future<Transaction?> transactionCustomer(BuildContext context, Transaction input
           price: int.parse(editPrice.text),
           priceSQFT: inputTrans.priceSQFT,
           status: editStatus,
-          payStatus: editClaimed,
+          payStatus: inputTrans.payStatus,
           commission: double.parse(editCommission.text),
           projectName: editProjectName.text,
           unit: editUnit.text,
