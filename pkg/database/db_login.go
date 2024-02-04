@@ -5,10 +5,10 @@ import (
 )
 
 type LoginResult struct {
-    Message    string
-    Username   string
-    Password   string
-    Permission string
+	Message    string
+	Username   string
+	Password   string
+	Permission string
 }
 
 var sqlLogin = `
@@ -30,7 +30,7 @@ func (DB *SmartHubDB) Try2Login(account, password string) LoginResult {
 	var lr LoginResult
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlLogin, account))
-    defer Hits.Close()
+	defer Hits.Close()
 
 	if err != nil {
 		lr.Message = "Query failed"
@@ -63,7 +63,7 @@ func (DB *SmartHubDB) GetNameAndPerm(account string) LoginResult {
 	var lr LoginResult
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlGetNameAndPerm, account))
-    defer Hits.Close()
+	defer Hits.Close()
 
 	if err != nil {
 		lr.Message = "Query failed"
