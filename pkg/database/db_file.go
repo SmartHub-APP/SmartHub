@@ -5,8 +5,8 @@ import (
 )
 
 type File struct {
-    FileName string
-    HashCode string
+	FileName string
+	HashCode string
 }
 
 var sqlFileGET = `SELECT FileName, HashCode FROM File WHERE TransactionID=%s;`
@@ -18,7 +18,9 @@ func (DB *SmartHubDB) FileGET(TransactionID string) ([]File, string) {
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlFileGET, TransactionID))
 
-	if err != nil { return Files, "Query failed" }
+	if err != nil {
+		return Files, "Query failed"
+	}
 
 	for Hits.Next() {
 		var F File
@@ -34,7 +36,9 @@ func (DB *SmartHubDB) FileGET(TransactionID string) ([]File, string) {
 func (DB *SmartHubDB) FilePOST(TransactionID, FileName, HashCode string) string {
 	sql := fmt.Sprintf(sqlFilePOST, TransactionID, FileName, HashCode)
 
-	if _, err := DB.ctl.Exec(sql); err != nil { return "Query failed" }
+	if _, err := DB.ctl.Exec(sql); err != nil {
+		return "Query failed"
+	}
 
 	return ""
 }
@@ -42,7 +46,9 @@ func (DB *SmartHubDB) FilePOST(TransactionID, FileName, HashCode string) string 
 func (DB *SmartHubDB) FileDELETE(HashCode string) string {
 	sql := fmt.Sprintf(sqlFileDELETE, HashCode)
 
-	if _, err := DB.ctl.Exec(sql); err != nil { return "Query failed" }
+	if _, err := DB.ctl.Exec(sql); err != nil {
+		return "Query failed"
+	}
 
 	return ""
 }

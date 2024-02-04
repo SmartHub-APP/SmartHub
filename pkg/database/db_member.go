@@ -94,11 +94,10 @@ func (DB *SmartHubDB) MemberGET(query, scheme string) ([]MemberInfo, string) {
 	}
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlMemberGet, syntax))
-	defer Hits.Close()
-
 	if err != nil {
 		return []MemberInfo{}, "Query failed"
 	}
+	defer Hits.Close()
 
 	for Hits.Next() {
 		var R MemberInfo
@@ -216,11 +215,10 @@ func (DB *SmartHubDB) ValidMemberInsert(i Member) (string, Member) {
 
 	alreadyExist := -1
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlMemberCheck, trimAccount))
-	defer Hits.Close()
-
 	if err != nil {
 		return "Query failed", RET
 	}
+	defer Hits.Close()
 
 	for Hits.Next() {
 		Hits.Scan(&alreadyExist)

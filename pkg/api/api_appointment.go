@@ -4,28 +4,25 @@ import (
 	SmartHubDatabase "SmartHub/pkg/database"
 	"encoding/json"
 	"net/http"
-	"strings"
 )
 
-type RoleRequestPost struct {
-	Name string `json:"Name"`
-	Perm string `json:"Perm"`
-}
-
-type RoleRequestPut struct {
-	ID   int    `json:"ID"`
-	Name string `json:"Name"`
-	Perm string `json:"Perm"`
-}
-
-func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
+func RouteAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 		switch r.Method {
 		case "GET":
-			if RET, msg := db.RoleGET(); msg != "" {
+			var Req SmartHubDatabase.AppointmentGetRequest
+
+			err := json.NewDecoder(r.Body).Decode(&Req)
+			if err != nil {
+				http.Error(w, "Failed to decode request", http.StatusBadRequest)
+				return
+			}
+
+			if RET, msg := db.AppointmentGET(Req); msg != "" {
 				http.Error(w, msg, http.StatusInternalServerError)
 				return
 			} else {
@@ -41,7 +38,7 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
 			}
 
 		case "POST":
-			var Req RoleRequestPost
+			var Req SmartHubDatabase.AppointmentEdit
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -49,15 +46,14 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
 				return
 			}
 
-			trimName := strings.TrimSpace(Req.Name)
-			trimPerm := strings.TrimSpace(Req.Perm)
-
-			if trimName == "" || trimPerm == "" {
+			if ok, after := SmartHubDatabase.ValidAppointment(Req); ok {
+				Req = after
+			} else {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
 
-			if msg := db.RolePOST(trimName, trimPerm); msg == "" {
+			if msg := db.AppointmentPOST(Req); msg == "" {
 				w.WriteHeader(http.StatusCreated)
 			} else {
 				if err != nil {
@@ -67,7 +63,7 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
 			}
 
 		case "PUT":
-			var Req RoleRequestPut
+			var Req SmartHubDatabase.AppointmentEdit
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -75,15 +71,14 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
 				return
 			}
 
-			trimName := strings.TrimSpace(Req.Name)
-			trimPerm := strings.TrimSpace(Req.Perm)
-
-			if trimName == "" || trimPerm == "" || Req.ID == 0 {
+			if ok, after := SmartHubDatabase.ValidAppointment(Req); ok {
+				Req = after
+			} else {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
 
-			if msg := db.RolePUT(trimName, trimPerm, Req.ID); msg == "" {
+			if msg := db.AppointmentPUT(Req); msg == "" {
 				w.WriteHeader(http.StatusNoContent)
 			} else {
 				if err != nil {
@@ -101,7 +96,7 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
 				return
 			}
 
-			if msg := db.RoleDELETE(Req); msg == "" {
+			if msg := db.AppointmentDELETE(Req); msg == "" {
 				w.WriteHeader(http.StatusNoContent)
 			} else {
 				if err != nil {
