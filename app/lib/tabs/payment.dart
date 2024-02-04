@@ -1,3 +1,5 @@
+import 'package:smarthub/api/transaction.dart';
+
 import '../config.dart';
 import '../object.dart';
 import '../component/payment.dart';
@@ -21,7 +23,7 @@ class _PaymentState extends State<Payment> {
   bool sortAscend = true;
   TextEditingController filterAgent = TextEditingController(text: "");
   TextEditingController filterName = TextEditingController(text: "");
-  List<Transaction> transactions = Transaction.create().fakeData(10);
+  List<Transaction> transactions = [];
 
   @override
   Widget build(BuildContext context) {
@@ -127,8 +129,24 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.search),
                                 tooltip: context.tr('search'),
                                 onPressed: () {
-                                  setState(() {
-                                    transactions = Transaction.create().fakeData(30);
+                                  getTransactionList(
+                                    TransactionGetRequest(
+                                      name: filterName.text,
+                                      projectName: "",
+                                      status: -1,
+                                      payStatus: searchStatus,
+                                      unit: "",
+                                      launchDateStart: ini.timeStart.toString(),
+                                      launchDateEnd: DateTime.now().toString(),
+                                      saleDateStart: ini.timeStart.toString(),
+                                      saleDateEnd: DateTime.now().toString(),
+                                    ),
+                                  ).then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        transactions = value;
+                                      });
+                                    }
                                   });
                                 },
                               ),
