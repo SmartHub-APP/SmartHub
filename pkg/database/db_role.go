@@ -26,6 +26,9 @@ func (DB *SmartHubDB) RoleGET() ([]Role, string) {
 	var Roles []Role
 
 	Hits, err := DB.ctl.Query(sqlRoleGet)
+	if err != nil {
+		return []Role{}, "Query failed"
+	}
 	defer Hits.Close()
 
 	if err != nil {

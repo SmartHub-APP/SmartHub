@@ -30,12 +30,13 @@ func (DB *SmartHubDB) Try2Login(account, password string) LoginResult {
 	var lr LoginResult
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlLogin, account))
-	defer Hits.Close()
 
 	if err != nil {
 		lr.Message = "Query failed"
 		return lr
 	}
+
+	defer Hits.Close()
 
 	for Hits.Next() {
 		Hits.Scan(
@@ -63,12 +64,11 @@ func (DB *SmartHubDB) GetNameAndPerm(account string) LoginResult {
 	var lr LoginResult
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlGetNameAndPerm, account))
-	defer Hits.Close()
-
 	if err != nil {
 		lr.Message = "Query failed"
 		return lr
 	}
+	defer Hits.Close()
 
 	for Hits.Next() {
 		Hits.Scan(

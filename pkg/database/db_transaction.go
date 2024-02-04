@@ -107,11 +107,10 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]Transaction, 
 	}
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlTransactionGet, queryFilter))
-	defer Hits.Close()
-
 	if err != nil {
 		return []Transaction{}, "Query failed"
 	}
+	defer Hits.Close()
 
 	for Hits.Next() {
 		var R Transaction
