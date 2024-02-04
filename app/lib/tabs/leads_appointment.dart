@@ -1,3 +1,5 @@
+import 'package:smarthub/api/appointment.dart';
+
 import '../config.dart';
 import '../object.dart';
 import '../component/appointment.dart';
@@ -21,7 +23,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
   DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
   TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterProjectName = TextEditingController(text: "");
-  List<Appointment> leadAppointments = Appointment.create().fakeData(30);
+  List<Appointment> leadAppointments = [];
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +152,22 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 icon: const Icon(Icons.search),
                                 tooltip: context.tr('search'),
                                 onPressed: () {
-                                  setState(() {});
+                                  leadAppointments = [];
+                                  getAppointmentList(
+                                    AppointmentGetRequest(
+                                      name: filterName.text,
+                                      projectName: filterProjectName.text,
+                                      status: searchStatus,
+                                      appointTimeStart: searchRange.start.toString(),
+                                      appointTimeEnd: searchRange.end.toString(),
+                                    ),
+                                  ).then((value) {
+                                    setState(() {
+                                      if (value != null) {
+                                        leadAppointments = value;
+                                      }
+                                    });
+                                  });
                                 },
                               ),
                             ),

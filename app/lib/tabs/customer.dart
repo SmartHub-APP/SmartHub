@@ -1,3 +1,4 @@
+import '../api/transaction.dart';
 import '../config.dart';
 import '../object.dart';
 import '../component/tableview.dart';
@@ -150,8 +151,23 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.search),
                                 tooltip: context.tr('search'),
                                 onPressed: () {
-                                  setState(() {
-                                    selfTransactions = Transaction.create().fakeData(30);
+                                  String start = searchRange.start.toString();
+                                  String end = searchRange.end.toString();
+                                  getTransactionList(TransactionGetRequest(
+                                    name: filterName.text,
+                                    projectName: filterClass.text,
+                                    status: searchStatus,
+                                    payStatus: -1,
+                                    unit: "",
+                                    launchDateStart: start,
+                                    launchDateEnd: end,
+                                    saleDateStart: start,
+                                    saleDateEnd: end,
+                                  )).then((value) {
+                                    if (value != null) {
+                                      selfTransactions = value;
+                                    }
+                                    setState(() {});
                                   });
                                 },
                               ),

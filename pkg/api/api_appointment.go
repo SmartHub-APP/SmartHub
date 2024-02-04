@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
+func RouteAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
@@ -14,7 +14,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 
 		switch r.Method {
 		case "GET":
-			var Req SmartHubDatabase.TransactionGetRequest
+			var Req SmartHubDatabase.AppointmentGetRequest
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -22,7 +22,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if RET, msg := db.TransactionGET(Req); msg != "" {
+			if RET, msg := db.AppointmentGET(Req); msg != "" {
 				http.Error(w, msg, http.StatusInternalServerError)
 				return
 			} else {
@@ -38,7 +38,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 			}
 
 		case "POST":
-			var Req SmartHubDatabase.TransactionEdit
+			var Req SmartHubDatabase.AppointmentEdit
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -46,14 +46,14 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidTransaction(Req); ok {
+			if ok, after := SmartHubDatabase.ValidAppointment(Req); ok {
 				Req = after
 			} else {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
 
-			if msg := db.TransactionPOST(Req); msg == "" {
+			if msg := db.AppointmentPOST(Req); msg == "" {
 				w.WriteHeader(http.StatusCreated)
 			} else {
 				if err != nil {
@@ -63,7 +63,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 			}
 
 		case "PUT":
-			var Req SmartHubDatabase.TransactionEdit
+			var Req SmartHubDatabase.AppointmentEdit
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -71,14 +71,14 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidTransaction(Req); ok {
+			if ok, after := SmartHubDatabase.ValidAppointment(Req); ok {
 				Req = after
 			} else {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
 
-			if msg := db.TransactionPUT(Req); msg == "" {
+			if msg := db.AppointmentPUT(Req); msg == "" {
 				w.WriteHeader(http.StatusNoContent)
 			} else {
 				if err != nil {
@@ -96,7 +96,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if msg := db.TransactionDELETE(Req); msg == "" {
+			if msg := db.AppointmentDELETE(Req); msg == "" {
 				w.WriteHeader(http.StatusNoContent)
 			} else {
 				if err != nil {

@@ -1,3 +1,5 @@
+import 'package:smarthub/api/transaction.dart';
+
 import '../config.dart';
 import '../object.dart';
 import '../component/interaction.dart';
@@ -27,7 +29,32 @@ class _DashboardState extends State<Dashboard> {
     DataPoint('9', 7),
     DataPoint('10', 4),
   ];
-  List<Transaction> recentTransactions = Transaction.create().fakeData(30);
+
+  List<Transaction> recentTransactions = [];
+
+  @override
+  void initState() {
+    getTransactionList(
+      TransactionGetRequest(
+        name: "",
+        projectName: "",
+        unit: "",
+        status: -1,
+        payStatus: -1,
+        saleDateStart: ini.timeStart.toString(),
+        saleDateEnd: DateTime.now().toString(),
+        launchDateStart: ini.timeStart.toString(),
+        launchDateEnd: DateTime.now().toString(),
+      ),
+    ).then((value) {
+      if (value != null) {
+        setState(() {
+          recentTransactions = value;
+        });
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

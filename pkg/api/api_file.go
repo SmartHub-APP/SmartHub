@@ -1,137 +1,137 @@
 ﻿package api
 
 import (
-    "os"
-    "io"
-    "strings"
+	SmartHubDatabase "SmartHub/pkg/database"
+	SmartHubTool "SmartHub/pkg/tool"
+	"encoding/json"
+	"io"
 	"net/http"
-    "path/filepath"
-    "encoding/json"
-    SmartHubTool "SmartHub/pkg/tool"
-    SmartHubDatabase "SmartHub/pkg/database"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 func RouterFile(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-        Val := r.URL.Query()
+		Val := r.URL.Query()
 
 		switch r.Method {
-            case "GET":
-                TID := strings.TrimSpace(Val.Get("TID"))
+		case "GET":
+			TID := strings.TrimSpace(Val.Get("TID"))
 
-                if TID == "" {
-                    http.Error(w, "Missed field", http.StatusBadRequest)
-                    return
-                }
+			if TID == "" {
+				http.Error(w, "Missed field", http.StatusBadRequest)
+				return
+			}
 
-                if FID := strings.TrimSpace(Val.Get("FID")); FID == "" {
-                    if Files, msg := db.FileGET(TID); msg != "" {
-                        http.Error(w, msg, http.StatusInternalServerError)
-                        return
-                    } else {
-                        jsonResponse, err := json.Marshal(Files)
-                        if err != nil {
-                            http.Error(w, err.Error(), http.StatusInternalServerError)
-                            return
-                        }
-            
-                        w.Header().Set("Content-Type", "application/json; charset=utf-8")
-                        w.WriteHeader(http.StatusOK)
-                        w.Write(jsonResponse)
-                    }
-                } else {
-                    fPath := filepath.Join(base, FID)
+			if FID := strings.TrimSpace(Val.Get("FID")); FID == "" {
+				if Files, msg := db.FileGET(TID); msg != "" {
+					http.Error(w, msg, http.StatusInternalServerError)
+					return
+				} else {
+					jsonResponse, err := json.Marshal(Files)
+					if err != nil {
+						http.Error(w, err.Error(), http.StatusInternalServerError)
+						return
+					}
 
-                    if  _, err := os.Stat(fPath); err == nil {
-                        if Files, msg := db.FileGET(TID); msg != "" {
-                            http.Error(w, msg, http.StatusInternalServerError)
-                            return
-                        } else {
-                            fName := ""
+					w.Header().Set("Content-Type", "application/json; charset=utf-8")
+					w.WriteHeader(http.StatusOK)
+					w.Write(jsonResponse)
+				}
+			} else {
+				fPath := filepath.Join(base, FID)
 
-                            for _, File := range Files {
-                                if File.HashCode == FID {
-                                    fName = File.FileName
-                                    break
-                                }
-                            }
+				if _, err := os.Stat(fPath); err == nil {
+					if Files, msg := db.FileGET(TID); msg != "" {
+						http.Error(w, msg, http.StatusInternalServerError)
+						return
+					} else {
+						fName := ""
 
-                            if fName == "" {
-                                w.Header().Set("Content-Disposition", "attachment; filename="+FID)
-                            } else {
-                                w.Header().Set("Content-Disposition", "attachment; filename="+fName)
-                            }
+						for _, File := range Files {
+							if File.HashCode == FID {
+								fName = File.FileName
+								break
+							}
+						}
 
-                            http.ServeFile(w, r, fPath)
-                        }
-                    } else {
-                        http.Error(w, err.Error(), http.StatusNotFound)
-                        return
-                    }
-                }
+						if fName == "" {
+							w.Header().Set("Content-Disposition", "attachment; filename="+FID)
+						} else {
+							w.Header().Set("Content-Disposition", "attachment; filename="+fName)
+						}
 
-			case "POST" :
-                TID := strings.TrimSpace(Val.Get("TID"))
+						http.ServeFile(w, r, fPath)
+					}
+				} else {
+					http.Error(w, err.Error(), http.StatusNotFound)
+					return
+				}
+			}
 
-                if TID == "" {
-                    http.Error(w, "Missed field", http.StatusBadRequest)
-                    return
-                }
+		case "POST":
+			TID := strings.TrimSpace(Val.Get("TID"))
 
-                r.ParseMultipartForm(500 << 20)
+			if TID == "" {
+				http.Error(w, "Missed field", http.StatusBadRequest)
+				return
+			}
 
-				file, handler, err := r.FormFile("FileContent")
-                if err != nil {
-                    http.Error(w, "Failed to upload file", http.StatusNotAcceptable)
-                    return
-                }
-                defer file.Close()
+			r.ParseMultipartForm(500 << 20)
 
-                HashCode := SmartHubTool.SHA256EncodeTime(handler.Filename) + filepath.Ext(handler.Filename)
+			file, handler, err := r.FormFile("FileContent")
+			if err != nil {
+				http.Error(w, "Failed to upload file", http.StatusNotAcceptable)
+				return
+			}
+			defer file.Close()
 
-                db.FilePOST(TID, handler.Filename, HashCode)
+			HashCode := SmartHubTool.SHA256EncodeTime(handler.Filename) + filepath.Ext(handler.Filename)
 
-                dest, err := os.Create(filepath.Join(base, HashCode))
-                if err != nil {
-                    http.Error(w, "Failed to create file", http.StatusInternalServerError)
-                    return
-                }
-                defer dest.Close()
+			db.FilePOST(TID, handler.Filename, HashCode)
 
-                if _, err := io.Copy(dest, file); err != nil {
-                    http.Error(w, "Copy data error", http.StatusInternalServerError)
-                    return
-                }
+			dest, err := os.Create(filepath.Join(base, HashCode))
+			if err != nil {
+				http.Error(w, "Failed to create file", http.StatusInternalServerError)
+				return
+			}
+			defer dest.Close()
 
-        		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
-        		w.Header().Set("Access-Control-Allow-Methods", "POST, DELETE")
-                w.WriteHeader(http.StatusCreated)
+			if _, err := io.Copy(dest, file); err != nil {
+				http.Error(w, "Copy data error", http.StatusInternalServerError)
+				return
+			}
 
-            case "DELETE" :
-                file := strings.TrimSpace(Val.Get("file"))
+			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+			w.Header().Set("Access-Control-Allow-Methods", "POST, DELETE")
+			w.WriteHeader(http.StatusCreated)
 
-                if file == "" {
-                    http.Error(w, "Missed field", http.StatusBadRequest)
-                    return
-                }
+		case "DELETE":
+			file := strings.TrimSpace(Val.Get("file"))
 
-                err := os.Remove(filepath.Join(base, file))
-                if err != nil {
-                    http.Error(w, "Failed to delete file", http.StatusInternalServerError)
-                    return
-                }
+			if file == "" {
+				http.Error(w, "Missed field", http.StatusBadRequest)
+				return
+			}
 
-                if msg := db.FileDELETE(file); msg == "" {
-                    w.WriteHeader(http.StatusNoContent)
-                } else {
-                    if err != nil {
-                         http.Error(w, msg, http.StatusInternalServerError)
-                         return
-                     }
-                }
+			err := os.Remove(filepath.Join(base, file))
+			if err != nil {
+				http.Error(w, "Failed to delete file", http.StatusInternalServerError)
+				return
+			}
 
-            default:
-                http.Error(w, "No such method", http.StatusMethodNotAllowed)
-	    }
+			if msg := db.FileDELETE(file); msg == "" {
+				w.WriteHeader(http.StatusNoContent)
+			} else {
+				if err != nil {
+					http.Error(w, msg, http.StatusInternalServerError)
+					return
+				}
+			}
+
+		default:
+			http.Error(w, "No such method", http.StatusMethodNotAllowed)
+		}
 	}
 }

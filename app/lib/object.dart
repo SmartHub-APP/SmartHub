@@ -1,6 +1,4 @@
-import 'tool.dart';
 import 'config.dart';
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 
 // ##### UI
@@ -202,33 +200,25 @@ class Appointment {
     );
   }
 
-  List<Appointment> fakeData(int amount) {
-    Random seed = Random();
-    return List.generate(amount, (index) {
-      return Appointment(
-        onSelect: false,
-        status: seed.nextInt(3) + 1,
-        projectName: randomString(5),
-        lead: randomPerson(),
-        agent: randomPerson(),
-        appointDate: DateTime(
-          seed.nextInt(23) + 2000,
-          seed.nextInt(12) + 1,
-          seed.nextInt(25) + 1,
-          seed.nextInt(12) + 1,
-          seed.nextInt(60) + 1,
-        ),
-      );
-    });
+  factory Appointment.fromJson(Map<String, dynamic> json) {
+    return Appointment(
+      onSelect: false,
+      status: json["Status"] ?? 0,
+      projectName: json["ProjectName"] ?? "",
+      appointDate: DateTime.parse(json["AppointDate"] ?? ini.timeStart.toString()),
+      lead: json["Lead"] != null ? Member.fromJson(json["Lead"]) : null,
+      agent: json["Agent"] != null ? Member.fromJson(json["Agent"]) : null,
+    );
   }
 }
 
 class Transaction {
+  int id;
   bool onSelect;
   int price, status, payStatus;
   int? priceSQFT;
   double commission;
-  String id, unit, name, projectName, location, developer;
+  String unit, name, projectName, location, developer;
   String? description;
   Member? appoint;
   DateTime saleDate, launchDate;
@@ -265,7 +255,7 @@ class Transaction {
       status: 2,
       payStatus: 0,
       commission: 0,
-      id: "",
+      id: 0,
       unit: "",
       name: "",
       location: "",
@@ -288,7 +278,7 @@ class Transaction {
       status: 2,
       payStatus: 0,
       commission: defaultCommission,
-      id: "",
+      id: 0,
       unit: "",
       name: "",
       location: "",
@@ -303,45 +293,30 @@ class Transaction {
     );
   }
 
-  List<Transaction> fakeData(int amount) {
-    Random seed = Random();
-    return List.generate(amount, (index) {
-      String rngString3 = "$index-${randomString(3)}";
-      String rngString10 = "$index-${randomString(10)}";
-      return Transaction(
-        onSelect: false,
-        id: rngString10,
-        status: seed.nextInt(5) + 1,
-        payStatus: seed.nextInt(3),
-        commission: seed.nextInt(30) + 1,
-        price: seed.nextInt(100000) + 10000,
-        priceSQFT: seed.nextInt(100) + 100,
-        name: "Name-$rngString3",
-        unit: "Unit-$rngString3",
-        location: "Location-$rngString3",
-        developer: "Developer-$rngString3",
-        projectName: "ProjectName-$rngString3",
-        description: "Description - $rngString10-$rngString10",
-        appoint: randomPerson(),
-        agent: List.generate(3, (index) => randomPerson()),
-        clients: List.generate(3, (index) => randomPerson()),
-        documents: List.generate(3, (index) => randomPic()),
-        saleDate: DateTime(
-          seed.nextInt(23) + 2000,
-          seed.nextInt(12) + 1,
-          seed.nextInt(25) + 1,
-          seed.nextInt(12) + 1,
-          seed.nextInt(60) + 1,
-        ),
-        launchDate: DateTime(
-          seed.nextInt(23) + 2000,
-          seed.nextInt(12) + 1,
-          seed.nextInt(25) + 1,
-          seed.nextInt(12) + 1,
-          seed.nextInt(60) + 1,
-        ),
-      );
-    });
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    return Transaction(
+      onSelect: false,
+      id: json["ID"] ?? 0,
+      name: json["Name"] ?? "",
+      projectName: json["ProjectName"] ?? "",
+      price: json["Price"] ?? 0,
+      priceSQFT: json["PriceSQFT"] ?? 0,
+      commission: json["Commission"] ?? 0,
+      status: json["Status"] ?? 0,
+      payStatus: json["PayStatus"] ?? 0,
+      unit: json["Unit"] ?? "",
+      location: json["Location"] ?? "",
+      developer: json["Developer"] ?? "",
+      description: json["Description"] ?? "",
+      //appoint: json["Appoint"] != null ? Member.fromJson(json["Appoint"]) : null,
+      clients: [],
+      //List<Member>.from(json["Clients"].map((x) => Member.fromJson(x))),
+      agent: [],
+      //List<Member>.from(json["Agent"].map((x) => Member.fromJson(x))),
+      saleDate: DateTime.parse(json["SaleDate"] ?? ini.timeStart.toString()),
+      launchDate: DateTime.parse(json["LaunchDate"] ?? ini.timeStart.toString()),
+      documents: [], //List<File>.from(json["Documents"].map((x) => File(fileName: x["FileName"], fileHash: x["FileHash"]))),
+    );
   }
 }
 
@@ -467,8 +442,15 @@ class InitSetting {
 class Api {
   String login;
   String member;
+  String transaction;
+  String appointment;
 
-  Api({required this.login, required this.member});
+  Api({
+    required this.login,
+    required this.member,
+    required this.transaction,
+    required this.appointment,
+  });
 }
 
 class Lang {

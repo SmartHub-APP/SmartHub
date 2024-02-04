@@ -17,7 +17,7 @@ class Product extends StatefulWidget {
 
 class _ProductState extends State<Product> {
   int searchStatus = 0;
-  List<Transaction> pubTransactions = Transaction.create().fakeData(30);
+  List<Transaction> pubTransactions = [];
   TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterClass = TextEditingController(text: "");
 
@@ -107,8 +107,8 @@ class _ProductState extends State<Product> {
                                   transactionEdit(context, Transaction.create(), 2).then((value) {
                                     if (value != null) {
                                       setState(() {
-                                        if (value != Transaction.create() && value != null) {
-                                          pubTransactions.add(value!);
+                                        if (value != Transaction.create()) {
+                                          pubTransactions.add(value);
                                         }
                                       });
                                     }
@@ -128,7 +128,19 @@ class _ProductState extends State<Product> {
                                 tooltip: context.tr('search'),
                                 onPressed: () {
                                   setState(() {
-                                    pubTransactions = Transaction.create().fakeData(30);
+                                    pubTransactions = pubTransactions.where((element) {
+                                      bool result = true;
+                                      if (filterName.text.isNotEmpty) {
+                                        result = result && element.name.contains(filterName.text);
+                                      }
+                                      if (filterClass.text.isNotEmpty) {
+                                        result = result && element.unit.contains(filterClass.text);
+                                      }
+                                      if (searchStatus > 0) {
+                                        result = result && element.status == searchStatus;
+                                      }
+                                      return result;
+                                    }).toList();
                                   });
                                 },
                               ),
@@ -193,7 +205,7 @@ class _ProductState extends State<Product> {
                           transactionEdit(context, pubTransactions[index], 1).then((value) {
                             if (value != null) {
                               setState(() {
-                                if (value != Transaction.create() && value != null) {
+                                if (value != Transaction.create()) {
                                   pubTransactions[index] = value;
                                 }
                               });
