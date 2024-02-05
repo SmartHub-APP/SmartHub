@@ -4,6 +4,7 @@ import (
 	SmartHubDatabase "SmartHub/pkg/database"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
@@ -16,11 +17,15 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 		case "GET":
 			var Req SmartHubDatabase.TransactionGetRequest
 
-			err := json.NewDecoder(r.Body).Decode(&Req)
-			if err != nil {
-				http.Error(w, "Failed to decode request", http.StatusBadRequest)
-				return
-			}
+			Req.Name = r.URL.Query().Get("Name")
+			Req.ProjectName = r.URL.Query().Get("ProjectName")
+			Req.Status, _ = strconv.Atoi(r.URL.Query().Get("Status"))
+			Req.PayStatus, _ = strconv.Atoi(r.URL.Query().Get("PayStatus"))
+			Req.Unit = r.URL.Query().Get("Unit")
+			Req.LaunchDateStart = r.URL.Query().Get("LaunchDateStart")
+			Req.LaunchDateEnd = r.URL.Query().Get("LaunchDateEnd")
+			Req.SaleDateStart = r.URL.Query().Get("SaleDateStart")
+			Req.SaleDateEnd = r.URL.Query().Get("SaleDateEnd")
 
 			if RET, msg := db.TransactionGET(Req); msg != "" {
 				http.Error(w, msg, http.StatusInternalServerError)
