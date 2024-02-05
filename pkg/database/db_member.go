@@ -251,7 +251,7 @@ func (DB *SmartHubDB) MemberGetByID(query string) ([]MemberInfo, string) {
 	Members := []MemberInfo{}
 	Querys := []string{}
 
-	for _, q := range strings.Split(query, ",") {
+	for _, q := range strings.Split(query, ";") {
 		Querys = append(Querys, fmt.Sprintf("Member.ID = %s", q))
 	}
 

@@ -126,7 +126,6 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]TransactionGe
 	}
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlTransactionGet, queryFilter))
-	fmt.Println("###", fmt.Sprintf(sqlTransactionGet, queryFilter))
 	if err != nil {
 		return Transactions, "Query failed"
 	}
