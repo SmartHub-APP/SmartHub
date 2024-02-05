@@ -107,6 +107,7 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]Transaction, 
 	}
 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlTransactionGet, queryFilter))
+	fmt.Println("###", fmt.Sprintf(sqlTransactionGet, queryFilter))
 	if err != nil {
 		return []Transaction{}, "Query failed"
 	}
@@ -135,6 +136,8 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]Transaction, 
 			&R.LaunchDate,
 			&R.CreateTime,
 		)
+
+		fmt.Println(R)
 
 		Transactions = append(Transactions, R)
 	}
