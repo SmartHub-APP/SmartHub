@@ -52,7 +52,7 @@ clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Aut
 
 ## Transaction
 1. GET
-clear; curl -X GET -H "Content-Type: application/json" -d '{"Name":"", "ProjectName":"", "Status":"", "PayStatus":"", "Unit":"", "LaunchDateStart":"", "LaunchDateEnd":"", "SaleDateStart":"", "SaleDateEnd":""}' http://140.113.120.235:25000/smarthub/transaction
+curl -X GET "http://140.113.120.235:25000/smarthub/transaction?Name=Test&ProjectName=Test&Status=1&PayStatus=1&Unit=Test&LaunchDateStart=2020-01-01&LaunchDateEnd=2020-12-31&SaleDateStart=2020-01-01&SaleDateEnd=2020-12-31"
 2. POST
 clear; curl -X POST -H "Content-Type: application/json" -d '{"Name":"test","ProjectName":"test","Price":1000000,"PriceSQFT":500,"Commission":20.87,"Status":2,"PayStatus":2,"Unit":"test","Location":"test","Developer":"test","Description":"test","Appoint":"1;2","Client":"1","Agent":"3","SaleDate":"2020-01-01","LaunchDate":"2025-01-01"}' http://140.113.120.235:25000/smarthub/transaction
 3. PUT

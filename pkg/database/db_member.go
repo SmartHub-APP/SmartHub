@@ -68,6 +68,21 @@ WHERE ID="%d";
 `
 var sqlMemberDELETE = `DELETE FROM Member WHERE ID IN (%s);`
 var sqlMemberCheck = `SELECT ID FROM Member WHERE Account="%s";`
+var sqlGetMemberByID = `
+SELECT 
+Member.ID,
+Role.Name AS RoleName,
+Role.Permission AS Permission,
+Member.Name,
+Member.Company,
+Member.JobTitle,
+Member.Account,
+Member.Phone,
+Member.BankCode,
+Member.BankAccount
+FROM Member
+JOIN Role ON Member.RoleID = Role.ID
+WHERE (Member.Status != 0) AND (%s)`
 
 func (DB *SmartHubDB) MemberGET(query, scheme string) ([]MemberInfo, string) {
 	sRoleID, err := strconv.Atoi(scheme)
@@ -230,4 +245,40 @@ func (DB *SmartHubDB) ValidMemberInsert(i Member) (string, Member) {
 	}
 
 	return "", RET
+}
+
+func (DB *SmartHubDB) MemberGetByID(query string) ([]MemberInfo, string) {
+	Members := []MemberInfo{}
+	Querys := []string{}
+
+	for _, q := range strings.Split(query, ";") {
+		Querys = append(Querys, fmt.Sprintf("Member.ID = %s", q))
+	}
+
+	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlGetMemberByID, strings.Join(Querys, " OR ")))
+	if err != nil {
+		return Members, "Query failed"
+	}
+	defer Hits.Close()
+
+	for Hits.Next() {
+		var R MemberInfo
+
+		Hits.Scan(
+			&R.ID,
+			&R.Role.Name,
+			&R.Role.Permission,
+			&R.Name,
+			&R.Company,
+			&R.JobTitle,
+			&R.Account,
+			&R.Phone,
+			&R.BankCode,
+			&R.BankAccount,
+		)
+
+		Members = append(Members, R)
+	}
+
+	return Members, ""
 }
