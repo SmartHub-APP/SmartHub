@@ -38,6 +38,26 @@ type TransactionGetRequest struct {
 	SaleDateEnd     string `json:"SaleDateEnd"`
 }
 
+type TransactionGetResponse struct {
+	ID          int          `json:"ID"`
+	Name        string       `json:"Name"`
+	ProjectName string       `json:"ProjectName"`
+	Price       float64      `json:"Price"`
+	PriceSQFT   float64      `json:"PriceSQFT"`
+	Commission  float64      `json:"Commission"`
+	Status      int          `json:"Status"`
+	PayStatus   int          `json:"PayStatus"`
+	Unit        string       `json:"Unit"`
+	Location    string       `json:"Location"`
+	Developer   string       `json:"Developer"`
+	Description string       `json:"Description"`
+	Appoint     []MemberInfo `json:"Appoint"`
+	Client      []MemberInfo `json:"Client"`
+	Agent       []MemberInfo `json:"Agent"`
+	SaleDate    string       `json:"SaleDate"`
+	LaunchDate  string       `json:"LaunchDate"`
+}
+
 type TransactionEdit struct {
 	Name        string  `json:"Name"`
 	ProjectName string  `json:"ProjectName"`
@@ -58,7 +78,6 @@ type TransactionEdit struct {
 }
 
 var sqlTransactionGet = `SELECT * FROM Transaction %s;`
-
 var sqlTransactionPOST = `
 INSERT INTO Transaction (Name, ProjectName, Price, PriceSQFT, Commission,
 	Status, PayStatus, Unit, Location, Developer, Description, Appoint,
@@ -73,8 +92,8 @@ Description="%s", Appoint="%s", Client="%s", Agent="%s", SaleDate="%s", LaunchDa
 `
 var sqlTransactionDELETE = `DELETE FROM Transaction WHERE ID IN (%s);`
 
-func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]Transaction, string) {
-	var Transactions []Transaction
+func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]TransactionGetResponse, string) {
+	var Transactions []TransactionGetResponse
 
 	Querys := []string{}
 	if req.Name != "" {
@@ -109,7 +128,7 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]Transaction, 
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlTransactionGet, queryFilter))
 	fmt.Println("###", fmt.Sprintf(sqlTransactionGet, queryFilter))
 	if err != nil {
-		return []Transaction{}, "Query failed"
+		return Transactions, "Query failed"
 	}
 	defer Hits.Close()
 
@@ -137,9 +156,32 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]Transaction, 
 			&R.CreateTime,
 		)
 
-		fmt.Println(R)
+		Appoints, _ := DB.MemberGetByID(R.Appoint)
+		Clients, _ := DB.MemberGetByID(R.Client)
+		Agents, _ := DB.MemberGetByID(R.Agent)
 
-		Transactions = append(Transactions, R)
+		Transactions = append(
+			Transactions,
+			TransactionGetResponse{
+				ID:          R.ID,
+				Name:        R.Name,
+				ProjectName: R.ProjectName,
+				Price:       R.Price,
+				PriceSQFT:   R.PriceSQFT,
+				Commission:  R.Commission,
+				Status:      R.Status,
+				PayStatus:   R.PayStatus,
+				Unit:        R.Unit,
+				Location:    R.Location,
+				Developer:   R.Developer,
+				Description: R.Description,
+				Appoint:     Appoints,
+				Client:      Clients,
+				Agent:       Agents,
+				SaleDate:    R.SaleDate,
+				LaunchDate:  R.LaunchDate,
+			},
+		)
 	}
 
 	return Transactions, ""
