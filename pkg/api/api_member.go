@@ -13,6 +13,11 @@ func RouterMember(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *htt
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 		switch r.Method {
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+
+			return
+
 		case "GET":
 			query := r.URL.Query().Get("q")
 			scheme := r.URL.Query().Get("s")

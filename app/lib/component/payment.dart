@@ -1,7 +1,7 @@
-import 'package:sprintf/sprintf.dart';
-
 import 'interaction.dart';
-import '../object.dart';
+import '../object/member.dart';
+import '../object/transaction.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';

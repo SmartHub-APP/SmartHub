@@ -1,5 +1,5 @@
 import '../config.dart';
-import '../object.dart';
+import '../object/member.dart';
 import 'dart:convert';
 import 'package:sprintf/sprintf.dart';
 import 'package:http/http.dart' as http;

@@ -1,7 +1,7 @@
-import 'package:smarthub/api/transaction.dart';
-
 import '../config.dart';
-import '../object.dart';
+import '../api/transaction.dart';
+import '../object/plot.dart';
+import '../object/transaction.dart';
 import '../component/interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';

@@ -14,6 +14,11 @@ func RouterAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 		switch r.Method {
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+
+			return
+
 		case "GET":
 			var Req SmartHubDatabase.AppointmentGetRequest
 
@@ -39,7 +44,7 @@ func RouterAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 			}
 
 		case "POST":
-			var Req SmartHubDatabase.AppointmentEdit
+			var Req SmartHubDatabase.AppointmentPost
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -47,9 +52,7 @@ func RouterAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidAppointment(Req); ok {
-				Req = after
-			} else {
+			if Req.Status <= 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
@@ -64,7 +67,7 @@ func RouterAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 			}
 
 		case "PUT":
-			var Req SmartHubDatabase.AppointmentEdit
+			var Req SmartHubDatabase.AppointmentPUT
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -72,9 +75,7 @@ func RouterAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidAppointment(Req); ok {
-				Req = after
-			} else {
+			if Req.Status <= 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}

@@ -16,6 +16,11 @@ func RouterFile(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseW
 		Val := r.URL.Query()
 
 		switch r.Method {
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+
+			return
+
 		case "GET":
 			TID := strings.TrimSpace(Val.Get("TID"))
 

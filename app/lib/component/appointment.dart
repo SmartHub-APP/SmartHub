@@ -1,6 +1,7 @@
 import 'interaction.dart';
 import '../config.dart';
-import '../object.dart';
+import '../object/member.dart';
+import '../object/appointment.dart';
 import '../component/member.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
