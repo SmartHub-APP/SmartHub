@@ -34,7 +34,17 @@ type AppointmentGetResponse struct {
 	AppointTime string       `json:"AppointTime"`
 }
 
-type AppointmentEdit struct {
+type AppointmentPost struct {
+	Status      int    `json:"Status"`
+	Name        string `json:"Name"`
+	ProjectName string `json:"ProjectName"`
+	Lead        string `json:"Lead"`
+	Agent       string `json:"Agent"`
+	AppointTime string `json:"AppointTime"`
+}
+
+type AppointmentPUT struct {
+	ID          int    `json:"ID"`
 	Status      int    `json:"Status"`
 	Name        string `json:"Name"`
 	ProjectName string `json:"ProjectName"`
@@ -52,6 +62,7 @@ VALUES ("%d", "%s", "%s", "%s", "%s", "%s");
 var sqlAppointmentPUT = `
 UPDATE Appointment
 SET Status="%d", Name="%s", ProjectName="%s", Lead="%s", Agent="%s", AppointDate="%s";
+WHERE ID="%d";
 `
 var sqlAppointmentDELETE = `DELETE FROM Appointment WHERE ID IN (%s);`
 
@@ -118,7 +129,7 @@ func (DB *SmartHubDB) AppointmentGET(req AppointmentGetRequest) ([]AppointmentGe
 	return Appointments, ""
 }
 
-func (DB *SmartHubDB) AppointmentPOST(m AppointmentEdit) string {
+func (DB *SmartHubDB) AppointmentPOST(m AppointmentPost) string {
 	sql := fmt.Sprintf(
 		sqlAppointmentPOST,
 		m.Status, m.Name, m.ProjectName, m.Lead, m.Agent, m.AppointTime,
@@ -131,10 +142,11 @@ func (DB *SmartHubDB) AppointmentPOST(m AppointmentEdit) string {
 	return ""
 }
 
-func (DB *SmartHubDB) AppointmentPUT(m AppointmentEdit) string {
+func (DB *SmartHubDB) AppointmentPUT(m AppointmentPUT) string {
 	sql := fmt.Sprintf(
 		sqlAppointmentPUT,
 		m.Status, m.Name, m.ProjectName, m.Lead, m.Agent, m.AppointTime,
+		m.ID,
 	)
 
 	if _, err := DB.ctl.Exec(sql); err != nil {
@@ -158,17 +170,4 @@ func (DB *SmartHubDB) AppointmentDELETE(IDs []int) string {
 	}
 
 	return ""
-}
-
-func ValidAppointment(i AppointmentEdit) (bool, AppointmentEdit) {
-	RET := i
-
-	if RET.Name == "" || RET.ProjectName == "" || RET.Status < 0 {
-		return false, RET
-	}
-	if RET.Agent == "" || RET.Lead == "" || RET.AppointTime == "" {
-		return false, RET
-	}
-
-	return true, RET
 }

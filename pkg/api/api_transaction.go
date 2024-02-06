@@ -48,7 +48,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 			}
 
 		case "POST":
-			var Req SmartHubDatabase.TransactionEdit
+			var Req SmartHubDatabase.TransactionPost
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -71,7 +71,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 			}
 
 		case "PUT":
-			var Req SmartHubDatabase.TransactionEdit
+			var Req SmartHubDatabase.TransactionPut
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {

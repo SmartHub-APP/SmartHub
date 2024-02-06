@@ -58,7 +58,27 @@ type TransactionGetResponse struct {
 	LaunchDate  string       `json:"LaunchDate"`
 }
 
-type TransactionEdit struct {
+type TransactionPost struct {
+	Name        string  `json:"Name"`
+	ProjectName string  `json:"ProjectName"`
+	Price       float64 `json:"Price"`
+	PriceSQFT   float64 `json:"PriceSQFT"`
+	Commission  float64 `json:"Commission"`
+	Status      int     `json:"Status"`
+	PayStatus   int     `json:"PayStatus"`
+	Unit        string  `json:"Unit"`
+	Location    string  `json:"Location"`
+	Developer   string  `json:"Developer"`
+	Description string  `json:"Description"`
+	Appoint     string  `json:"Appoint"`
+	Client      string  `json:"Client"`
+	Agent       string  `json:"Agent"`
+	SaleDate    string  `json:"SaleDate"`
+	LaunchDate  string  `json:"LaunchDate"`
+}
+
+type TransactionPut struct {
+	ID          int     `json:"ID"`
 	Name        string  `json:"Name"`
 	ProjectName string  `json:"ProjectName"`
 	Price       float64 `json:"Price"`
@@ -88,7 +108,8 @@ var sqlTransactionPUT = `
 UPDATE Transaction
 SET Name="%s", ProjectName="%s", Price="%f", PriceSQFT="%f", Commission="%f",
 Status="%d", PayStatus="%d", Unit="%s", Location="%s", Developer="%s",
-Description="%s", Appoint="%s", Client="%s", Agent="%s", SaleDate="%s", LaunchDate="%s";
+Description="%s", Appoint="%s", Client="%s", Agent="%s", SaleDate="%s", LaunchDate="%s"
+WHERE ID="%d";
 `
 var sqlTransactionDELETE = `DELETE FROM Transaction WHERE ID IN (%s);`
 
@@ -186,7 +207,7 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]TransactionGe
 	return Transactions, ""
 }
 
-func (DB *SmartHubDB) TransactionPOST(m TransactionEdit) string {
+func (DB *SmartHubDB) TransactionPOST(m TransactionPost) string {
 	sql := fmt.Sprintf(
 		sqlTransactionPOST,
 		m.Name, m.ProjectName, m.Price, m.PriceSQFT, m.Commission,
@@ -201,12 +222,13 @@ func (DB *SmartHubDB) TransactionPOST(m TransactionEdit) string {
 	return ""
 }
 
-func (DB *SmartHubDB) TransactionPUT(m TransactionEdit) string {
+func (DB *SmartHubDB) TransactionPUT(m TransactionPut) string {
 	sql := fmt.Sprintf(
 		sqlTransactionPUT,
 		m.Name, m.ProjectName, m.Price, m.PriceSQFT, m.Commission,
 		m.Status, m.PayStatus, m.Unit, m.Location, m.Developer,
 		m.Description, m.Appoint, m.Client, m.Agent, m.SaleDate, m.LaunchDate,
+		m.ID,
 	)
 
 	if _, err := DB.ctl.Exec(sql); err != nil {
