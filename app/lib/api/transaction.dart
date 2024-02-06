@@ -66,12 +66,12 @@ Future<String> putTransaction(TransactionPutRequest req) async {
   }
 }
 
-Future<String> deleteTransaction(int id) async {
+Future<String> deleteTransaction(List<int> ids) async {
   try {
     http.Response response = await http.delete(
       Uri.parse(ini.apiServer + ini.api.transaction),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
-      body: jsonEncode({"ID": id}),
+      body: jsonEncode(ids),
     );
 
     return response.statusCode == 200 ? "" : response.body;

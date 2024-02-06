@@ -1,10 +1,10 @@
+import 'member.dart';
+import 'interaction.dart';
+import '../config.dart';
 import '../api/transaction.dart';
 import '../object/file.dart';
 import '../object/member.dart';
 import '../object/transaction.dart';
-import 'member.dart';
-import 'interaction.dart';
-import '../config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';

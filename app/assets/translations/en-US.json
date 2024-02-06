@@ -27,6 +27,7 @@
   "upload": "Upload",
   "result": "result",
   "download": "Download",
+  "noDataSelect": "No data selected",
   "pagePast": "Previous page",
   "pageNext": "Next Page",
   "userName": "Input new username",
