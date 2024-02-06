@@ -5,9 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppointmentGetRequest {
+  int status;
   String name;
   String projectName;
-  int status;
   String appointTimeStart;
   String appointTimeEnd;
 

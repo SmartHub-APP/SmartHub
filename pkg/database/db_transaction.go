@@ -102,10 +102,10 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]TransactionGe
 	if req.ProjectName != "" {
 		Querys = append(Querys, fmt.Sprintf(`ProjectName LIKE '%%%s%%'`, req.ProjectName))
 	}
-	if req.Status != -1 {
+	if req.Status != 0 {
 		Querys = append(Querys, fmt.Sprintf(`Status = %d`, req.Status))
 	}
-	if req.PayStatus != -1 {
+	if req.PayStatus != 0 {
 		Querys = append(Querys, fmt.Sprintf(`PayStatus = %d`, req.PayStatus))
 	}
 	if req.Unit != "" {

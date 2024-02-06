@@ -12,6 +12,6 @@ func CreateRouter(cfg SmartHubTool.SettingConfig, db SmartHubDatabase.SmartHubDB
 	http.HandleFunc(cfg.API_Base+cfg.API_Role, RouterRole(db))
 	http.HandleFunc(cfg.API_Base+cfg.API_Member, RouterMember(db))
 	http.HandleFunc(cfg.API_Base+cfg.API_Transaction, RouterTransaction(db))
-	//	http.HandleFunc(cfg.API_Base + cfg.API_Appointment, RouterAppointment(db))
+	http.HandleFunc(cfg.API_Base+cfg.API_Appointment, RouterAppointment(db))
 	http.ListenAndServe(":"+cfg.SH_Port, nil)
 }
