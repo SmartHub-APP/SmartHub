@@ -16,6 +16,11 @@ func RouterFile(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseW
 		Val := r.URL.Query()
 
 		switch r.Method {
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+
+			return
+
 		case "GET":
 			TID := strings.TrimSpace(Val.Get("TID"))
 
@@ -103,7 +108,7 @@ func RouterFile(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseW
 				return
 			}
 
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 			w.Header().Set("Access-Control-Allow-Methods", "POST, DELETE")
 			w.WriteHeader(http.StatusCreated)
 
