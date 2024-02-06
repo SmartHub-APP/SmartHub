@@ -65,7 +65,7 @@ func (DB *SmartHubDB) AppointmentGET(req AppointmentGetRequest) ([]AppointmentGe
 	if req.ProjectName != "" {
 		Querys = append(Querys, fmt.Sprintf(`ProjectName LIKE '%%%s%%'`, req.ProjectName))
 	}
-	if req.Status != -1 {
+	if req.Status != 0 {
 		Querys = append(Querys, fmt.Sprintf(`Status = %d`, req.Status))
 	}
 	if req.AppointTimeStart != "" && req.AppointTimeEnd != "" {
