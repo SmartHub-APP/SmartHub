@@ -150,7 +150,7 @@ class _CustomerState extends State<Customer> {
                                           client: value.client.map((e) => e.id).toList().join(ini.separator),
                                           agent: value.agent.map((e) => e.id).toList().join(ini.separator),
                                           saleDate: value.saleDate.toUtc().toString(),
-                                          launchDate: value.launchDate.toUtc().toString(),
+                                          launchDate: DateTime.now().toUtc().toString(),
                                         ),
                                       );
                                       /*

@@ -122,25 +122,6 @@ Future<List<Transaction>?> getTransactionList(TransactionGetRequest req) async {
 }
 
 Future<String> postTransaction(TransactionEdit req) async {
-  if (req.name.isEmpty ||
-      req.projectName.isEmpty ||
-      req.price <= 0 ||
-      req.priceSQFT <= 0 ||
-      req.commission < 0 ||
-      req.status < 0 ||
-      req.payStatus < 0 ||
-      req.unit.isEmpty ||
-      req.location.isEmpty ||
-      req.developer.isEmpty ||
-      req.description.isEmpty ||
-      req.appoint.isEmpty ||
-      req.client.isEmpty ||
-      req.agent.isEmpty ||
-      req.saleDate.isEmpty ||
-      req.launchDate.isEmpty) {
-    return "Invalid Input";
-  }
-
   try {
     http.Response response = await http.post(
       Uri.parse(ini.apiServer + ini.api.transaction),

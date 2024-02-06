@@ -103,7 +103,7 @@ func RouterFile(db SmartHubDatabase.SmartHubDB, base string) func(http.ResponseW
 				return
 			}
 
-			w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Methods", "POST, DELETE")
 			w.WriteHeader(http.StatusCreated)
 
