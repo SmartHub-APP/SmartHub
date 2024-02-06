@@ -1,7 +1,6 @@
-import 'package:smarthub/api/transaction.dart';
-
 import '../config.dart';
-import '../object.dart';
+import '../api/transaction.dart';
+import '../object/transaction.dart';
 import '../component/payment.dart';
 import '../component/interaction.dart';
 import '../component/transaction.dart';
@@ -108,12 +107,10 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionEdit(context, Transaction.create(), 3).then((value) {
-                                    setState(() {
-                                      if (value != Transaction.create() && value != null) {
-                                        transactions.add(value);
-                                      }
-                                    });
+                                  transactionEdit(context, Transaction.create(), 3, true).then((value) {
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                    }
                                   });
                                 },
                               ),
@@ -316,24 +313,17 @@ class _PaymentState extends State<Payment> {
                               DataCell(text3("\$ ${data.price}")),
                               DataCell(text3(ini.commissionStatus[data.payStatus])),
                               DataCell(text3(data.saleDate.toString().substring(0, 16))),
-                              DataCell(
-                                Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!])),
-                              ),
+                              DataCell(Container(padding: const EdgeInsets.all(10), child: userShow(context, data.appoint))),
                               DataCell(text3("${data.commission} %")),
                               DataCell(text3((data.commission * data.price * 0.01).toStringAsFixed(3))),
                               DataCell(
                                 IconButton(
-                                  onPressed: () async {
-                                    await transactionEdit(context, data, 3).then((value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          transactions[transactions.indexWhere((element) => element == data)] = value;
-                                        });
+                                  onPressed: () {
+                                    transactionEdit(context, data, 3, false).then((value) {
+                                      if (value != "") {
+                                        alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                       }
                                     });
-                                    setState(() {});
                                   },
                                   icon: const Icon(Icons.edit_note_outlined),
                                   tooltip: context.tr('edit'),

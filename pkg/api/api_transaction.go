@@ -14,6 +14,11 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 		switch r.Method {
+		case "OPTIONS":
+			w.WriteHeader(http.StatusOK)
+
+			return
+
 		case "GET":
 			var Req SmartHubDatabase.TransactionGetRequest
 
@@ -43,7 +48,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 			}
 
 		case "POST":
-			var Req SmartHubDatabase.TransactionEdit
+			var Req SmartHubDatabase.TransactionPost
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -51,9 +56,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidTransaction(Req); ok {
-				Req = after
-			} else {
+			if Req.Status <= 0 && Req.PayStatus <= 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
@@ -68,7 +71,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 			}
 
 		case "PUT":
-			var Req SmartHubDatabase.TransactionEdit
+			var Req SmartHubDatabase.TransactionPut
 
 			err := json.NewDecoder(r.Body).Decode(&Req)
 			if err != nil {
@@ -76,9 +79,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidTransaction(Req); ok {
-				Req = after
-			} else {
+			if Req.Status <= 0 && Req.PayStatus <= 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}

@@ -1,91 +1,8 @@
 import '../config.dart';
-import '../object.dart';
+import '../object/transaction.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-class TransactionGetRequest {
-  String name;
-  String projectName;
-  int status;
-  int payStatus;
-  String unit;
-  String launchDateStart;
-  String launchDateEnd;
-  String saleDateStart;
-  String saleDateEnd;
-
-  TransactionGetRequest({
-    required this.name,
-    required this.projectName,
-    required this.status,
-    required this.payStatus,
-    required this.unit,
-    required this.launchDateStart,
-    required this.launchDateEnd,
-    required this.saleDateStart,
-    required this.saleDateEnd,
-  });
-}
-
-class TransactionEdit {
-  String name;
-  String projectName;
-  double price;
-  double priceSQFT;
-  double commission;
-  int status;
-  int payStatus;
-  String unit;
-  String location;
-  String developer;
-  String description;
-  String appoint;
-  String client;
-  String agent;
-  String saleDate;
-  String launchDate;
-
-  TransactionEdit({
-    required this.name,
-    required this.projectName,
-    required this.price,
-    required this.priceSQFT,
-    required this.commission,
-    required this.status,
-    required this.payStatus,
-    required this.unit,
-    required this.location,
-    required this.developer,
-    required this.description,
-    required this.appoint,
-    required this.client,
-    required this.agent,
-    required this.saleDate,
-    required this.launchDate,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      "Name": name,
-      "ProjectName": projectName,
-      "Price": price,
-      "PriceSQFT": priceSQFT,
-      "Commission": commission,
-      "Status": status,
-      "PayStatus": payStatus,
-      "Unit": unit,
-      "Location": location,
-      "Developer": developer,
-      "Description": description,
-      "Appoint": appoint,
-      "Client": client,
-      "Agent": agent,
-      "SaleDate": saleDate,
-      "LaunchDate": launchDate,
-    };
-  }
-}
 
 Future<List<Transaction>?> getTransactionList(TransactionGetRequest req) async {
   SharedPreferences cache = await SharedPreferences.getInstance();
@@ -94,7 +11,7 @@ Future<List<Transaction>?> getTransactionList(TransactionGetRequest req) async {
     http.Response response = await http.get(
       Uri(
         scheme: 'http',
-        host: ini.apiServer,
+        host: ini.apiBase,
         port: 25000,
         path: ini.api.transaction,
         queryParameters: {
@@ -109,10 +26,6 @@ Future<List<Transaction>?> getTransactionList(TransactionGetRequest req) async {
           "SaleDateEnd": req.saleDateEnd,
         },
       ),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ${cache.getString(ini.cacheName.tokenAccess) ?? ''}',
-      },
     );
 
     if (response.statusCode == 200) {
@@ -125,26 +38,7 @@ Future<List<Transaction>?> getTransactionList(TransactionGetRequest req) async {
   }
 }
 
-Future<String> postTransaction(TransactionEdit req) async {
-  if (req.name.isEmpty ||
-      req.projectName.isEmpty ||
-      req.price <= 0 ||
-      req.priceSQFT <= 0 ||
-      req.commission < 0 ||
-      req.status < 0 ||
-      req.payStatus < 0 ||
-      req.unit.isEmpty ||
-      req.location.isEmpty ||
-      req.developer.isEmpty ||
-      req.description.isEmpty ||
-      req.appoint.isEmpty ||
-      req.client.isEmpty ||
-      req.agent.isEmpty ||
-      req.saleDate.isEmpty ||
-      req.launchDate.isEmpty) {
-    return "Invalid Input";
-  }
-
+Future<String> postTransaction(TransactionPostRequest req) async {
   try {
     http.Response response = await http.post(
       Uri.parse(ini.apiServer + ini.api.transaction),
@@ -158,26 +52,7 @@ Future<String> postTransaction(TransactionEdit req) async {
   }
 }
 
-Future<String> putTransaction(TransactionEdit req) async {
-  if (req.name.isEmpty ||
-      req.projectName.isEmpty ||
-      req.price <= 0 ||
-      req.priceSQFT <= 0 ||
-      req.commission < 0 ||
-      req.status < 0 ||
-      req.payStatus < 0 ||
-      req.unit.isEmpty ||
-      req.location.isEmpty ||
-      req.developer.isEmpty ||
-      req.description.isEmpty ||
-      req.appoint.isEmpty ||
-      req.client.isEmpty ||
-      req.agent.isEmpty ||
-      req.saleDate.isEmpty ||
-      req.launchDate.isEmpty) {
-    return "Invalid Input";
-  }
-
+Future<String> putTransaction(TransactionPutRequest req) async {
   try {
     http.Response response = await http.put(
       Uri.parse(ini.apiServer + ini.api.transaction),
@@ -191,12 +66,12 @@ Future<String> putTransaction(TransactionEdit req) async {
   }
 }
 
-Future<String> deleteTransaction(int id) async {
+Future<String> deleteTransaction(List<int> ids) async {
   try {
     http.Response response = await http.delete(
       Uri.parse(ini.apiServer + ini.api.transaction),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
-      body: jsonEncode({"ID": id}),
+      body: jsonEncode(ids),
     );
 
     return response.statusCode == 200 ? "" : response.body;
