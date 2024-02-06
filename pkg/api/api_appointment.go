@@ -4,9 +4,10 @@ import (
 	SmartHubDatabase "SmartHub/pkg/database"
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
-func RouteAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
+func RouterAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
@@ -16,11 +17,11 @@ func RouteAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, 
 		case "GET":
 			var Req SmartHubDatabase.AppointmentGetRequest
 
-			err := json.NewDecoder(r.Body).Decode(&Req)
-			if err != nil {
-				http.Error(w, "Failed to decode request", http.StatusBadRequest)
-				return
-			}
+			Req.Name = r.URL.Query().Get("Name")
+			Req.ProjectName = r.URL.Query().Get("ProjectName")
+			Req.Status, _ = strconv.Atoi(r.URL.Query().Get("Status"))
+			Req.AppointTimeStart = r.URL.Query().Get("AppointTimeStart")
+			Req.AppointTimeEnd = r.URL.Query().Get("AppointTimeEnd")
 
 			if RET, msg := db.AppointmentGET(Req); msg != "" {
 				http.Error(w, msg, http.StatusInternalServerError)
