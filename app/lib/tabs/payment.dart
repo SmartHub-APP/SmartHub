@@ -1,7 +1,6 @@
-import 'package:smarthub/api/transaction.dart';
-
 import '../config.dart';
-import '../object.dart';
+import '../api/transaction.dart';
+import '../object/transaction.dart';
 import '../component/payment.dart';
 import '../component/interaction.dart';
 import '../component/transaction.dart';
@@ -109,11 +108,7 @@ class _PaymentState extends State<Payment> {
                                 tooltip: context.tr('add'),
                                 onPressed: () {
                                   transactionEdit(context, Transaction.create(), 3).then((value) {
-                                    setState(() {
-                                      if (value != Transaction.create() && value != null) {
-                                        transactions.add(value);
-                                      }
-                                    });
+                                    alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                   });
                                 },
                               ),
@@ -323,10 +318,8 @@ class _PaymentState extends State<Payment> {
                                 IconButton(
                                   onPressed: () async {
                                     await transactionEdit(context, data, 3).then((value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          transactions[transactions.indexWhere((element) => element == data)] = value;
-                                        });
+                                      if (value != "") {
+                                        alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                       }
                                     });
                                     setState(() {});

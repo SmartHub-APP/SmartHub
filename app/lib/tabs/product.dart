@@ -1,5 +1,5 @@
 import '../config.dart';
-import '../object.dart';
+import '../object/transaction.dart';
 import '../component/interaction.dart';
 import '../component/transaction.dart';
 import 'package:flutter/material.dart';
@@ -105,12 +105,8 @@ class _ProductState extends State<Product> {
                                 tooltip: context.tr('add'),
                                 onPressed: () {
                                   transactionEdit(context, Transaction.create(), 2).then((value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        if (value != Transaction.create()) {
-                                          pubTransactions.add(value);
-                                        }
-                                      });
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }
                                   });
                                 },
@@ -203,12 +199,8 @@ class _ProductState extends State<Product> {
                       return InkWell(
                         onTap: () {
                           transactionEdit(context, pubTransactions[index], 1).then((value) {
-                            if (value != null) {
-                              setState(() {
-                                if (value != Transaction.create()) {
-                                  pubTransactions[index] = value;
-                                }
-                              });
+                            if (value != "") {
+                              alertDialog(context, context.tr('error'), value, context.tr('ok'));
                             }
                           });
                         },
@@ -224,9 +216,8 @@ class _ProductState extends State<Product> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  text3("${context.tr('product_colPrice')} :\n"
-                                      "    \$${pubTransactions[index].price}"),
-                                  if (pubTransactions[index].priceSQFT != null) text3(" (\$${pubTransactions[index].priceSQFT}/sqft)"),
+                                  text3("${context.tr('product_colPrice')} :\n    \$${pubTransactions[index].price}"),
+                                  text3(" (\$${pubTransactions[index].priceSQFT}/sqft)"),
                                 ],
                               ),
                               const SizedBox(height: 5),
@@ -242,9 +233,7 @@ class _ProductState extends State<Product> {
                               text3("${context.tr('product_colCommission')} :\n"
                                   "    ${pubTransactions[index].commission}%"),
                               const SizedBox(height: 5),
-                              if (pubTransactions[index].description != null)
-                                text3("${context.tr('product_colDescription')} :\n"
-                                    "    ${pubTransactions[index].description ?? ""}"),
+                              text3("${context.tr('product_colDescription')} :\n    ${pubTransactions[index].description}"),
                               const SizedBox(height: 5),
                               if (pubTransactions[index].documents.isNotEmpty) text3("${context.tr('product_colDocument')} :"),
                               Column(

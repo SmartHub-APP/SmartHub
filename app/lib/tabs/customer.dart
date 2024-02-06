@@ -1,6 +1,6 @@
-import '../api/transaction.dart';
 import '../config.dart';
-import '../object.dart';
+import '../api/transaction.dart';
+import '../object/transaction.dart';
 import '../component/tableview.dart';
 import '../component/interaction.dart';
 import '../component/transaction.dart';
@@ -132,35 +132,8 @@ class _CustomerState extends State<Customer> {
                                 tooltip: context.tr('add'),
                                 onPressed: () {
                                   transactionEdit(context, Transaction.create(), 1).then((value) {
-                                    if (value != null) {
-                                      postTransaction(
-                                        TransactionEdit(
-                                          name: value.name,
-                                          projectName: value.projectName,
-                                          price: value.price,
-                                          priceSQFT: value.priceSQFT,
-                                          commission: value.commission,
-                                          status: value.status,
-                                          payStatus: value.payStatus,
-                                          unit: value.unit,
-                                          location: value.location,
-                                          developer: value.developer,
-                                          description: value.description ?? '',
-                                          appoint: value.appoint.map((e) => e.id).toList().join(ini.separator),
-                                          client: value.client.map((e) => e.id).toList().join(ini.separator),
-                                          agent: value.agent.map((e) => e.id).toList().join(ini.separator),
-                                          saleDate: value.saleDate.toUtc().toString(),
-                                          launchDate: DateTime.now().toUtc().toString(),
-                                        ),
-                                      );
-                                      /*
-                                      alertDialog(
-                        context,
-                        context.tr('error'),
-                        context.tr('emptyLeads'),
-                        context.tr('ok'),
-                      );
-                                      */
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }
                                     setState(() {});
                                   });

@@ -1,6 +1,6 @@
 import 'interaction.dart';
 import '../config.dart';
-import '../object.dart';
+import '../object/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -224,7 +224,7 @@ class _TableViewState extends State<TableView> {
                           text3(ini.transactionStatus[widget.data[index].status]),
                           text3(widget.data[index].saleDate.toString().substring(0, 10)),
                           text3(userShowText(widget.data[index].agent)),
-                          text3(widget.data[index].description ?? ""),
+                          text3(widget.data[index].description),
                         ]
                             .asMap()
                             .entries
@@ -242,8 +242,7 @@ class _TableViewState extends State<TableView> {
                   IconButton(
                     onPressed: () {
                       transactionEdit(context, widget.data[index], 1).then((value) {
-                        if (value != null) {
-                          widget.data[index] = value;
+                        if (value != "") {
                           setState(() {});
                         }
                       });

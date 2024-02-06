@@ -1,7 +1,11 @@
+import 'package:smarthub/api/transaction.dart';
+
+import '../object/file.dart';
+import '../object/member.dart';
+import '../object/transaction.dart';
 import 'member.dart';
 import 'interaction.dart';
 import '../config.dart';
-import '../object.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -11,10 +15,9 @@ import 'package:easy_localization/easy_localization.dart';
 /// - mode 1 : Customer
 /// - mode 2 : Product
 /// - mode 3 : Payment
-Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTrans, int mode) async {
+Future<String> transactionEdit(BuildContext context, Transaction inputTrans, int mode, bool isNew) async {
   int editStatus = inputTrans.status;
   int editClaimed = inputTrans.payStatus;
-  bool canSave = false;
   DateTime selectDate = inputTrans.saleDate;
   TextEditingController editUnit = TextEditingController(text: inputTrans.unit);
   TextEditingController editPrice = TextEditingController(text: inputTrans.price.toString());
@@ -354,8 +357,30 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
                         context.tr('ok'),
                       );
                     } else {
-                      canSave = true;
-                      Navigator.pop(context);
+                      saveTransaction(
+                        TransactionEdit(
+                            id: inputTrans.id,
+                            name: inputTrans.name,
+                            projectName: editProjectName.text,
+                            price: double.parse(editPrice.text),
+                            priceSQFT: inputTrans.priceSQFT,
+                            commission: double.parse(editCommission.text),
+                            status: editStatus,
+                            payStatus: (mode == 3) ? inputTrans.payStatus : editClaimed,
+                            unit: editUnit.text,
+                            location: inputTrans.location,
+                            developer: inputTrans.developer,
+                            description: editDescription.text,
+                            appoint: appoint.map((e) => e.id.toString()).toList().join(";"),
+                            client: clients.map((e) => e.id.toString()).toList().join(";"),
+                            agent: agents.map((e) => e.id.toString()).toList().join(";"),
+                            saleDate: selectDate.toString(),
+                            launchDate: inputTrans.launchDate.toString(),
+                            documents: [] //documents.map((e) => e.fileHash).toList(),
+                            ),
+                      ).then((value) {
+                        Navigator.pop(context);
+                      });
                     }
                   },
                 ),
@@ -367,7 +392,8 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
     },
   );
 
-  return canSave
+  return "";
+  /*canSave
       ? Transaction(
           onSelect: inputTrans.onSelect,
           id: inputTrans.id,
@@ -389,5 +415,5 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
           agent: agents,
           documents: documents,
         )
-      : null;
+      : null*/
 }
