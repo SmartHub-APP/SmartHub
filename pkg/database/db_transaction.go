@@ -237,22 +237,7 @@ func (DB *SmartHubDB) TransactionDELETE(IDs []int) string {
 func ValidTransaction(i TransactionEdit) (bool, TransactionEdit) {
 	RET := i
 
-	if RET.Name == "" || RET.ProjectName == "" {
-		return false, RET
-	}
-	if RET.Price < 0 || RET.PriceSQFT < 0 {
-		return false, RET
-	}
-	if RET.Commission < 0 || RET.Status < 0 || RET.PayStatus < 0 {
-		return false, RET
-	}
-	if RET.Unit == "" || RET.Location == "" || RET.Developer == "" {
-		return false, RET
-	}
-	if RET.Description == "" || RET.Appoint == "" || RET.Client == "" {
-		return false, RET
-	}
-	if RET.Agent == "" || RET.SaleDate == "" || RET.LaunchDate == "" {
+	if RET.Status < 0 || RET.PayStatus < 0 {
 		return false, RET
 	}
 

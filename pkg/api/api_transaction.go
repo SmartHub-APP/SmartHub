@@ -56,9 +56,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidTransaction(Req); ok {
-				Req = after
-			} else {
+			if Req.Status <= 0 && Req.PayStatus <= 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
@@ -81,9 +79,7 @@ func RouterTransaction(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter,
 				return
 			}
 
-			if ok, after := SmartHubDatabase.ValidTransaction(Req); ok {
-				Req = after
-			} else {
+			if Req.Status <= 0 && Req.PayStatus <= 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
