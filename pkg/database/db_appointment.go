@@ -85,6 +85,7 @@ func (DB *SmartHubDB) AppointmentGET(req AppointmentGetRequest) ([]AppointmentGe
 		queryFilter = "WHERE " + strings.Join(Querys, " AND ")
 	}
 
+	fmt.Println("###", fmt.Sprintf(sqlAppointmentGet, queryFilter))
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlAppointmentGet, queryFilter))
 	if err != nil {
 		return Appointments, "Query failed"
@@ -98,6 +99,8 @@ func (DB *SmartHubDB) AppointmentGET(req AppointmentGetRequest) ([]AppointmentGe
 			&R.ID, &R.Status, &R.Name, &R.ProjectName,
 			&R.Lead, &R.Agent, &R.AppointTime,
 		)
+
+		fmt.Println(R.Lead, R.Agent)
 
 		Leads, _ := DB.MemberGetByID(R.Lead)
 		Clients, _ := DB.MemberGetByID(R.Agent)
