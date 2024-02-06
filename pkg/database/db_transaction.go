@@ -194,8 +194,6 @@ func (DB *SmartHubDB) TransactionPOST(m TransactionEdit) string {
 		m.Description, m.Appoint, m.Client, m.Agent, m.SaleDate, m.LaunchDate,
 	)
 
-	fmt.Println(sql)
-
 	if _, err := DB.ctl.Exec(sql); err != nil {
 		return "Query failed"
 	}
@@ -232,14 +230,4 @@ func (DB *SmartHubDB) TransactionDELETE(IDs []int) string {
 	}
 
 	return ""
-}
-
-func ValidTransaction(i TransactionEdit) (bool, TransactionEdit) {
-	RET := i
-
-	if RET.Status < 0 || RET.PayStatus < 0 {
-		return false, RET
-	}
-
-	return true, RET
 }
