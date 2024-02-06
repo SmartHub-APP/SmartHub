@@ -59,3 +59,10 @@ clear; curl -X POST -H "Content-Type: application/json" -d '{"Name":"test","Proj
 clear; curl -X PUT -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '{"ID":6,"Status":1,"RoleID":2,"Name":"HAHAHA","Account":"123123123","Password":"94879487","BankCode":"456","BankAccount":"789"}' http://140.113.120.235:25000/smarthub/transaction -v
 4. DELETE
 clear; curl -X DELETE -H 'Content-Type: application/json; charset=utf-8' -H 'Authorization: Bearer "{ACCESS_TOKEN}"' -d '[9,10]' http://140.113.120.235:25000/smarthub/transaction -v
+
+## Appointment
+1. GET
+curl -X GET "http://localhost:8080/api/appointment?Name=Test&ProjectName=Test&Status=1&AppointTimeStart=2020-01-01&AppointTimeEnd=2020-12-31"
+2. POST
+3. PUT
+4. DELETE

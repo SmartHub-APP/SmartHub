@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func RouteAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
+func RouterAppointment(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
