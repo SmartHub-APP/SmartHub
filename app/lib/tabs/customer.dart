@@ -22,7 +22,7 @@ class _CustomerState extends State<Customer> {
   bool sortAscend = true;
   DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
   TextEditingController filterName = TextEditingController(text: "");
-  TextEditingController filterClass = TextEditingController(text: "");
+  TextEditingController filterUnit = TextEditingController(text: "");
   List<Transaction> selfTransactions = [];
 
   @override
@@ -62,7 +62,7 @@ class _CustomerState extends State<Customer> {
                               child: SizedBox(
                                 height: 7.h,
                                 child: TextField(
-                                  controller: filterClass,
+                                  controller: filterUnit,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
                                     labelText: context.tr('customer_colUnit'),
@@ -131,9 +131,36 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionEdit(context, Transaction.createCommission(10), 1).then((value) {
+                                  transactionEdit(context, Transaction.create(), 1).then((value) {
                                     if (value != null) {
-                                      selfTransactions.add(value);
+                                      postTransaction(
+                                        TransactionEdit(
+                                          name: value.name,
+                                          projectName: value.projectName,
+                                          price: value.price,
+                                          priceSQFT: value.priceSQFT,
+                                          commission: value.commission,
+                                          status: value.status,
+                                          payStatus: value.payStatus,
+                                          unit: value.unit,
+                                          location: value.location,
+                                          developer: value.developer,
+                                          description: value.description ?? '',
+                                          appoint: value.appoint.map((e) => e.id).toList().join(ini.separator),
+                                          client: value.client.map((e) => e.id).toList().join(ini.separator),
+                                          agent: value.agent.map((e) => e.id).toList().join(ini.separator),
+                                          saleDate: value.saleDate.toUtc().toString(),
+                                          launchDate: value.launchDate.toUtc().toString(),
+                                        ),
+                                      );
+                                      /*
+                                      alertDialog(
+                        context,
+                        context.tr('error'),
+                        context.tr('emptyLeads'),
+                        context.tr('ok'),
+                      );
+                                      */
                                     }
                                     setState(() {});
                                   });
@@ -153,17 +180,19 @@ class _CustomerState extends State<Customer> {
                                 onPressed: () {
                                   String start = searchRange.start.toString();
                                   String end = searchRange.end.toString();
-                                  getTransactionList(TransactionGetRequest(
-                                    name: filterName.text,
-                                    projectName: filterClass.text,
-                                    status: searchStatus,
-                                    payStatus: -1,
-                                    unit: "",
-                                    launchDateStart: start,
-                                    launchDateEnd: end,
-                                    saleDateStart: start,
-                                    saleDateEnd: end,
-                                  )).then((value) {
+                                  getTransactionList(
+                                    TransactionGetRequest(
+                                      name: filterName.text,
+                                      projectName: "",
+                                      status: searchStatus,
+                                      payStatus: 0,
+                                      unit: filterUnit.text,
+                                      launchDateStart: "",
+                                      launchDateEnd: "",
+                                      saleDateStart: start,
+                                      saleDateEnd: end,
+                                    ),
+                                  ).then((value) {
                                     if (value != null) {
                                       selfTransactions = value;
                                     }
@@ -185,7 +214,7 @@ class _CustomerState extends State<Customer> {
                                 onPressed: () {
                                   setState(() {
                                     searchStatus = 0;
-                                    filterName.text = filterClass.text = '';
+                                    filterName.text = filterUnit.text = '';
                                     searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
                                   });
                                 },

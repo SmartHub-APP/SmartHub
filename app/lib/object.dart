@@ -215,21 +215,21 @@ class Appointment {
 class Transaction {
   int id;
   bool onSelect;
-  int price, status, payStatus;
-  int? priceSQFT;
+  double price, priceSQFT;
+  int status, payStatus;
   double commission;
   String unit, name, projectName, location, developer;
-  String? description;
-  Member? appoint;
+  String description;
   DateTime saleDate, launchDate;
   List<File> documents;
-  List<Member> clients, agent;
+  List<Member> client, agent, appoint;
 
   Transaction({
     required this.onSelect,
     required this.name,
     required this.projectName,
     required this.price,
+    required this.priceSQFT,
     required this.commission,
     required this.payStatus,
     required this.status,
@@ -238,13 +238,12 @@ class Transaction {
     required this.saleDate,
     required this.agent,
     required this.documents,
-    required this.clients,
+    required this.client,
     required this.location,
     required this.developer,
     required this.launchDate,
-    this.priceSQFT,
-    this.description,
-    this.appoint,
+    required this.description,
+    required this.appoint,
   });
 
   factory Transaction.create() {
@@ -265,7 +264,8 @@ class Transaction {
       saleDate: DateTime.now(),
       launchDate: DateTime.now(),
       agent: [],
-      clients: [],
+      client: [],
+      appoint: [],
       documents: [],
     );
   }
@@ -288,7 +288,8 @@ class Transaction {
       saleDate: DateTime.now(),
       launchDate: DateTime.now(),
       agent: [],
-      clients: [],
+      client: [],
+      appoint: [],
       documents: [],
     );
   }
@@ -309,10 +310,12 @@ class Transaction {
       developer: json["Developer"] ?? "",
       description: json["Description"] ?? "",
       //appoint: json["Appoint"] != null ? Member.fromJson(json["Appoint"]) : null,
-      clients: [],
-      //List<Member>.from(json["Clients"].map((x) => Member.fromJson(x))),
+      client: [],
+      //List<Member>.from(json["Client"].map((x) => Member.fromJson(x))),
       agent: [],
       //List<Member>.from(json["Agent"].map((x) => Member.fromJson(x))),
+      appoint: [],
+      //List<Member>.from(json["Appoint"].map((x) => Member.fromJson(x))),
       saleDate: DateTime.parse(json["SaleDate"] ?? ini.timeStart.toString()),
       launchDate: DateTime.parse(json["LaunchDate"] ?? ini.timeStart.toString()),
       documents: [], //List<File>.from(json["Documents"].map((x) => File(fileName: x["FileName"], fileHash: x["FileHash"]))),
@@ -417,6 +420,8 @@ class Role {
 // ##### Rooted Setting
 class InitSetting {
   Api api;
+  String separator;
+  String apiBase;
   String apiServer;
   DateTime timeStart;
   CacheName cacheName;
@@ -428,6 +433,8 @@ class InitSetting {
 
   InitSetting({
     required this.api,
+    required this.separator,
+    required this.apiBase,
     required this.apiServer,
     required this.urls,
     required this.timeStart,

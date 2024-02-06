@@ -316,11 +316,7 @@ class _PaymentState extends State<Payment> {
                               DataCell(text3("\$ ${data.price}")),
                               DataCell(text3(ini.commissionStatus[data.payStatus])),
                               DataCell(text3(data.saleDate.toString().substring(0, 16))),
-                              DataCell(
-                                Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: data.appoint == null ? const SizedBox() : userShow(context, [data.appoint!])),
-                              ),
+                              DataCell(Container(padding: const EdgeInsets.all(10), child: userShow(context, data.appoint))),
                               DataCell(text3("${data.commission} %")),
                               DataCell(text3((data.commission * data.price * 0.01).toStringAsFixed(3))),
                               DataCell(

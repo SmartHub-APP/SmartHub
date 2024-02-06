@@ -94,7 +94,7 @@ Future<List<Transaction>?> getTransactionList(TransactionGetRequest req) async {
     http.Response response = await http.get(
       Uri(
         scheme: 'http',
-        host: ini.apiServer,
+        host: ini.apiBase,
         port: 25000,
         path: ini.api.transaction,
         queryParameters: {
@@ -109,10 +109,6 @@ Future<List<Transaction>?> getTransactionList(TransactionGetRequest req) async {
           "SaleDateEnd": req.saleDateEnd,
         },
       ),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ${cache.getString(ini.cacheName.tokenAccess) ?? ''}',
-      },
     );
 
     if (response.statusCode == 200) {

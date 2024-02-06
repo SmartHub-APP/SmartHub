@@ -22,8 +22,8 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
   TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
   List<Member> agents = inputTrans.agent;
-  List<Member> clients = inputTrans.clients;
-  List<Member> appoint = inputTrans.appoint == null ? [] : [inputTrans.appoint!];
+  List<Member> clients = inputTrans.client;
+  List<Member> appoint = inputTrans.appoint;
   List<File> documents = inputTrans.documents;
   await showDialog(
     context: context,
@@ -304,18 +304,18 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
                   icon: const Icon(Icons.save_alt_sharp),
                   tooltip: context.tr('save'),
                   onPressed: () {
-                    if (editUnit.text.isEmpty) {
+                    if (editProjectName.text.isEmpty) {
                       alertDialog(
                         context,
                         context.tr('error'),
-                        context.tr('emptyClass'),
+                        context.tr('emptyProjectName'),
                         context.tr('ok'),
                       );
-                    } else if (editProjectName.text.isEmpty) {
+                    } else if (editUnit.text.isEmpty) {
                       alertDialog(
                         context,
                         context.tr('error'),
-                        context.tr('emptyName'),
+                        context.tr('emptyUnit'),
                         context.tr('ok'),
                       );
                     } else if (editPrice.text.isEmpty) {
@@ -329,7 +329,7 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
                       alertDialog(
                         context,
                         context.tr('error'),
-                        context.tr('emptyPrice'),
+                        context.tr('emptyCommission'),
                         context.tr('ok'),
                       );
                     } else if (editStatus == 0) {
@@ -371,7 +371,7 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
       ? Transaction(
           onSelect: inputTrans.onSelect,
           id: inputTrans.id,
-          price: int.parse(editPrice.text),
+          price: double.parse(editPrice.text),
           priceSQFT: inputTrans.priceSQFT,
           status: editStatus,
           payStatus: (mode == 3) ? inputTrans.payStatus : editClaimed,
@@ -382,10 +382,10 @@ Future<Transaction?> transactionEdit(BuildContext context, Transaction inputTran
           location: inputTrans.location,
           developer: inputTrans.developer,
           description: editDescription.text,
-          clients: clients,
+          client: clients,
           saleDate: selectDate,
           launchDate: inputTrans.launchDate,
-          appoint: appoint.isNotEmpty ? appoint[0] : null,
+          appoint: appoint,
           agent: agents,
           documents: documents,
         )
