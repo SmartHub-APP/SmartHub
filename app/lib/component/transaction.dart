@@ -1,5 +1,4 @@
-import 'package:smarthub/api/transaction.dart';
-
+import '../api/transaction.dart';
 import '../object/file.dart';
 import '../object/member.dart';
 import '../object/transaction.dart';
@@ -357,30 +356,62 @@ Future<String> transactionEdit(BuildContext context, Transaction inputTrans, int
                         context.tr('ok'),
                       );
                     } else {
-                      saveTransaction(
-                        TransactionEdit(
-                            id: inputTrans.id,
-                            name: inputTrans.name,
-                            projectName: editProjectName.text,
-                            price: double.parse(editPrice.text),
-                            priceSQFT: inputTrans.priceSQFT,
-                            commission: double.parse(editCommission.text),
-                            status: editStatus,
-                            payStatus: (mode == 3) ? inputTrans.payStatus : editClaimed,
-                            unit: editUnit.text,
-                            location: inputTrans.location,
-                            developer: inputTrans.developer,
-                            description: editDescription.text,
-                            appoint: appoint.map((e) => e.id.toString()).toList().join(";"),
-                            client: clients.map((e) => e.id.toString()).toList().join(";"),
-                            agent: agents.map((e) => e.id.toString()).toList().join(";"),
-                            saleDate: selectDate.toString(),
-                            launchDate: inputTrans.launchDate.toString(),
-                            documents: [] //documents.map((e) => e.fileHash).toList(),
-                            ),
-                      ).then((value) {
-                        Navigator.pop(context);
-                      });
+                      if (isNew) {
+                        postTransaction(
+                          TransactionPostRequest(
+                              name: inputTrans.name,
+                              projectName: editProjectName.text,
+                              price: double.parse(editPrice.text),
+                              priceSQFT: inputTrans.priceSQFT,
+                              commission: double.parse(editCommission.text),
+                              status: editStatus,
+                              payStatus: (mode == 3) ? inputTrans.payStatus : editClaimed,
+                              unit: editUnit.text,
+                              location: inputTrans.location,
+                              developer: inputTrans.developer,
+                              description: editDescription.text,
+                              appoint: appoint.map((e) => e.id.toString()).toList().join(";"),
+                              client: clients.map((e) => e.id.toString()).toList().join(";"),
+                              agent: agents.map((e) => e.id.toString()).toList().join(";"),
+                              saleDate: selectDate.toString(),
+                              launchDate: inputTrans.launchDate.toString(),
+                              documents: [] //documents.map((e) => e.fileHash).toList(),
+                              ),
+                        ).then((value) {
+                          Navigator.pop(context);
+                          if (value.isNotEmpty) {
+                            return value;
+                          }
+                        });
+                      } else {
+                        putTransaction(
+                          TransactionPutRequest(
+                              id: inputTrans.id,
+                              price: double.parse(editPrice.text),
+                              priceSQFT: inputTrans.priceSQFT,
+                              status: editStatus,
+                              payStatus: (mode == 3) ? inputTrans.payStatus : editClaimed,
+                              commission: double.parse(editCommission.text),
+                              projectName: editProjectName.text,
+                              unit: editUnit.text,
+                              name: inputTrans.name,
+                              location: inputTrans.location,
+                              developer: inputTrans.developer,
+                              description: editDescription.text,
+                              client: clients.map((e) => e.id.toString()).toList().join(";"),
+                              saleDate: selectDate.toString(),
+                              launchDate: inputTrans.launchDate.toString(),
+                              appoint: appoint.map((e) => e.id.toString()).toList().join(";"),
+                              agent: agents.map((e) => e.id.toString()).toList().join(";"),
+                              documents: [] //documents.map((e) => e.fileHash).toList(),
+                              ),
+                        ).then((value) {
+                          Navigator.pop(context);
+                          if (value.isNotEmpty) {
+                            return value;
+                          }
+                        });
+                      }
                     }
                   },
                 ),
@@ -393,27 +424,4 @@ Future<String> transactionEdit(BuildContext context, Transaction inputTrans, int
   );
 
   return "";
-  /*canSave
-      ? Transaction(
-          onSelect: inputTrans.onSelect,
-          id: inputTrans.id,
-          price: double.parse(editPrice.text),
-          priceSQFT: inputTrans.priceSQFT,
-          status: editStatus,
-          payStatus: (mode == 3) ? inputTrans.payStatus : editClaimed,
-          commission: double.parse(editCommission.text),
-          projectName: editProjectName.text,
-          unit: editUnit.text,
-          name: inputTrans.name,
-          location: inputTrans.location,
-          developer: inputTrans.developer,
-          description: editDescription.text,
-          client: clients,
-          saleDate: selectDate,
-          launchDate: inputTrans.launchDate,
-          appoint: appoint,
-          agent: agents,
-          documents: documents,
-        )
-      : null*/
 }

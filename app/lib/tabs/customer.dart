@@ -131,7 +131,7 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionEdit(context, Transaction.create(), 1).then((value) {
+                                  transactionEdit(context, Transaction.create(), 1, true).then((value) {
                                     if (value != "") {
                                       alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }

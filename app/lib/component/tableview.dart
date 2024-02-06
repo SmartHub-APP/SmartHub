@@ -241,9 +241,9 @@ class _TableViewState extends State<TableView> {
                   SizedBox(width: 0.5.w),
                   IconButton(
                     onPressed: () {
-                      transactionEdit(context, widget.data[index], 1).then((value) {
+                      transactionEdit(context, widget.data[index], 1, false).then((value) {
                         if (value != "") {
-                          setState(() {});
+                          alertDialog(context, context.tr('error'), value, context.tr('ok'));
                         }
                       });
                     },

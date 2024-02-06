@@ -104,7 +104,7 @@ class _ProductState extends State<Product> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionEdit(context, Transaction.create(), 2).then((value) {
+                                  transactionEdit(context, Transaction.create(), 2, true).then((value) {
                                     if (value != "") {
                                       alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }
@@ -198,7 +198,7 @@ class _ProductState extends State<Product> {
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          transactionEdit(context, pubTransactions[index], 1).then((value) {
+                          transactionEdit(context, pubTransactions[index], 1, false).then((value) {
                             if (value != "") {
                               alertDialog(context, context.tr('error'), value, context.tr('ok'));
                             }

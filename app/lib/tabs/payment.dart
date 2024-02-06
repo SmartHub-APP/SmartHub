@@ -107,8 +107,10 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionEdit(context, Transaction.create(), 3).then((value) {
-                                    alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                  transactionEdit(context, Transaction.create(), 3, true).then((value) {
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                    }
                                   });
                                 },
                               ),
@@ -316,13 +318,12 @@ class _PaymentState extends State<Payment> {
                               DataCell(text3((data.commission * data.price * 0.01).toStringAsFixed(3))),
                               DataCell(
                                 IconButton(
-                                  onPressed: () async {
-                                    await transactionEdit(context, data, 3).then((value) {
+                                  onPressed: () {
+                                    transactionEdit(context, data, 3, false).then((value) {
                                       if (value != "") {
                                         alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                       }
                                     });
-                                    setState(() {});
                                   },
                                   icon: const Icon(Icons.edit_note_outlined),
                                   tooltip: context.tr('edit'),

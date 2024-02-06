@@ -38,7 +38,7 @@ Future<List<Transaction>?> getTransactionList(TransactionGetRequest req) async {
   }
 }
 
-Future<String> saveTransaction(TransactionPostRequest req) async {
+Future<String> postTransaction(TransactionPostRequest req) async {
   try {
     http.Response response = await http.post(
       Uri.parse(ini.apiServer + ini.api.transaction),
@@ -47,6 +47,20 @@ Future<String> saveTransaction(TransactionPostRequest req) async {
     );
 
     return response.statusCode == 201 ? "" : response.body;
+  } catch (_) {
+    return "Network Error";
+  }
+}
+
+Future<String> putTransaction(TransactionPutRequest req) async {
+  try {
+    http.Response response = await http.put(
+      Uri.parse(ini.apiServer + ini.api.transaction),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode(req.toJson()),
+    );
+
+    return response.statusCode == 200 ? "" : response.body;
   } catch (_) {
     return "Network Error";
   }
