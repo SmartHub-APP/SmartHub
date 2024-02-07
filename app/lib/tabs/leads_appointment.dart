@@ -1,5 +1,6 @@
 import '../config.dart';
 import '../api/appointment.dart';
+import '../object/appointment.dart';
 import '../component/appointment.dart';
 import '../component/interaction.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import '../object/appointment.dart';
+DateTime defaultTime = DateTime.now();
 
 class LeadsAppointment extends StatefulWidget {
   const LeadsAppointment({super.key});
@@ -20,7 +21,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
   int colIndex = 0;
   int searchStatus = 0;
   bool sortAscend = true;
-  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
+  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: defaultTime);
   TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterProjectName = TextEditingController(text: "");
   List<Appointment> leadAppointments = [];
@@ -131,12 +132,11 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  appointmentData(context, Appointment.create()).then((value) {
-                                    setState(() {
-                                      if (value != Appointment.create()) {
-                                        leadAppointments.add(value);
-                                      }
-                                    });
+                                  appointmentData(context, Appointment.create(), true).then((value) {
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                    }
+                                    searchAppoint();
                                   });
                                 },
                               ),
@@ -152,22 +152,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 icon: const Icon(Icons.search),
                                 tooltip: context.tr('search'),
                                 onPressed: () {
-                                  leadAppointments = [];
-                                  getAppointmentList(
-                                    AppointmentGetRequest(
-                                      name: filterName.text,
-                                      projectName: filterProjectName.text,
-                                      status: searchStatus,
-                                      appointTimeStart: searchRange.start.toString(),
-                                      appointTimeEnd: searchRange.end.toString(),
-                                    ),
-                                  ).then((value) {
-                                    setState(() {
-                                      if (value != null) {
-                                        leadAppointments = value;
-                                      }
-                                    });
-                                  });
+                                  searchAppoint();
                                 },
                               ),
                             ),
@@ -202,14 +187,21 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 icon: const Icon(Icons.delete_forever_outlined),
                                 tooltip: context.tr('delete'),
                                 onPressed: () {
-                                  setState(() {
-                                    List<Appointment> newLeadAppointments = [];
-                                    for (var i in leadAppointments) {
-                                      if (!i.onSelect) {
-                                        newLeadAppointments.add(i);
-                                      }
+                                  List<int> deletes = [];
+                                  for (var element in leadAppointments) {
+                                    if (element.onSelect) {
+                                      deletes.add(element.id);
                                     }
-                                    leadAppointments = newLeadAppointments;
+                                  }
+                                  if (deletes.isEmpty) {
+                                    alertDialog(context, context.tr('error'), context.tr('noDataSelect'), context.tr('ok'));
+                                    return;
+                                  }
+                                  deleteAppointment(deletes).then((value) {
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                    }
+                                    searchAppoint();
                                   });
                                 },
                               ),
@@ -290,24 +282,24 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                               DataCell(
                                 Container(
                                   padding: const EdgeInsets.all(10),
-                                  child: userShow(context, data.lead == null ? [] : [data.lead!]),
+                                  child: userShow(context, data.lead),
                                 ),
                               ),
                               DataCell(
                                 Container(
                                   padding: const EdgeInsets.all(10),
-                                  child: userShow(context, data.agent == null ? [] : [data.agent!]),
+                                  child: userShow(context, data.agent),
                                 ),
                               ),
                               DataCell(
                                 IconButton(
-                                  onPressed: () async {
-                                    await appointmentData(context, data).then((value) {
-                                      setState(() {
-                                        leadAppointments[leadAppointments.indexWhere((element) => element == data)] = value;
-                                      });
+                                  onPressed: () {
+                                    appointmentData(context, data, false).then((value) {
+                                      if (value != "") {
+                                        alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                      }
+                                      searchAppoint();
                                     });
-                                    setState(() {});
                                   },
                                   icon: const Icon(Icons.edit_note_outlined),
                                   tooltip: context.tr('edit'),
@@ -326,5 +318,32 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
         );
       },
     );
+  }
+
+  searchAppoint() {
+    getAppointmentList(
+      DateTimeRange(start: ini.timeStart, end: defaultTime) == searchRange
+          ? AppointmentGetRequest(
+              name: filterName.text,
+              projectName: filterProjectName.text,
+              status: searchStatus,
+              appointTimeStart: "",
+              appointTimeEnd: "",
+            )
+          : AppointmentGetRequest(
+              name: filterName.text,
+              projectName: filterProjectName.text,
+              status: searchStatus,
+              appointTimeStart: searchRange.start.toString(),
+              appointTimeEnd: searchRange.end.toString(),
+            ),
+    ).then((value) {
+      if (value != null) {
+        leadAppointments = value;
+      } else {
+        alertDialog(context, context.tr('error'), context.tr('emptySearch'), context.tr('ok'));
+      }
+      setState(() {});
+    });
   }
 }

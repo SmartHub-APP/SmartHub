@@ -1,3 +1,5 @@
+import 'package:smarthub/api/appointment.dart';
+
 import 'interaction.dart';
 import '../config.dart';
 import '../object/member.dart';
@@ -8,13 +10,12 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-Future<Appointment> appointmentData(BuildContext context, Appointment input) async {
+Future<String> appointmentData(BuildContext context, Appointment input, bool isNew) async {
   int editStatus = input.status;
-  bool canSave = false;
   DateTime selectDate = input.appointDate;
   TimeOfDay selectTime = TimeOfDay(hour: input.appointDate.hour, minute: input.appointDate.minute);
-  List<Member> lead = input.lead == null ? [] : [input.lead!];
-  List<Member> agent = input.agent == null ? [] : [input.agent!];
+  List<Member> lead = input.lead;
+  List<Member> agent = input.agent;
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -212,23 +213,41 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
                         context.tr('emptyStatus'),
                         context.tr('ok'),
                       );
-                    } else if (lead.isEmpty) {
-                      alertDialog(
-                        context,
-                        context.tr('error'),
-                        context.tr('emptyLeads'),
-                        context.tr('ok'),
-                      );
-                    } else if (agent.isEmpty) {
-                      alertDialog(
-                        context,
-                        context.tr('error'),
-                        context.tr('emptyAgent'),
-                        context.tr('ok'),
-                      );
                     } else {
-                      canSave = true;
-                      Navigator.pop(context);
+                      if (isNew) {
+                        postAppointment(
+                          AppointmentPostRequest(
+                            payStatus: editStatus,
+                            projectName: input.projectName,
+                            lead: lead.map((e) => e.id).join(","),
+                            agent: agent.map((e) => e.id).join(","),
+                            appointTime: "${selectDate.year}-${selectDate.month}-${selectDate.day} ${selectTime.hour}:${selectTime.minute}:00",
+                          ),
+                        ).then((value) {
+                          if (value.isEmpty) {
+                            Navigator.pop(context);
+                          } else {
+                            alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                          }
+                        });
+                      } else {
+                        putAppointment(
+                          AppointmentPutRequest(
+                            id: input.id,
+                            payStatus: editStatus,
+                            projectName: input.projectName,
+                            lead: lead.map((e) => e.id).join(","),
+                            agent: agent.map((e) => e.id).join(","),
+                            appointTime: "${selectDate.year}-${selectDate.month}-${selectDate.day} ${selectTime.hour}:${selectTime.minute}:00",
+                          ),
+                        ).then((value) {
+                          if (value.isEmpty) {
+                            Navigator.pop(context);
+                          } else {
+                            alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                          }
+                        });
+                      }
                     }
                   },
                 ),
@@ -240,20 +259,5 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
     },
   );
 
-  return canSave
-      ? Appointment(
-          onSelect: input.onSelect,
-          lead: lead[0],
-          agent: agent[0],
-          status: editStatus,
-          projectName: input.projectName,
-          appointDate: DateTime(
-            selectDate.year,
-            selectDate.month,
-            selectDate.day,
-            selectTime.hour,
-            selectTime.minute,
-          ),
-        )
-      : input;
+  return "";
 }

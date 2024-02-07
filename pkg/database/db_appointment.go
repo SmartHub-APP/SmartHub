@@ -56,12 +56,12 @@ type AppointmentPUT struct {
 var sqlAppointmentGet = `SELECT * FROM Appointment %s;`
 
 var sqlAppointmentPOST = `
-INSERT INTO Appointment (Status, Name, ProjectName, Lead, Agent, AppointDate)
+INSERT INTO Appointment (Status, Name, ProjectName, Lead, Agent, AppointTime)
 VALUES ("%d", "%s", "%s", "%s", "%s", "%s");
 `
 var sqlAppointmentPUT = `
 UPDATE Appointment
-SET Status="%d", Name="%s", ProjectName="%s", Lead="%s", Agent="%s", AppointDate="%s";
+SET Status="%d", Name="%s", ProjectName="%s", Lead="%s", Agent="%s", AppointTime="%s";
 WHERE ID="%d";
 `
 var sqlAppointmentDELETE = `DELETE FROM Appointment WHERE ID IN (%s);`
@@ -83,7 +83,7 @@ func (DB *SmartHubDB) AppointmentGET(req AppointmentGetRequest) ([]AppointmentGe
 		Querys = append(
 			Querys,
 			fmt.Sprintf(
-				`LaunchDate BETWEEN '%s' AND '%s'`,
+				`AppointTime BETWEEN '%s' AND '%s'`,
 				req.AppointTimeStart, req.AppointTimeEnd,
 			),
 		)
