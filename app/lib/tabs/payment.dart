@@ -172,9 +172,36 @@ class _PaymentState extends State<Payment> {
                                       if (value) {
                                         setState(() {
                                           for (var i in selects) {
-                                            i.payStatus = 1;
                                             i.onSelect = false;
+                                            putTransaction(
+                                              TransactionPutRequest(
+                                                id: i.id,
+                                                name: i.name,
+                                                projectName: i.projectName,
+                                                status: i.status,
+                                                payStatus: 1,
+                                                unit: i.unit,
+                                                launchDate: i.launchDate.toString(),
+                                                saleDate: i.saleDate.toString(),
+                                                appoint: i.appoint.map((e) => e.id.toString()).toList().join(ini.separator),
+                                                price: i.price,
+                                                commission: i.commission,
+                                                agent: i.agent.map((e) => e.id.toString()).toList().join(ini.separator),
+                                                client: i.client.map((e) => e.id.toString()).toList().join(ini.separator),
+                                                description: i.description,
+                                                developer: i.developer,
+                                                documents: [],
+                                                //i.documents.map((e) => e.id.toString()).toList().join(ini.separator),
+                                                location: i.location,
+                                                priceSQFT: i.priceSQFT,
+                                              ),
+                                            ).then((value) {
+                                              if (value != "") {
+                                                alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                              }
+                                            });
                                           }
+                                          searchTransaction();
                                         });
                                       }
                                     });

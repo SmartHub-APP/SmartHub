@@ -219,8 +219,8 @@ Future<String> appointmentData(BuildContext context, Appointment input, bool isN
                           AppointmentPostRequest(
                             payStatus: editStatus,
                             projectName: input.projectName,
-                            lead: lead.map((e) => e.id).join(","),
-                            agent: agent.map((e) => e.id).join(","),
+                            lead: lead.map((e) => e.id).join(ini.separator),
+                            agent: agent.map((e) => e.id).join(ini.separator),
                             appointTime: "${selectDate.year}-${selectDate.month}-${selectDate.day} ${selectTime.hour}:${selectTime.minute}:00",
                           ),
                         ).then((value) {
@@ -236,8 +236,8 @@ Future<String> appointmentData(BuildContext context, Appointment input, bool isN
                             id: input.id,
                             payStatus: editStatus,
                             projectName: input.projectName,
-                            lead: lead.map((e) => e.id).join(","),
-                            agent: agent.map((e) => e.id).join(","),
+                            lead: lead.map((e) => e.id).join(ini.separator),
+                            agent: agent.map((e) => e.id).join(ini.separator),
                             appointTime: "${selectDate.year}-${selectDate.month}-${selectDate.day} ${selectTime.hour}:${selectTime.minute}:00",
                           ),
                         ).then((value) {
