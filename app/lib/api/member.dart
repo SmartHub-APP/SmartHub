@@ -30,10 +30,6 @@ Future<List<Member>> getMemberList(String query, String scheme) async {
 }
 
 Future<String> postMember(Member m, String password) async {
-  if (m.phone == null || m.company == null || m.jobTitle == null || m.bankCode == null || m.bankAccount == null) {
-    return "Missing Field";
-  }
-
   SharedPreferences cache = await SharedPreferences.getInstance();
 
   try {

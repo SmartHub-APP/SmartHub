@@ -38,9 +38,8 @@ class Appointment {
       status: json["Status"] ?? 0,
       projectName: json["ProjectName"] ?? "",
       appointDate: DateTime.parse(json["AppointTime"] ?? ini.timeStart.toString()),
-      lead: [],
-      //json["Lead"] != null ? Member.fromJson(json["Lead"]) : null,
-      agent: [],
+      lead: List<Member>.from(json["Lead"].map((x) => Member.fromJson(x))),
+      agent: List<Member>.from(json["Agent"].map((x) => Member.fromJson(x))),
       //json["Agent"] != null ? Member.fromJson(json["Agent"]) : null,
     );
   }

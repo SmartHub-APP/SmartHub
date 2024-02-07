@@ -14,12 +14,14 @@ Widget memberTile(
   bool isDelete = false,
   bool advanced = false,
 }) {
-  String personIntro = "${m.company ?? ""}, ${m.jobTitle ?? ""}";
-  String msg = "${context.tr('email')} : ${m.account}\n${context.tr('phone')} :  ${(m.phone ?? "").isEmpty ? "N/A" : m.phone}";
+  String personIntro = "${m.company.isEmpty ? "" : m.company}"
+      "${m.jobTitle.isEmpty ? "" : m.jobTitle}";
+  String msg = "${context.tr('email')} : ${m.account.isEmpty ? "N/A" : m.account}\n"
+      "${context.tr('phone')} :  ${m.phone.isEmpty ? "N/A" : m.phone}";
 
   if (advanced) {
-    msg += "\n${context.tr('bankCode')} : ${(m.bankCode ?? "").isEmpty ? "N/A" : m.bankCode}\n"
-        "${context.tr('bankAccount')} : ${(m.bankAccount ?? "").isEmpty ? "N/A" : m.bankAccount}";
+    msg += "\n${context.tr('bankCode')} : ${m.bankCode.isEmpty ? "N/A" : m.bankCode}\n"
+        "${context.tr('bankAccount')} : ${m.bankAccount.isEmpty ? "N/A" : m.bankAccount}";
   }
 
   return Tooltip(
@@ -216,7 +218,6 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers, Str
                               } else {
                                 Member newMember = Member(
                                   id: -1,
-                                  status: 1,
                                   name: newName.text,
                                   phone: newPhone.text,
                                   account: newEmail.text,

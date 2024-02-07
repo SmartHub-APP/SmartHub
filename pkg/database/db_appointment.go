@@ -149,6 +149,8 @@ func (DB *SmartHubDB) AppointmentPUT(m AppointmentPUT) string {
 		m.ID,
 	)
 
+	fmt.Println(sql)
+
 	if _, err := DB.ctl.Exec(sql); err != nil {
 		return "Query failed"
 	}
