@@ -83,7 +83,7 @@ func (DB *SmartHubDB) AppointmentGET(req AppointmentGetRequest) ([]AppointmentGe
 		Querys = append(
 			Querys,
 			fmt.Sprintf(
-				`LaunchDate BETWEEN '%s' AND '%s'`,
+				`AppointTime BETWEEN '%s' AND '%s'`,
 				req.AppointTimeStart, req.AppointTimeEnd,
 			),
 		)

@@ -13,8 +13,8 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
   bool canSave = false;
   DateTime selectDate = input.appointDate;
   TimeOfDay selectTime = TimeOfDay(hour: input.appointDate.hour, minute: input.appointDate.minute);
-  List<Member> lead = input.lead == null ? [] : [input.lead!];
-  List<Member> agent = input.agent == null ? [] : [input.agent!];
+  List<Member> lead = input.lead;
+  List<Member> agent = input.agent;
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -243,8 +243,8 @@ Future<Appointment> appointmentData(BuildContext context, Appointment input) asy
   return canSave
       ? Appointment(
           onSelect: input.onSelect,
-          lead: lead[0],
-          agent: agent[0],
+          lead: lead,
+          agent: agent,
           status: editStatus,
           projectName: input.projectName,
           appointDate: DateTime(

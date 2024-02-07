@@ -5,7 +5,7 @@ class Appointment {
   bool onSelect;
   String projectName;
   int status;
-  Member? lead, agent;
+  List<Member> lead, agent;
   DateTime appointDate;
 
   Appointment({
@@ -13,8 +13,8 @@ class Appointment {
     required this.status,
     required this.projectName,
     required this.appointDate,
-    this.lead,
-    this.agent,
+    required this.lead,
+    required this.agent,
   });
 
   factory Appointment.create() {
@@ -23,6 +23,8 @@ class Appointment {
       status: 0,
       projectName: '',
       appointDate: ini.timeStart,
+      lead: [],
+      agent: [],
     );
   }
 
@@ -32,8 +34,81 @@ class Appointment {
       status: json["Status"] ?? 0,
       projectName: json["ProjectName"] ?? "",
       appointDate: DateTime.parse(json["AppointDate"] ?? ini.timeStart.toString()),
-      lead: json["Lead"] != null ? Member.fromJson(json["Lead"]) : null,
-      agent: json["Agent"] != null ? Member.fromJson(json["Agent"]) : null,
+      lead: [],
+      //json["Lead"] != null ? Member.fromJson(json["Lead"]) : null,
+      agent: [],
+      //json["Agent"] != null ? Member.fromJson(json["Agent"]) : null,
     );
+  }
+}
+
+class AppointmentGetRequest {
+  int status;
+  String name;
+  String projectName;
+  String appointTimeStart;
+  String appointTimeEnd;
+
+  AppointmentGetRequest({
+    required this.name,
+    required this.projectName,
+    required this.status,
+    required this.appointTimeStart,
+    required this.appointTimeEnd,
+  });
+}
+
+class AppointmentPostRequest {
+  int payStatus;
+  String projectName;
+  String lead;
+  String agent;
+  String appointTime;
+
+  AppointmentPostRequest({
+    required this.payStatus,
+    required this.projectName,
+    required this.lead,
+    required this.agent,
+    required this.appointTime,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "Status": payStatus,
+      "ProjectName": projectName,
+      "Lead": lead,
+      "Agent": agent,
+      "AppointTime": appointTime,
+    };
+  }
+}
+
+class AppointmentPutRequest {
+  int id;
+  int payStatus;
+  String projectName;
+  String lead;
+  String agent;
+  String appointTime;
+
+  AppointmentPutRequest({
+    required this.id,
+    required this.payStatus,
+    required this.projectName,
+    required this.lead,
+    required this.agent,
+    required this.appointTime,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      "ID": id,
+      "Status": payStatus,
+      "ProjectName": projectName,
+      "Lead": lead,
+      "Agent": agent,
+      "AppointTime": appointTime,
+    };
   }
 }

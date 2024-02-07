@@ -116,6 +116,7 @@ class _ProductState extends State<Product> {
                                     if (value != "") {
                                       alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }
+                                    searchTransaction();
                                   });
                                 },
                               ),
@@ -152,7 +153,7 @@ class _ProductState extends State<Product> {
                                   });
                                 },
                               ),
-                            ),
+                            ),/*
                             SizedBox(width: 1.w),
                             Container(
                               decoration: BoxDecoration(
@@ -175,7 +176,7 @@ class _ProductState extends State<Product> {
                                   });
                                 },
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                       ),

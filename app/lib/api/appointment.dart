@@ -4,48 +4,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AppointmentGetRequest {
-  int status;
-  String name;
-  String projectName;
-  String appointTimeStart;
-  String appointTimeEnd;
-
-  AppointmentGetRequest({
-    required this.name,
-    required this.projectName,
-    required this.status,
-    required this.appointTimeStart,
-    required this.appointTimeEnd,
-  });
-}
-
-class AppointmentEdit {
-  int status;
-  String projectName;
-  String lead;
-  String agent;
-  String appointTime;
-
-  AppointmentEdit({
-    required this.status,
-    required this.projectName,
-    required this.lead,
-    required this.agent,
-    required this.appointTime,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      "Status": status,
-      "ProjectName": projectName,
-      "Lead": lead,
-      "Agent": agent,
-      "AppointTime": appointTime,
-    };
-  }
-}
-
 Future<List<Appointment>?> getAppointmentList(AppointmentGetRequest req) async {
   SharedPreferences cache = await SharedPreferences.getInstance();
 
@@ -53,7 +11,7 @@ Future<List<Appointment>?> getAppointmentList(AppointmentGetRequest req) async {
     http.Response response = await http.get(
       Uri(
         scheme: 'http',
-        host: ini.apiServer,
+        host: ini.apiBase,
         port: 25000,
         path: ini.api.appointment,
         queryParameters: {
@@ -64,10 +22,6 @@ Future<List<Appointment>?> getAppointmentList(AppointmentGetRequest req) async {
           'AppointTimeEnd': req.appointTimeEnd,
         },
       ),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer ${cache.getString(ini.cacheName.tokenAccess) ?? ''}',
-      },
     );
 
     if (response.statusCode == 200) {
@@ -80,11 +34,7 @@ Future<List<Appointment>?> getAppointmentList(AppointmentGetRequest req) async {
   }
 }
 
-Future<String> postAppointment(AppointmentEdit req) async {
-  if (req.projectName.isEmpty || req.lead.isEmpty || req.agent.isEmpty || req.appointTime.isEmpty || req.status < 0) {
-    return "Invalid Input";
-  }
-
+Future<String> postAppointment(AppointmentPostRequest req) async {
   try {
     http.Response response = await http.post(
       Uri.parse(ini.apiServer + ini.api.appointment),
@@ -98,11 +48,7 @@ Future<String> postAppointment(AppointmentEdit req) async {
   }
 }
 
-Future<String> putAppointment(AppointmentEdit req) async {
-  if (req.projectName.isEmpty || req.lead.isEmpty || req.agent.isEmpty || req.appointTime.isEmpty || req.status < 0) {
-    return "Invalid Input";
-  }
-
+Future<String> putAppointment(AppointmentPutRequest req) async {
   try {
     http.Response response = await http.put(
       Uri.parse(ini.apiServer + ini.api.appointment),

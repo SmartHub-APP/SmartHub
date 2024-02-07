@@ -1,5 +1,6 @@
 import '../config.dart';
 import '../api/appointment.dart';
+import '../object/appointment.dart';
 import '../component/appointment.dart';
 import '../component/interaction.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-import '../object/appointment.dart';
+DateTime defaultTime = DateTime.now();
 
 class LeadsAppointment extends StatefulWidget {
   const LeadsAppointment({super.key});
@@ -20,7 +21,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
   int colIndex = 0;
   int searchStatus = 0;
   bool sortAscend = true;
-  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
+  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: defaultTime);
   TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterProjectName = TextEditingController(text: "");
   List<Appointment> leadAppointments = [];
@@ -152,22 +153,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 icon: const Icon(Icons.search),
                                 tooltip: context.tr('search'),
                                 onPressed: () {
-                                  leadAppointments = [];
-                                  getAppointmentList(
-                                    AppointmentGetRequest(
-                                      name: filterName.text,
-                                      projectName: filterProjectName.text,
-                                      status: searchStatus,
-                                      appointTimeStart: searchRange.start.toString(),
-                                      appointTimeEnd: searchRange.end.toString(),
-                                    ),
-                                  ).then((value) {
-                                    setState(() {
-                                      if (value != null) {
-                                        leadAppointments = value;
-                                      }
-                                    });
-                                  });
+                                  searchAppoint();
                                 },
                               ),
                             ),
@@ -290,13 +276,13 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                               DataCell(
                                 Container(
                                   padding: const EdgeInsets.all(10),
-                                  child: userShow(context, data.lead == null ? [] : [data.lead!]),
+                                  child: userShow(context, data.lead),
                                 ),
                               ),
                               DataCell(
                                 Container(
                                   padding: const EdgeInsets.all(10),
-                                  child: userShow(context, data.agent == null ? [] : [data.agent!]),
+                                  child: userShow(context, data.agent),
                                 ),
                               ),
                               DataCell(
@@ -326,5 +312,33 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
         );
       },
     );
+  }
+
+  searchAppoint() {
+    getAppointmentList(
+      DateTimeRange(start: ini.timeStart, end: defaultTime) == searchRange
+          ? AppointmentGetRequest(
+              name: filterName.text,
+              projectName: filterProjectName.text,
+              status: searchStatus,
+              appointTimeStart: "",
+              appointTimeEnd: "",
+            )
+          : AppointmentGetRequest(
+              name: filterName.text,
+              projectName: filterProjectName.text,
+              status: searchStatus,
+              appointTimeStart: searchRange.start.toString(),
+              appointTimeEnd: searchRange.end.toString(),
+            ),
+    ).then((value) {
+      print(value);
+      if (value != null) {
+        leadAppointments = value;
+      } else {
+        alertDialog(context, context.tr('error'), context.tr('emptySearch'), context.tr('ok'));
+      }
+      setState(() {});
+    });
   }
 }
