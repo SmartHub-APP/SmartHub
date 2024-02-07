@@ -61,7 +61,7 @@ VALUES ("%d", "%s", "%s", "%s", "%s", "%s");
 `
 var sqlAppointmentPUT = `
 UPDATE Appointment
-SET Status="%d", Name="%s", ProjectName="%s", Lead="%s", Agent="%s", AppointTime="%s";
+SET Status="%d", Name="%s", ProjectName="%s", Lead="%s", Agent="%s", AppointTime="%s"
 WHERE ID="%d";
 `
 var sqlAppointmentDELETE = `DELETE FROM Appointment WHERE ID IN (%s);`
@@ -148,8 +148,6 @@ func (DB *SmartHubDB) AppointmentPUT(m AppointmentPUT) string {
 		m.Status, m.Name, m.ProjectName, m.Lead, m.Agent, m.AppointTime,
 		m.ID,
 	)
-
-	fmt.Println(sql)
 
 	if _, err := DB.ctl.Exec(sql); err != nil {
 		return "Query failed"
