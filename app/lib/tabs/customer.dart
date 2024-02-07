@@ -276,7 +276,11 @@ class _CustomerState extends State<Customer> {
                                 icon: const Icon(Icons.cleaning_services_rounded),
                                 tooltip: context.tr('clear'),
                                 onPressed: () {
-                                  clearFilter();
+                                  filterName.text = "";
+                                  filterUnit.text = "";
+                                  searchStatus = 0;
+                                  searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
+                                  setState(() {});
                                 },
                               ),
                             ),
@@ -452,14 +456,6 @@ class _CustomerState extends State<Customer> {
         );
       },
     );
-  }
-
-  clearFilter() {
-    filterName.text = "";
-    filterUnit.text = "";
-    searchStatus = 0;
-    searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
-    setState(() {});
   }
 
   searchTransaction() {

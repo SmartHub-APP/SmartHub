@@ -61,7 +61,7 @@ VALUES ("%d", "%s", "%s", "%s", "%s", "%s");
 `
 var sqlAppointmentPUT = `
 UPDATE Appointment
-SET Status="%d", Name="%s", ProjectName="%s", Lead="%s", Agent="%s", AppointTime="%s";
+SET Status="%d", Name="%s", ProjectName="%s", Lead="%s", Agent="%s", AppointTime="%s"
 WHERE ID="%d";
 `
 var sqlAppointmentDELETE = `DELETE FROM Appointment WHERE ID IN (%s);`
