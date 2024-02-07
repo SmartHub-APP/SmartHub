@@ -18,10 +18,10 @@ class Payment extends StatefulWidget {
 
 class _PaymentState extends State<Payment> {
   int colIndex = 0;
-  int searchStatus = 0;
+  int searchPayStatus = 0;
   bool sortAscend = true;
   TextEditingController filterAgent = TextEditingController(text: "");
-  TextEditingController filterName = TextEditingController(text: "");
+  TextEditingController filterProjectName = TextEditingController(text: "");
   List<Transaction> transactions = [];
 
   @override
@@ -61,7 +61,7 @@ class _PaymentState extends State<Payment> {
                               child: SizedBox(
                                 height: 7.h,
                                 child: TextField(
-                                  controller: filterName,
+                                  controller: filterProjectName,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
                                     labelText: context.tr('customer_colProject'),
@@ -82,10 +82,10 @@ class _PaymentState extends State<Payment> {
                                   items: ini.commissionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      searchStatus = ini.commissionStatus.indexWhere((element) => element == newValue);
+                                      searchPayStatus = ini.commissionStatus.indexWhere((element) => element == newValue);
                                     });
                                   },
-                                  value: ini.commissionStatus[searchStatus],
+                                  value: ini.commissionStatus[searchPayStatus],
                                 ),
                               ),
                             ),
@@ -111,6 +111,7 @@ class _PaymentState extends State<Payment> {
                                     if (value != "") {
                                       alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }
+                                    searchTransaction();
                                   });
                                 },
                               ),
@@ -126,25 +127,7 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.search),
                                 tooltip: context.tr('search'),
                                 onPressed: () {
-                                  getTransactionList(
-                                    TransactionGetRequest(
-                                      name: filterName.text,
-                                      projectName: "",
-                                      status: -1,
-                                      payStatus: searchStatus,
-                                      unit: "",
-                                      launchDateStart: ini.timeStart.toString(),
-                                      launchDateEnd: DateTime.now().toString(),
-                                      saleDateStart: ini.timeStart.toString(),
-                                      saleDateEnd: DateTime.now().toString(),
-                                    ),
-                                  ).then((value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        transactions = value;
-                                      });
-                                    }
-                                  });
+                                  searchTransaction();
                                 },
                               ),
                             ),
@@ -160,8 +143,9 @@ class _PaymentState extends State<Payment> {
                                 tooltip: context.tr('clear'),
                                 onPressed: () {
                                   setState(() {
-                                    searchStatus = 0;
-                                    filterName.text = '';
+                                    searchPayStatus = 0;
+                                    filterAgent.text = '';
+                                    filterProjectName.text = '';
                                   });
                                 },
                               ),
@@ -189,10 +173,13 @@ class _PaymentState extends State<Payment> {
                                         setState(() {
                                           for (var i in selects) {
                                             i.payStatus = 1;
+                                            i.onSelect = false;
                                           }
                                         });
                                       }
                                     });
+                                  } else {
+                                    alertDialog(context, context.tr('error'), context.tr('noDataSelect'), context.tr('ok'));
                                   }
                                 },
                               ),
@@ -208,14 +195,21 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.delete_forever_outlined),
                                 tooltip: context.tr('delete'),
                                 onPressed: () {
-                                  setState(() {
-                                    List<Transaction> newTransactions = [];
-                                    for (var i in transactions) {
-                                      if (!i.onSelect) {
-                                        newTransactions.add(i);
-                                      }
+                                  List<int> deletes = [];
+                                  for (var element in transactions) {
+                                    if (element.onSelect) {
+                                      deletes.add(element.id);
                                     }
-                                    transactions = newTransactions;
+                                  }
+                                  if (deletes.isEmpty) {
+                                    alertDialog(context, context.tr('error'), context.tr('noDataSelect'), context.tr('ok'));
+                                    return;
+                                  }
+                                  deleteTransaction(deletes).then((value) {
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                    }
+                                    searchTransaction();
                                   });
                                 },
                               ),
@@ -342,5 +336,28 @@ class _PaymentState extends State<Payment> {
         );
       },
     );
+  }
+
+  searchTransaction() {
+    getTransactionList(
+      TransactionGetRequest(
+        name: "",
+        projectName: filterProjectName.text,
+        status: 0,
+        payStatus: searchPayStatus,
+        unit: "",
+        launchDateStart: "",
+        launchDateEnd: "",
+        saleDateStart: "",
+        saleDateEnd: "",
+      ),
+    ).then((value) {
+      if (value != null) {
+        transactions = value;
+      } else {
+        alertDialog(context, context.tr('error'), context.tr('emptySearch'), context.tr('ok'));
+      }
+      setState(() {});
+    });
   }
 }

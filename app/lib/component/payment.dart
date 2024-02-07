@@ -8,7 +8,15 @@ import 'package:easy_localization/easy_localization.dart';
 
 Future<bool> makePayment(BuildContext context, List<Transaction> selects) async {
   bool isSuccess = false;
-  List<Member> payTo = selects.map((e) => e.agent[0]).toList();
+
+  List<Member> payTo = [];
+
+  for (var e in selects) {
+    if (e.agent.isNotEmpty) {
+      payTo.add(e.agent[0]);
+    }
+  }
+
   if (payTo.length != 1) {
     alertDialog(context, context.tr('error'), context.tr('payment_error'), context.tr('ok'));
   } else {
