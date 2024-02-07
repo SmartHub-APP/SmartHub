@@ -2,6 +2,7 @@ import 'member.dart';
 import '../config.dart';
 
 class Appointment {
+  int id;
   bool onSelect;
   String projectName;
   int status;
@@ -9,6 +10,7 @@ class Appointment {
   DateTime appointDate;
 
   Appointment({
+    required this.id,
     required this.onSelect,
     required this.status,
     required this.projectName,
@@ -19,6 +21,7 @@ class Appointment {
 
   factory Appointment.create() {
     return Appointment(
+      id: 0,
       onSelect: false,
       status: 0,
       projectName: '',
@@ -30,10 +33,11 @@ class Appointment {
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
+      id: json["ID"] ?? 0,
       onSelect: false,
       status: json["Status"] ?? 0,
       projectName: json["ProjectName"] ?? "",
-      appointDate: DateTime.parse(json["AppointDate"] ?? ini.timeStart.toString()),
+      appointDate: DateTime.parse(json["AppointTime"] ?? ini.timeStart.toString()),
       lead: [],
       //json["Lead"] != null ? Member.fromJson(json["Lead"]) : null,
       agent: [],

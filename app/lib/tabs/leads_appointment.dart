@@ -132,12 +132,11 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  appointmentData(context, Appointment.create()).then((value) {
-                                    setState(() {
-                                      if (value != Appointment.create()) {
-                                        leadAppointments.add(value);
-                                      }
-                                    });
+                                  appointmentData(context, Appointment.create(), true).then((value) {
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                    }
+                                    searchAppoint();
                                   });
                                 },
                               ),
@@ -188,14 +187,21 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                 icon: const Icon(Icons.delete_forever_outlined),
                                 tooltip: context.tr('delete'),
                                 onPressed: () {
-                                  setState(() {
-                                    List<Appointment> newLeadAppointments = [];
-                                    for (var i in leadAppointments) {
-                                      if (!i.onSelect) {
-                                        newLeadAppointments.add(i);
-                                      }
+                                  List<int> deletes = [];
+                                  for (var element in leadAppointments) {
+                                    if (element.onSelect) {
+                                      deletes.add(element.id);
                                     }
-                                    leadAppointments = newLeadAppointments;
+                                  }
+                                  if (deletes.isEmpty) {
+                                    alertDialog(context, context.tr('error'), context.tr('noDataSelect'), context.tr('ok'));
+                                    return;
+                                  }
+                                  deleteAppointment(deletes).then((value) {
+                                    if (value != "") {
+                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                    }
+                                    searchAppoint();
                                   });
                                 },
                               ),
@@ -287,13 +293,13 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                               ),
                               DataCell(
                                 IconButton(
-                                  onPressed: () async {
-                                    await appointmentData(context, data).then((value) {
-                                      setState(() {
-                                        leadAppointments[leadAppointments.indexWhere((element) => element == data)] = value;
-                                      });
+                                  onPressed: () {
+                                    appointmentData(context, data, false).then((value) {
+                                      if (value != "") {
+                                        alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                      }
+                                      searchAppoint();
                                     });
-                                    setState(() {});
                                   },
                                   icon: const Icon(Icons.edit_note_outlined),
                                   tooltip: context.tr('edit'),
@@ -332,7 +338,6 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
               appointTimeEnd: searchRange.end.toString(),
             ),
     ).then((value) {
-      print(value);
       if (value != null) {
         leadAppointments = value;
       } else {

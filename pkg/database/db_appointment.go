@@ -96,7 +96,6 @@ func (DB *SmartHubDB) AppointmentGET(req AppointmentGetRequest) ([]AppointmentGe
 		queryFilter = "WHERE " + strings.Join(Querys, " AND ")
 	}
 
-	fmt.Println(fmt.Sprintf(sqlAppointmentGet, queryFilter))
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlAppointmentGet, queryFilter))
 	if err != nil {
 		return Appointments, "Query failed"

@@ -62,12 +62,12 @@ Future<String> putAppointment(AppointmentPutRequest req) async {
   }
 }
 
-Future<String> deleteAppointment(int id) async {
+Future<String> deleteAppointment(List<int> ids) async {
   try {
     http.Response response = await http.delete(
       Uri.parse(ini.apiServer + ini.api.appointment),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
-      body: jsonEncode({"ID": id}),
+      body: jsonEncode(ids),
     );
 
     return response.statusCode == 200 ? "" : response.body;
