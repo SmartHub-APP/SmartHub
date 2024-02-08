@@ -14,12 +14,14 @@ Widget memberTile(
   bool isDelete = false,
   bool advanced = false,
 }) {
-  String personIntro = "${m.company ?? ""}, ${m.jobTitle ?? ""}";
-  String msg = "${context.tr('email')} : ${m.account}\n${context.tr('phone')} :  ${(m.phone ?? "").isEmpty ? "N/A" : m.phone}";
+  String personIntro = "${m.company.isEmpty ? "" : m.company}"
+      "${m.jobTitle.isEmpty ? "" : m.jobTitle}";
+  String msg = "${context.tr('email')} : ${m.account.isEmpty ? "N/A" : m.account}\n"
+      "${context.tr('phone')} :  ${m.phone.isEmpty ? "N/A" : m.phone}";
 
   if (advanced) {
-    msg += "\n${context.tr('bankCode')} : ${(m.bankCode ?? "").isEmpty ? "N/A" : m.bankCode}\n"
-        "${context.tr('bankAccount')} : ${(m.bankAccount ?? "").isEmpty ? "N/A" : m.bankAccount}";
+    msg += "\n${context.tr('bankCode')} : ${m.bankCode.isEmpty ? "N/A" : m.bankCode}\n"
+        "${context.tr('bankAccount')} : ${m.bankAccount.isEmpty ? "N/A" : m.bankAccount}";
   }
 
   return Tooltip(
@@ -27,7 +29,7 @@ Widget memberTile(
     textStyle: const TextStyle(fontSize: 12, color: Colors.white),
     decoration: BoxDecoration(color: Colors.black, borderRadius: uiStyle.roundCorner2),
     child: Container(
-      padding: expandMode ? EdgeInsets.zero : const EdgeInsets.all(5),
+      padding: expandMode ? EdgeInsets.zero : const EdgeInsets.all(1),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Colors.black),
@@ -154,6 +156,7 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers, Str
                             ),
                           )
                         : text3(context.tr('emptySearch')),
+                  /*
                   const Divider(color: Colors.grey),
                   text2(context.tr('add')),
                   SizedBox(height: 1.h),
@@ -216,7 +219,6 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers, Str
                               } else {
                                 Member newMember = Member(
                                   id: -1,
-                                  status: 1,
                                   name: newName.text,
                                   phone: newPhone.text,
                                   account: newEmail.text,
@@ -243,7 +245,7 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers, Str
                       ),
                     ],
                   ),
-                  SizedBox(height: 1.h),
+                  SizedBox(height: 1.h),*/
                 ],
               ),
             ),

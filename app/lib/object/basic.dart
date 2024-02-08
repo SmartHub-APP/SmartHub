@@ -7,6 +7,7 @@ class InitSetting {
   String apiBase;
   String apiServer;
   DateTime timeStart;
+  DateTime timeEnd;
   CacheName cacheName;
   List<String> transactionStatus;
   List<String> appointmentLeadStatus;
@@ -21,6 +22,7 @@ class InitSetting {
     required this.apiServer,
     required this.urls,
     required this.timeStart,
+    required this.timeEnd,
     required this.cacheName,
     required this.transactionStatus,
     required this.appointmentLeadStatus,

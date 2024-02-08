@@ -1,3 +1,4 @@
+import '../api/transaction.dart';
 import '../config.dart';
 import '../object/transaction.dart';
 import '../component/interaction.dart';
@@ -19,7 +20,14 @@ class _ProductState extends State<Product> {
   int searchStatus = 0;
   List<Transaction> pubTransactions = [];
   TextEditingController filterName = TextEditingController(text: "");
-  TextEditingController filterClass = TextEditingController(text: "");
+  TextEditingController filterUnit = TextEditingController(text: "");
+
+  @override
+  void initState() {
+    searchTransaction();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +66,7 @@ class _ProductState extends State<Product> {
                               child: SizedBox(
                                 height: 7.h,
                                 child: TextField(
-                                  controller: filterClass,
+                                  controller: filterUnit,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
                                     labelText: context.tr('customer_colUnit'),
@@ -108,6 +116,7 @@ class _ProductState extends State<Product> {
                                     if (value != "") {
                                       alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }
+                                    searchTransaction();
                                   });
                                 },
                               ),
@@ -123,21 +132,7 @@ class _ProductState extends State<Product> {
                                 icon: const Icon(Icons.search),
                                 tooltip: context.tr('search'),
                                 onPressed: () {
-                                  setState(() {
-                                    pubTransactions = pubTransactions.where((element) {
-                                      bool result = true;
-                                      if (filterName.text.isNotEmpty) {
-                                        result = result && element.name.contains(filterName.text);
-                                      }
-                                      if (filterClass.text.isNotEmpty) {
-                                        result = result && element.unit.contains(filterClass.text);
-                                      }
-                                      if (searchStatus > 0) {
-                                        result = result && element.status == searchStatus;
-                                      }
-                                      return result;
-                                    }).toList();
-                                  });
+                                  searchTransaction();
                                 },
                               ),
                             ),
@@ -154,11 +149,11 @@ class _ProductState extends State<Product> {
                                 onPressed: () {
                                   setState(() {
                                     searchStatus = 0;
-                                    filterName.text = filterClass.text = '';
+                                    filterName.text = filterUnit.text = '';
                                   });
                                 },
                               ),
-                            ),
+                            ),/*
                             SizedBox(width: 1.w),
                             Container(
                               decoration: BoxDecoration(
@@ -181,7 +176,7 @@ class _ProductState extends State<Product> {
                                   });
                                 },
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -190,62 +185,68 @@ class _ProductState extends State<Product> {
                 ),
                 Expanded(
                   flex: 9,
-                  child: MasonryGridView.count(
-                    itemCount: pubTransactions.length,
-                    crossAxisCount: isMobile ? 2 : 3,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          transactionEdit(context, pubTransactions[index], 1, false).then((value) {
-                            if (value != "") {
-                              alertDialog(context, context.tr('error'), value, context.tr('ok'));
-                            }
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
+                  child: pubTransactions.isNotEmpty
+                      ? MasonryGridView.count(
+                          itemCount: pubTransactions.length,
+                          crossAxisCount: isMobile ? 2 : 3,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                transactionEdit(context, pubTransactions[index], 1, false).then((value) {
+                                  if (value != "") {
+                                    alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                  }
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    text3("${context.tr('product_colName')} :\n"
+                                        "    ${pubTransactions[index].name}"),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        text3("${context.tr('product_colPrice')} :\n    \$${pubTransactions[index].price}"),
+                                        text3(" (\$${pubTransactions[index].priceSQFT}/sqft)"),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                    text3("${context.tr('product_colLocation')} :\n"
+                                        "    ${pubTransactions[index].location}"),
+                                    const SizedBox(height: 5),
+                                    text3("${context.tr('product_colDeveloper')} :\n"
+                                        "    ${pubTransactions[index].developer}"),
+                                    const SizedBox(height: 5),
+                                    text3("${context.tr('product_colLaunchingData')} :\n"
+                                        "    ${pubTransactions[index].launchDate.toString().substring(0, 10)}"),
+                                    const SizedBox(height: 5),
+                                    text3("${context.tr('product_colCommission')} :\n"
+                                        "    ${pubTransactions[index].commission}%"),
+                                    const SizedBox(height: 5),
+                                    text3("${context.tr('product_colDescription')} :\n    ${pubTransactions[index].description}"),
+                                    const SizedBox(height: 5),
+                                    if (pubTransactions[index].documents.isNotEmpty) text3("${context.tr('product_colDocument')} :"),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: pubTransactions[index].documents.map((e) => text3("    ${e.fileName}")).toList(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      : Container(
+                          alignment: Alignment.center,
                           decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              text3("${context.tr('product_colName')} :\n"
-                                  "    ${pubTransactions[index].name}"),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  text3("${context.tr('product_colPrice')} :\n    \$${pubTransactions[index].price}"),
-                                  text3(" (\$${pubTransactions[index].priceSQFT}/sqft)"),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              text3("${context.tr('product_colLocation')} :\n"
-                                  "    ${pubTransactions[index].location}"),
-                              const SizedBox(height: 5),
-                              text3("${context.tr('product_colDeveloper')} :\n"
-                                  "    ${pubTransactions[index].developer}"),
-                              const SizedBox(height: 5),
-                              text3("${context.tr('product_colLaunchingData')} :\n"
-                                  "    ${pubTransactions[index].launchDate.toString().substring(0, 10)}"),
-                              const SizedBox(height: 5),
-                              text3("${context.tr('product_colCommission')} :\n"
-                                  "    ${pubTransactions[index].commission}%"),
-                              const SizedBox(height: 5),
-                              text3("${context.tr('product_colDescription')} :\n    ${pubTransactions[index].description}"),
-                              const SizedBox(height: 5),
-                              if (pubTransactions[index].documents.isNotEmpty) text3("${context.tr('product_colDocument')} :"),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: pubTransactions[index].documents.map((e) => text3("    ${e.fileName}")).toList(),
-                              ),
-                            ],
-                          ),
+                          child: text1(context.tr('emptySearch')),
                         ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),
@@ -253,5 +254,28 @@ class _ProductState extends State<Product> {
         );
       },
     );
+  }
+
+  searchTransaction() {
+    getTransactionList(
+      TransactionGetRequest(
+        name: filterName.text,
+        projectName: "",
+        status: searchStatus,
+        payStatus: 0,
+        unit: filterUnit.text,
+        launchDateStart: "",
+        launchDateEnd: "",
+        saleDateStart: "",
+        saleDateEnd: "",
+      ),
+    ).then((value) {
+      if (value != null) {
+        pubTransactions = value;
+      } else {
+        alertDialog(context, context.tr('error'), context.tr('emptySearch'), context.tr('ok'));
+      }
+      setState(() {});
+    });
   }
 }
