@@ -8,8 +8,6 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-DateTime defaultTime = DateTime.now();
-
 class LeadsAppointment extends StatefulWidget {
   const LeadsAppointment({super.key});
 
@@ -21,7 +19,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
   int colIndex = 0;
   int searchStatus = 0;
   bool sortAscend = true;
-  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: defaultTime);
+  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: ini.timeEnd);
   TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterProjectName = TextEditingController(text: "");
   List<Appointment> leadAppointments = [];
@@ -171,7 +169,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
                                     searchStatus = 0;
                                     filterName.text = '';
                                     filterProjectName.text = '';
-                                    searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
+                                    searchRange = DateTimeRange(start: ini.timeStart, end: ini.timeEnd);
                                   });
                                 },
                               ),
@@ -322,7 +320,7 @@ class _LeadsAppointmentState extends State<LeadsAppointment> {
 
   searchAppoint() {
     getAppointmentList(
-      DateTimeRange(start: ini.timeStart, end: defaultTime) == searchRange
+      DateTimeRange(start: ini.timeStart, end: ini.timeEnd) == searchRange
           ? AppointmentGetRequest(
               name: filterName.text,
               projectName: filterProjectName.text,
