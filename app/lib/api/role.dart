@@ -1,30 +1,23 @@
 import '../config.dart';
 import '../object/member.dart';
 import 'dart:convert';
-import 'package:sprintf/sprintf.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-bool memberExist(newMember) {
+import '../object/role.dart';
+
+bool roleExist(newMember) {
   return true;
 }
 
-Future<List<Member>> getMemberList(String query, String scheme) async {
-  if (query == "" || scheme == "") {
-    return [];
-  }
-
+Future<List<Role>> getRoleList() async {
   SharedPreferences cache = await SharedPreferences.getInstance();
 
   try {
-    http.Response response = await http.get(
-      Uri.parse(
-        ini.apiServer + ini.api.member + sprintf("?q=%s&s=%s", [query, scheme]),
-      ),
-    );
+    http.Response response = await http.get(Uri.parse(ini.apiServer + ini.api.role));
 
     if (response.statusCode == 200) {
-      return List<Member>.from(jsonDecode(response.body).map((x) => Member.fromJson(x)));
+      return List<Role>.from(jsonDecode(response.body).map((x) => Role.fromJson(x)));
     } else {
       return [];
     }
@@ -33,7 +26,7 @@ Future<List<Member>> getMemberList(String query, String scheme) async {
   }
 }
 
-Future<String> postRole(Member m, String password) async {
+Future<String> postMember(Member m, String password) async {
   SharedPreferences cache = await SharedPreferences.getInstance();
 
   try {

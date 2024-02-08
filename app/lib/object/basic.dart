@@ -32,12 +32,14 @@ class InitSetting {
 }
 
 class Api {
+  String role;
   String login;
   String member;
   String transaction;
   String appointment;
 
   Api({
+    required this.role,
     required this.login,
     required this.member,
     required this.transaction,
