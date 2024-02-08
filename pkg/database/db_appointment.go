@@ -169,5 +169,6 @@ func (DB *SmartHubDB) AppointmentDELETE(IDs []int) string {
 		return "Query failed"
 	}
 
+
 	return ""
 }

@@ -43,7 +43,7 @@ class _CustomerState extends State<Customer> {
   int searchStatus = 0;
   bool sortAscend = true;
   bool allSelected = false;
-  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
+  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: ini.timeEnd);
   TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterUnit = TextEditingController(text: "");
   List<Transaction> selfTransactions = [];
@@ -279,7 +279,7 @@ class _CustomerState extends State<Customer> {
                                   filterName.text = "";
                                   filterUnit.text = "";
                                   searchStatus = 0;
-                                  searchRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
+                                  searchRange = DateTimeRange(start: ini.timeStart, end: ini.timeEnd);
                                   setState(() {});
                                 },
                               ),
@@ -459,6 +459,7 @@ class _CustomerState extends State<Customer> {
   }
 
   searchTransaction() {
+    bool isDefault = DateTimeRange(start: ini.timeStart, end: ini.timeEnd) == searchRange;
     getTransactionList(
       TransactionGetRequest(
         name: filterName.text,
@@ -468,8 +469,8 @@ class _CustomerState extends State<Customer> {
         unit: filterUnit.text,
         launchDateStart: "",
         launchDateEnd: "",
-        saleDateStart: searchRange.start.toString(),
-        saleDateEnd: searchRange.end.toString(),
+        saleDateStart: isDefault ? "" : searchRange.start.toString(),
+        saleDateEnd: isDefault ? "" : searchRange.end.toString(),
       ),
     ).then((value) {
       if (value != null) {

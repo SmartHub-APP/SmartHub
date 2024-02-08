@@ -29,7 +29,7 @@ Widget memberTile(
     textStyle: const TextStyle(fontSize: 12, color: Colors.white),
     decoration: BoxDecoration(color: Colors.black, borderRadius: uiStyle.roundCorner2),
     child: Container(
-      padding: expandMode ? EdgeInsets.zero : const EdgeInsets.all(5),
+      padding: expandMode ? EdgeInsets.zero : const EdgeInsets.all(1),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: Colors.black),
@@ -156,6 +156,7 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers, Str
                             ),
                           )
                         : text3(context.tr('emptySearch')),
+                  /*
                   const Divider(color: Colors.grey),
                   text2(context.tr('add')),
                   SizedBox(height: 1.h),
@@ -244,7 +245,7 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers, Str
                       ),
                     ],
                   ),
-                  SizedBox(height: 1.h),
+                  SizedBox(height: 1.h),*/
                 ],
               ),
             ),
