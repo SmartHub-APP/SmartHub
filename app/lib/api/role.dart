@@ -45,7 +45,7 @@ Future<String> postRole(RolePostRequest r) async {
 
   try {
     http.Response response = await http.post(
-      Uri.parse(ini.apiServer + ini.api.member),
+      Uri.parse(ini.apiServer + ini.api.role),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode(r.toJson()),
     );
