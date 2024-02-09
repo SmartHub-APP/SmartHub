@@ -13,7 +13,7 @@ type Role struct {
 var sqlRoleGet = `SELECT * FROM Role;`
 var sqlRolePOST = `
 INSERT INTO Role (Name, Permission)
-VALUES ('%s', %s);
+VALUES ('%s', %d);
 `
 var sqlRolePUT = `
 UPDATE Role
@@ -47,6 +47,7 @@ func (DB *SmartHubDB) RoleGET() ([]Role, string) {
 }
 
 func (DB *SmartHubDB) RolePOST(name string, perm int) string {
+	fmt.Println(fmt.Sprintf(sqlRolePOST, name, perm))
 	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePOST, name, perm)); err != nil {
 		return "Query failed"
 	}
