@@ -46,8 +46,6 @@ func (DB *SmartHubDB) GetRangeData(from, to string) (FinancialData, string) {
 func (DB *SmartHubDB) GetStatistic(queryFrom, queryTo string) (Statistic, string) {
 	var StatisticData Statistic
 
-	fmt.Print(queryFrom, queryTo)
-
 	if len(queryFrom) < 10 || len(queryTo) < 10 {
 		return StatisticData, "Invalid date format"
 	}
@@ -58,9 +56,9 @@ func (DB *SmartHubDB) GetStatistic(queryFrom, queryTo string) (Statistic, string
 		return StatisticData, msg
 	}
 
-	fmt.Sprintln("############################################")
-	fmt.Sprintln(queryFrom, queryTo)
-	fmt.Sprintln(SubMonth(queryFrom), SubMonth(queryTo))
+	fmt.Println("############################################")
+	fmt.Println(queryFrom, queryTo)
+	fmt.Println(SubMonth(queryFrom), SubMonth(queryTo))
 
 	if monthRange, msg := DB.GetRangeData(SubMonth(queryFrom), SubMonth(queryTo)); msg == "" {
 		StatisticData.MonthRange = monthRange
