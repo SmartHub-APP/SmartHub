@@ -72,10 +72,11 @@ func (DB *SmartHubDB) GetStatistic(queryFrom, queryTo string) (Statistic, string
 func SubMonth(input string) string {
 	year, _ := strconv.Atoi(input[:4])
 	month, _ := strconv.Atoi(input[5:7])
+	fmt.Println("** <", input[:4], ">", year, "<", input[5:7], ">")
 
 	if month == 1 {
 		return fmt.Sprintf("%4d-%s-%s", year-1, "12", input[7:])
 	}
 
-	return fmt.Sprintf("%s-%2d-%s", input[:4], month-1, input[7:])
+	return fmt.Sprintf("%s-%02d-%s", input[:4], month-1, input[7:])
 }
