@@ -1,12 +1,19 @@
+import '../api/statistic.dart';
 import '../config.dart';
-import '../api/transaction.dart';
-import '../object/plot.dart';
+import '../object/statistic.dart';
 import '../object/transaction.dart';
 import '../component/interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+class DataPoint {
+  final String x;
+  final double y;
+
+  DataPoint(this.x, this.y);
+}
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -16,44 +23,24 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  DateTimeRange selectRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
-  List<DataPoint> pltData = [
-    DataPoint('1', 5),
-    DataPoint('2', 8),
-    DataPoint('3', 3),
-    DataPoint('4', 7),
-    DataPoint('5', 4),
-    DataPoint('6', 5),
-    DataPoint('7', 8),
-    DataPoint('8', 3),
-    DataPoint('9', 7),
-    DataPoint('10', 4),
-  ];
-
+  DateTimeRange selectRange = DateTimeRange(start: ini.timeEnd.subtract(Duration(days: ini.dayOfMonth)), end: ini.timeEnd);
+  Statistic statistic = Statistic.zero();
   List<Transaction> recentTransactions = [];
+  List<DataPoint> pltData = [];
 
   @override
   void initState() {
-    getTransactionList(
-      TransactionGetRequest(
-        name: "",
-        projectName: "",
-        unit: "",
-        status: -1,
-        payStatus: -1,
-        saleDateStart: ini.timeStart.toString(),
-        saleDateEnd: DateTime.now().toString(),
-        launchDateStart: ini.timeStart.toString(),
-        launchDateEnd: DateTime.now().toString(),
-      ),
-    ).then((value) {
-      if (value != null) {
-        setState(() {
-          recentTransactions = value;
-        });
-      }
-    });
     super.initState();
+    getStatistic(selectRange.start.toString(), selectRange.end.toString()).then((value) {
+      statistic = value;
+      statistic.yearSummary.sort((a, b) => a.from.compareTo(b.from));
+      pltData = statistic.yearSummary
+          .map(
+            (e) => DataPoint(e.from.length > 7 ? e.from.substring(0, 7).replaceAll("-", "\n") : e.from, e.revenue)
+          )
+          .toList();
+      setState(() {});
+    });
   }
 
   @override
@@ -347,6 +334,21 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
           const Expanded(flex: 1, child: SizedBox()),
+        ],
+      ),
+    );
+  }
+
+  Widget loadingData() {
+    return Container(
+      width: 60.w,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          SizedBox(height: 5.h),
+          text3(context.tr('loading')),
         ],
       ),
     );

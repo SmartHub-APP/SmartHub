@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 // ##### Rooted Setting
 class InitSetting {
   int maxPerm;
+  int dayOfMonth;
   Api api;
   String separator;
   String apiBase;
@@ -19,6 +20,7 @@ class InitSetting {
 
   InitSetting({
     required this.maxPerm,
+    required this.dayOfMonth,
     required this.api,
     required this.separator,
     required this.apiBase,
@@ -39,6 +41,7 @@ class Api {
   String role;
   String login;
   String member;
+  String statistic;
   String transaction;
   String appointment;
 
@@ -46,6 +49,7 @@ class Api {
     required this.role,
     required this.login,
     required this.member,
+    required this.statistic,
     required this.transaction,
     required this.appointment,
   });
