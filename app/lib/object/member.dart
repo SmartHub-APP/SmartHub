@@ -2,6 +2,7 @@ import 'role.dart';
 
 class Member {
   int id;
+  int status;
   Role role;
   String name;
   String account;
@@ -13,6 +14,7 @@ class Member {
 
   Map<String, dynamic> toJson() => {
         "ID": id,
+        "Status": status,
         "Role": role.toJson(),
         "Name": name,
         "Account": account,
@@ -25,6 +27,7 @@ class Member {
 
   Map<String, dynamic> toJsonCreate() => {
         "RoleID": role.id,
+        "Status": status,
         "Name": name,
         "Account": account,
         "Phone": phone,
@@ -37,6 +40,7 @@ class Member {
   factory Member.fromJson(Map<String, dynamic> json) {
     return Member(
       id: json["ID"] ?? -1,
+      status: json["Status"] ?? 1,
       role: Role.fromJson(json["Role"]),
       name: json["Name"] ?? "",
       account: json["Account"] ?? "",
@@ -49,6 +53,7 @@ class Member {
   }
 
   Member({
+    this.status = 1,
     required this.id,
     required this.role,
     required this.name,

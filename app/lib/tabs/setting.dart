@@ -1,3 +1,4 @@
+import '../component/member.dart';
 import '../config.dart';
 import '../api/role.dart';
 import '../api/member.dart';
@@ -18,6 +19,7 @@ class SettingDialog extends StatefulWidget {
 }
 
 class _SettingDialogState extends State<SettingDialog> {
+  int newRoleId = 0;
   TextEditingController newName = TextEditingController();
   TextEditingController newEmail = TextEditingController();
   TextEditingController newPhone = TextEditingController();
@@ -29,6 +31,24 @@ class _SettingDialogState extends State<SettingDialog> {
   List<int> newPerms = List.filled(ini.maxPerm, 0);
   List<Role> roleList = [];
   List<Member> memberList = [];
+
+  bool memberExist(Member newMember) {
+    for (var member in memberList) {
+      if (member.account == newMember.account && member.name == newMember.name) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool roleExist(RolePostRequest newRole) {
+    for (var role in roleList) {
+      if (role.name == newRole.name) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   editPerm(int index) {
     return Expanded(
@@ -167,6 +187,7 @@ class _SettingDialogState extends State<SettingDialog> {
         ExpansionTile(
           title: text3(context.tr('settingUserCreate')),
           children: [
+            SizedBox(height: 1.h),
             Row(
               children: [
                 SizedBox(width: 1.w),
@@ -211,7 +232,7 @@ class _SettingDialogState extends State<SettingDialog> {
                 SizedBox(width: 0.5.w),
                 Expanded(
                   child: TextField(
-                    controller: newPhone,
+                    controller: newJobTitle,
                     decoration: InputDecoration(
                       isDense: true,
                       border: const OutlineInputBorder(),
@@ -252,23 +273,23 @@ class _SettingDialogState extends State<SettingDialog> {
             ),
             SizedBox(height: 1.h),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(width: 1.w),
-                /*
-                              DropdownButton2(
-                                  underline: const SizedBox(),
-                                  iconStyleData: const IconStyleData(icon: SizedBox()),
-                                  hint: Text(context.tr('customer_selStatus')),
-                                  buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
-                                  items: ini.transactionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      searchStatus = ini.transactionStatus.indexWhere((element) => element == newValue);
-                                    });
-                                  },
-                                  value: ini.transactionStatus[searchStatus],
-                                ),
-                              */
+                text3("${context.tr('settingUserRole')} : "),
+                DropdownButton2(
+                  underline: const SizedBox(),
+                  iconStyleData: const IconStyleData(icon: SizedBox()),
+                  buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
+                  items: roleList.map((item) => DropdownMenuItem(value: item, child: text3(item.name))).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      if (newValue != null) {
+                        newRoleId = newValue.id;
+                      }
+                    });
+                  },
+                  value: roleList.firstWhere((element) => element.id == newRoleId, orElse: () => roleList[0]),
+                ),
                 SizedBox(width: 0.5.w),
                 Container(
                   decoration: BoxDecoration(
@@ -281,6 +302,7 @@ class _SettingDialogState extends State<SettingDialog> {
                     tooltip: context.tr('clear'),
                     onPressed: () {
                       setState(() {
+                        newRoleId = 0;
                         newName.text = newPhone.text = newEmail.text = "";
                         newCompany.text = newJobTitle.text = newBankCode.text = newBankAccount.text = "";
                       });
@@ -301,12 +323,14 @@ class _SettingDialogState extends State<SettingDialog> {
                       setState(() {
                         if (newName.text.isEmpty) {
                           alertDialog(context, context.tr('error'), context.tr('emptyUser'), context.tr('ok'));
+                          return;
                         } else if (newEmail.text.isEmpty) {
                           alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
+                          return;
                         }
 
                         Member newMember = Member(
-                          id: -1,
+                          id: newRoleId,
                           name: newName.text,
                           phone: newPhone.text,
                           account: newEmail.text,
@@ -323,6 +347,7 @@ class _SettingDialogState extends State<SettingDialog> {
                           postMember(newMember, "").then((value) {
                             if (value.isEmpty) {
                               setState(() {
+                                newRoleId = 0;
                                 newName.text = newPhone.text = newEmail.text = "";
                                 newCompany.text = newJobTitle.text = newBankCode.text = newBankAccount.text = "";
                               });
@@ -335,7 +360,6 @@ class _SettingDialogState extends State<SettingDialog> {
                     },
                   ),
                 ),
-                SizedBox(width: 1.w),
               ],
             ),
             SizedBox(height: 1.h)
@@ -343,7 +367,35 @@ class _SettingDialogState extends State<SettingDialog> {
         ),
         ExpansionTile(
           title: text3(context.tr('settingUserList')),
-          children: const [],
+          children: [
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              alignment: WrapAlignment.center,
+              runAlignment: WrapAlignment.center,
+              children: memberList
+                  .map(
+                    (e) => memberTile(
+                      true,
+                      e,
+                      context,
+                      () {
+                        deleteMember([e.id]).then((value) {
+                          if (value.isEmpty) {
+                            fetchData().then((value) => setState(() {}));
+                          } else {
+                            alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                          }
+                        });
+                      },
+                      isDelete: true,
+                      advanced: true,
+                    ),
+                  )
+                  .toList(),
+            ),
+            SizedBox(height: 1.h),
+          ],
         )
       ],
     );
@@ -432,22 +484,20 @@ class _SettingDialogState extends State<SettingDialog> {
                             permission: newPerms.fold(0, (previousValue, element) => previousValue * 10 + element),
                           );
 
-                          roleExist(newRole).then((isExist) {
-                            if (isExist) {
-                              alertDialog(context, context.tr('error'), context.tr('settingRoleExist'), context.tr('ok'));
-                            } else {
-                              postRole(newRole).then((value) {
-                                if (value.isEmpty) {
-                                  setState(() {
-                                    newRoleName.text = "";
-                                    newPerms = List.filled(ini.maxPerm, 0);
-                                  });
-                                } else {
-                                  alertDialog(context, context.tr('error'), value, context.tr('ok'));
-                                }
-                              });
-                            }
-                          });
+                          if (roleExist(newRole)) {
+                            alertDialog(context, context.tr('error'), context.tr('settingRoleExist'), context.tr('ok'));
+                          } else {
+                            postRole(newRole).then((value) {
+                              if (value.isEmpty) {
+                                setState(() {
+                                  newRoleName.text = "";
+                                  newPerms = List.filled(ini.maxPerm, 0);
+                                });
+                              } else {
+                                alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                              }
+                            });
+                          }
                         }
                       });
                     },

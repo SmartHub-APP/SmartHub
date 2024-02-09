@@ -5,10 +5,6 @@ import 'package:sprintf/sprintf.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-bool memberExist(newMember) {
-  return true;
-}
-
 Future<List<Member>> getMemberList(String query, String scheme) async {
   if (query == "" || scheme == "") {
     return [];
@@ -44,6 +40,22 @@ Future<String> postMember(Member m, String password) async {
     );
 
     return response.statusCode == 201 ? "" : response.body;
+  } catch (_) {
+    return "Network Error";
+  }
+}
+
+Future<String> deleteMember(List<int> ids) async {
+  SharedPreferences cache = await SharedPreferences.getInstance();
+
+  try {
+    http.Response response = await http.delete(
+      Uri.parse(ini.apiServer + ini.api.member),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode(ids),
+    );
+
+    return response.statusCode == 200 ? "" : response.body;
   } catch (_) {
     return "Network Error";
   }

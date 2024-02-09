@@ -1,28 +1,8 @@
 import '../config.dart';
+import '../object/role.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../object/role.dart';
-
-Future<bool> roleExist(RolePostRequest r) async {
-  if (r.name.isEmpty) {
-    return false;
-  }
-
-  bool ret = false;
-
-  await getRoleList().then((roleList) {
-    for (var role in roleList) {
-      if (role.name == r.name) {
-        ret = true;
-        break;
-      }
-    }
-  });
-
-  return ret;
-}
 
 Future<List<Role>> getRoleList() async {
   SharedPreferences cache = await SharedPreferences.getInstance();
