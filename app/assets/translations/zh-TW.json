@@ -4,6 +4,7 @@
   "error_null": "輸入欄不可為空",
   "login": "登入",
   "logout": "登出",
+  "loading": "載入中...",
   "setting": "設定",
   "settingSystem": "系統設定",
   "settingLanguage": "語言設定",

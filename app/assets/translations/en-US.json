@@ -4,6 +4,7 @@
   "error_null": "Input field cannot be empty",
   "login": "Login",
   "logout": "Logout",
+  "loading": "Loading...",
   "setting": "Setting",
   "settingSystem": "System setting",
   "settingLanguage": "Language setting",
