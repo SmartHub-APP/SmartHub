@@ -1,5 +1,6 @@
+import '../api/statistic.dart';
 import '../config.dart';
-import '../api/transaction.dart';
+import '../object/statistic.dart';
 import '../object/transaction.dart';
 import '../component/interaction.dart';
 import 'package:flutter/material.dart';
@@ -23,24 +24,36 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   DateTimeRange selectRange = DateTimeRange(start: ini.timeEnd.subtract(Duration(days: ini.dayOfMonth)), end: ini.timeEnd);
+  Statistic statistic = Statistic.zero();
   List<Transaction> recentTransactions = [];
-  List<DataPoint> pltData = [
-    DataPoint('Jan', 35),
-    DataPoint('Feb', 28),
-    DataPoint('Mar', 34),
-    DataPoint('Apr', 32),
-    DataPoint('May', 40),
-    DataPoint('Jun', 30),
-    DataPoint('Jul', 33),
-    DataPoint('Aug', 31),
-    DataPoint('Sep', 29),
-    DataPoint('Oct', 35),
-    DataPoint('Nov', 37),
-    DataPoint('Dec', 36),
-  ];
+  List<DataPoint> pltData = [];
 
-  Future<bool> queryDate() async {
-    return true;
+  @override
+  void initState() {
+    super.initState();
+    getStatistic(selectRange.start.toString(), selectRange.end.toString()).then((value) {
+      statistic = value;
+      pltData = [
+        DataPoint('Jan', statistic.yearSummary[0].revenue),
+        DataPoint('Feb', statistic.yearSummary[1].revenue),
+        DataPoint('Mar', statistic.yearSummary[2].revenue),
+        DataPoint('Apr', statistic.yearSummary[3].revenue),
+        DataPoint('May', statistic.yearSummary[4].revenue),
+        DataPoint('Jun', statistic.yearSummary[5].revenue),
+        DataPoint('Jul', statistic.yearSummary[6].revenue),
+        DataPoint('Aug', statistic.yearSummary[7].revenue),
+        DataPoint('Sep', statistic.yearSummary[8].revenue),
+        DataPoint('Oct', statistic.yearSummary[9].revenue),
+        DataPoint('Nov', statistic.yearSummary[10].revenue),
+        DataPoint('Dec', statistic.yearSummary[11].revenue),
+      ];
+      /*for (var iii in statistic.yearSummary) {
+        print(iii.revenue);
+      }*/
+      setState(() {
+
+      });
+    });
   }
 
   @override
@@ -49,92 +62,79 @@ class _DashboardState extends State<Dashboard> {
       builder: (context, orientation, screenType) {
         double sWidth = MediaQuery.of(context).size.width;
         bool isMobile = sWidth < 700;
-        return FutureBuilder(
-          future: queryDate(),
-          builder: (context, snapshot) {
-            Widget viewPage = Container();
-            if (snapshot.hasData) {
-              viewPage = Scaffold(
-                body: Container(
-                  margin: EdgeInsets.symmetric(horizontal: isMobile ? 2.w : 10.w, vertical: 2.h),
-                  child: Center(
-                    child: SizedBox(
-                      width: 90.w,
-                      height: 95.h,
-                      child: Column(
-                        children: [
-                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                            Container(
-                              width: 23.w,
-                              height: 5.h,
-                              alignment: Alignment.centerLeft,
-                              child: text2(context.tr('dashboard_overview'), color: Colors.black),
-                            ),
-                            downloadForm()
-                          ]),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: statisticBlock(
-                                  context.tr('dashboard_totalRevenue'),
-                                  "+20.1% from last month",
-                                  "\$45,231.87",
-                                  const Icon(Icons.attach_money, color: Colors.black),
-                                ),
-                              ),
-                              SizedBox(width: 2.w),
-                              Expanded(
-                                flex: 1,
-                                child: statisticBlock(
-                                  context.tr('dashboard_avgPayment'),
-                                  "+7% from last month",
-                                  "+32,234",
-                                  const Icon(Icons.support_agent_outlined, color: Colors.black),
-                                ),
-                              ),
-                              SizedBox(width: 2.w),
-                              Expanded(
-                                flex: 1,
-                                child: statisticBlock(
-                                  context.tr('dashboard_conversionRate'),
-                                  "+6% from last month",
-                                  "36%",
-                                  const Icon(Icons.local_convenience_store_rounded, color: Colors.black),
-                                ),
-                              ),
-                              SizedBox(width: 2.w),
-                              Expanded(
-                                flex: 1,
-                                child: statisticBlock(
-                                  context.tr('dashboard_sales'),
-                                  "+19% from last month",
-                                  "+12,234",
-                                  const Icon(Icons.credit_card, color: Colors.black),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(flex: 6, child: plotBlock()),
-                              SizedBox(width: 2.w),
-                              Expanded(flex: 4, child: recentSales()),
-                            ],
-                          ),
-                        ],
+        return Scaffold(
+          body: Container(
+            margin: EdgeInsets.symmetric(horizontal: isMobile ? 2.w : 10.w, vertical: 2.h),
+            child: Center(
+              child: SizedBox(
+                width: 90.w,
+                height: 95.h,
+                child: Column(
+                  children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                      Container(
+                        width: 23.w,
+                        height: 5.h,
+                        alignment: Alignment.centerLeft,
+                        child: text2(context.tr('dashboard_overview'), color: Colors.black),
                       ),
+                      downloadForm()
+                    ]),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: statisticBlock(
+                            context.tr('dashboard_totalRevenue'),
+                            "+20.1% from last month",
+                            "\$45,231.87",
+                            const Icon(Icons.attach_money, color: Colors.black),
+                          ),
+                        ),
+                        SizedBox(width: 2.w),
+                        Expanded(
+                          flex: 1,
+                          child: statisticBlock(
+                            context.tr('dashboard_avgPayment'),
+                            "+7% from last month",
+                            "+32,234",
+                            const Icon(Icons.support_agent_outlined, color: Colors.black),
+                          ),
+                        ),
+                        SizedBox(width: 2.w),
+                        Expanded(
+                          flex: 1,
+                          child: statisticBlock(
+                            context.tr('dashboard_conversionRate'),
+                            "+6% from last month",
+                            "36%",
+                            const Icon(Icons.local_convenience_store_rounded, color: Colors.black),
+                          ),
+                        ),
+                        SizedBox(width: 2.w),
+                        Expanded(
+                          flex: 1,
+                          child: statisticBlock(
+                            context.tr('dashboard_sales'),
+                            "+19% from last month",
+                            "+12,234",
+                            const Icon(Icons.credit_card, color: Colors.black),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                    Row(
+                      children: [
+                        Expanded(flex: 6, child: plotBlock()),
+                        SizedBox(width: 2.w),
+                        Expanded(flex: 4, child: recentSales()),
+                      ],
+                    ),
+                  ],
                 ),
-              );
-            } else if (snapshot.hasError) {
-              viewPage = Center(child: Text('${context.tr("error")}\n${snapshot.error}'));
-            } else {
-              viewPage = loadingData();
-            }
-            return viewPage;
-          },
+              ),
+            ),
+          ),
         );
       },
     );

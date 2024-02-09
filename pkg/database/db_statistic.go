@@ -6,6 +6,8 @@ import (
 )
 
 type FinancialData struct {
+	From       string  `json:"From"`
+	To         string  `json:"To"`
 	Revenue    float64 `json:"Revenue"`
 	Commission float64 `json:"Commission"`
 }
@@ -37,6 +39,8 @@ func (DB *SmartHubDB) GetRangeData(from, to string) (FinancialData, string) {
 		totalCommission += c
 	}
 
+	RangeData.From = from
+	RangeData.To = to
 	RangeData.Revenue = totalRevenue
 	RangeData.Commission = totalCommission
 

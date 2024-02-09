@@ -41,6 +41,7 @@ class Api {
   String role;
   String login;
   String member;
+  String statistic;
   String transaction;
   String appointment;
 
@@ -48,6 +49,7 @@ class Api {
     required this.role,
     required this.login,
     required this.member,
+    required this.statistic,
     required this.transaction,
     required this.appointment,
   });
