@@ -9,6 +9,8 @@
   "settingSystem": "System setting",
   "settingLanguage": "Language setting",
   "settingUserList": "User list",
+  "settingUserRole": "Select role",
+  "settingUserExist": "User exist",
   "settingUserSetting": "User setting",
   "settingUserCreate": "Create User",
   "settingUserAuthentication": "User Authentication",

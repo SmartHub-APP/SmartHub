@@ -9,6 +9,8 @@
   "settingSystem": "系統設定",
   "settingLanguage": "語言設定",
   "settingUserList": "使用者清單",
+  "settingUserRole": "選擇角色",
+  "settingUserExist": "使用者已存在",
   "settingUserSetting": "使用者設定",
   "settingUserCreate": "新建使用者",
   "settingUserAuthentication": "使用者授權",
