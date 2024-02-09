@@ -41,3 +41,19 @@ Future<String> postMember(Member m, String password) async {
     return "Network Error";
   }
 }
+
+Future<String> deleteRole(List<int> ids) async {
+  SharedPreferences cache = await SharedPreferences.getInstance();
+
+  try {
+    http.Response response = await http.delete(
+      Uri.parse(ini.apiServer + ini.api.role),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
+      body: jsonEncode(ids),
+    );
+
+    return response.statusCode == 200 ? "" : response.body;
+  } catch (_) {
+    return "Network Error";
+  }
+}
