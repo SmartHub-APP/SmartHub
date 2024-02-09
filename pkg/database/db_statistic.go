@@ -56,13 +56,31 @@ func (DB *SmartHubDB) GetStatistic(queryFrom, queryTo string) (Statistic, string
 		return StatisticData, msg
 	}
 
-	fmt.Println(queryFrom, queryTo)
-	fmt.Println(SubMonth(queryFrom), SubMonth(queryTo))
-
 	if monthRange, msg := DB.GetRangeData(SubMonth(queryFrom), SubMonth(queryTo)); msg == "" {
 		StatisticData.MonthRange = monthRange
 	} else {
 		return StatisticData, msg
+	}
+
+	nowYear, _ := strconv.Atoi(queryFrom[:4])
+	nowMonth, _ := strconv.Atoi(queryFrom[5:7])
+	StatisticData.YearSummary = make([]FinancialData, 12)
+	for i := 0; i < 12; i++ {
+		realMonth := i + 1
+		monthStart := fmt.Sprintf("%s-%02d-01", queryFrom[:4], realMonth)
+		monthEnd := fmt.Sprintf("%s-%02d-31", queryFrom[:4], realMonth)
+
+		if i > nowMonth {
+			pastYear := nowYear - 1
+			monthStart = fmt.Sprintf("%4d-%02d-01", pastYear, realMonth)
+			monthEnd = fmt.Sprintf("%4d-%02d-31", pastYear, realMonth)
+		}
+
+		if monthRange, msg := DB.GetRangeData(monthStart, monthEnd); msg == "" {
+			StatisticData.YearSummary[i] = monthRange
+		} else {
+			return StatisticData, msg
+		}
 	}
 
 	return StatisticData, ""
