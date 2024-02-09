@@ -33,26 +33,13 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     getStatistic(selectRange.start.toString(), selectRange.end.toString()).then((value) {
       statistic = value;
-      pltData = [
-        DataPoint('Jan', statistic.yearSummary[0].revenue),
-        DataPoint('Feb', statistic.yearSummary[1].revenue),
-        DataPoint('Mar', statistic.yearSummary[2].revenue),
-        DataPoint('Apr', statistic.yearSummary[3].revenue),
-        DataPoint('May', statistic.yearSummary[4].revenue),
-        DataPoint('Jun', statistic.yearSummary[5].revenue),
-        DataPoint('Jul', statistic.yearSummary[6].revenue),
-        DataPoint('Aug', statistic.yearSummary[7].revenue),
-        DataPoint('Sep', statistic.yearSummary[8].revenue),
-        DataPoint('Oct', statistic.yearSummary[9].revenue),
-        DataPoint('Nov', statistic.yearSummary[10].revenue),
-        DataPoint('Dec', statistic.yearSummary[11].revenue),
-      ];
-      /*for (var iii in statistic.yearSummary) {
-        print(iii.revenue);
-      }*/
-      setState(() {
-
-      });
+      statistic.yearSummary.sort((a, b) => a.from.compareTo(b.from));
+      pltData = statistic.yearSummary
+          .map(
+            (e) => DataPoint(e.from.length > 7 ? e.from.substring(0, 7).replaceAll("-", "\n") : e.from, e.revenue)
+          )
+          .toList();
+      setState(() {});
     });
   }
 
