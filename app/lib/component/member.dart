@@ -1,5 +1,4 @@
 import 'interaction.dart';
-import '../config.dart';
 import '../api/member.dart';
 import '../object/member.dart';
 import 'package:flutter/material.dart';
@@ -156,96 +155,6 @@ Future<List<Member>> userEdit(BuildContext context, List<Member> inputUsers, Str
                             ),
                           )
                         : text3(context.tr('emptySearch')),
-                  /*
-                  const Divider(color: Colors.grey),
-                  text2(context.tr('add')),
-                  SizedBox(height: 1.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: newName,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            border: const OutlineInputBorder(),
-                            labelText: context.tr('userName'),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 1.w),
-                      Expanded(
-                        child: TextField(
-                          controller: newPhone,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            border: const OutlineInputBorder(),
-                            labelText: context.tr('userPhone'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 1.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: newEmail,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            border: const OutlineInputBorder(),
-                            labelText: context.tr('userEmail'),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 0.5.w),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: uiStyle.roundCorner2,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.add),
-                          tooltip: context.tr('add'),
-                          onPressed: () {
-                            setState(() {
-                              if (newName.text.isEmpty) {
-                                alertDialog(context, context.tr('error'), context.tr('emptyUser'), context.tr('ok'));
-                              } else if (newEmail.text.isEmpty) {
-                                alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
-                              } else if (alreadyIn(newEmail.text, edit)) {
-                                alertDialog(context, context.tr('error'), context.tr('userExist'), context.tr('ok'));
-                              } else {
-                                Member newMember = Member(
-                                  id: -1,
-                                  name: newName.text,
-                                  phone: newPhone.text,
-                                  account: newEmail.text,
-                                  company: "",
-                                  jobTitle: "",
-                                  bankCode: "",
-                                  bankAccount: "",
-                                  role: RoleDefault.guest.toRole(),
-                                );
-                                postMember(newMember, "").then((value) {
-                                  if (value.isEmpty) {
-                                    setState(() {
-                                      edit.add(newMember);
-                                      newName.text = newPhone.text = newEmail.text = "";
-                                    });
-                                  } else {
-                                    alertDialog(context, context.tr('error'), value, context.tr('ok'));
-                                  }
-                                });
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 1.h),*/
                 ],
               ),
             ),

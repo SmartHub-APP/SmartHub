@@ -19,3 +19,15 @@ class Role {
     );
   }
 }
+
+class RolePostRequest {
+  String name;
+  int permission;
+
+  RolePostRequest({required this.name, required this.permission});
+
+  Map<String, dynamic> toJson() => {
+        "Name": name,
+        "Perm": permission,
+      };
+}

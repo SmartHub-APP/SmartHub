@@ -5,6 +5,10 @@ import 'package:sprintf/sprintf.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+bool memberExist(newMember) {
+  return true;
+}
+
 Future<List<Member>> getMemberList(String query, String scheme) async {
   if (query == "" || scheme == "") {
     return [];
