@@ -33,7 +33,7 @@ Future<List<Member>> getMemberList(String query, String scheme) async {
   }
 }
 
-Future<String> postRole(Member m, String password) async {
+Future<String> postMember(Member m, String password) async {
   SharedPreferences cache = await SharedPreferences.getInstance();
 
   try {

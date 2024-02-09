@@ -9,13 +9,13 @@ import (
 
 type RoleRequestPost struct {
 	Name string `json:"Name"`
-	Perm string `json:"Perm"`
+	Perm int    `json:"Perm"`
 }
 
 type RoleRequestPut struct {
 	ID   int    `json:"ID"`
 	Name string `json:"Name"`
-	Perm string `json:"Perm"`
+	Perm int    `json:"Perm"`
 }
 
 func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.Request) {
@@ -56,14 +56,13 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
 			}
 
 			trimName := strings.TrimSpace(Req.Name)
-			trimPerm := strings.TrimSpace(Req.Perm)
 
-			if trimName == "" || trimPerm == "" {
+			if trimName == "" || Req.Perm < 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
 
-			if msg := db.RolePOST(trimName, trimPerm); msg == "" {
+			if msg := db.RolePOST(trimName, Req.Perm); msg == "" {
 				w.WriteHeader(http.StatusCreated)
 			} else {
 				if err != nil {
@@ -82,14 +81,13 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
 			}
 
 			trimName := strings.TrimSpace(Req.Name)
-			trimPerm := strings.TrimSpace(Req.Perm)
 
-			if trimName == "" || trimPerm == "" || Req.ID == 0 {
+			if trimName == "" || Req.Perm < 0 || Req.ID < 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)
 				return
 			}
 
-			if msg := db.RolePUT(trimName, trimPerm, Req.ID); msg == "" {
+			if msg := db.RolePUT(trimName, Req.Perm, Req.ID); msg == "" {
 				w.WriteHeader(http.StatusNoContent)
 			} else {
 				if err != nil {

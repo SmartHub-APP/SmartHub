@@ -6,7 +6,9 @@ import '../object/member.dart';
 import '../component/interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class SettingDialog extends StatefulWidget {
   const SettingDialog({super.key});
@@ -16,8 +18,6 @@ class SettingDialog extends StatefulWidget {
 }
 
 class _SettingDialogState extends State<SettingDialog> {
-  int maxPerm = 3;
-  int maxPage = 8;
   TextEditingController newName = TextEditingController();
   TextEditingController newEmail = TextEditingController();
   TextEditingController newPhone = TextEditingController();
@@ -25,12 +25,33 @@ class _SettingDialogState extends State<SettingDialog> {
   TextEditingController newJobTitle = TextEditingController();
   TextEditingController newBankCode = TextEditingController();
   TextEditingController newBankAccount = TextEditingController();
+  TextEditingController newRoleName = TextEditingController();
+  List<int> newPerms = List.filled(ini.maxPerm, 0);
   List<Role> roleList = [];
   List<Member> memberList = [];
 
+  editPerm(int index) {
+    return Expanded(
+      child: DropdownButton2(
+        underline: const SizedBox(),
+        iconStyleData: const IconStyleData(icon: SizedBox()),
+        buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
+        items: ini.permModes.map((item) => DropdownMenuItem(value: item, child: text3(item.toString()))).toList(),
+        onChanged: (newValue) {
+          setState(() {
+            newPerms[index] = newValue ?? 0;
+          });
+        },
+        value: ini.permModes[newPerms[index]],
+      ),
+    );
+  }
+
   Future<bool> fetchData() async {
+    EasyLoading.show(status: context.tr('loading'));
     roleList = await getRoleList();
     memberList = await getMemberList("**", "-1");
+    EasyLoading.dismiss();
     return true;
   }
 
@@ -41,7 +62,15 @@ class _SettingDialogState extends State<SettingDialog> {
       builder: (context, snapshot) {
         Widget viewPage = Container();
         if (snapshot.hasData) {
-          viewPage = settingView();
+          viewPage = Container(
+            alignment: Alignment.topCenter,
+            width: 60.w,
+            height: 80.h,
+            decoration: BoxDecoration(borderRadius: uiStyle.roundCorner),
+            child: SingleChildScrollView(
+              child: Column(children: [settingLanguage(), settingMember(), settingRole()]),
+            ),
+          );
         } else if (snapshot.hasError) {
           viewPage = Center(child: Text('${context.tr("error")}\n${snapshot.error}'));
         } else {
@@ -98,139 +127,134 @@ class _SettingDialogState extends State<SettingDialog> {
     );
   }
 
-  Widget settingView() {
-    return Container(
-      alignment: Alignment.topCenter,
-      width: 60.w,
-      height: 80.h,
-      decoration: BoxDecoration(borderRadius: uiStyle.roundCorner),
-      child: SingleChildScrollView(
-        child: Column(
+  Widget settingLanguage() {
+    return ExpansionTile(
+      title: text3(context.tr('settingLanguage'), isBold: true),
+      children: [
+        SizedBox(height: 2.h),
+        Wrap(
+          spacing: 10,
+          runSpacing: 5,
+          alignment: WrapAlignment.center,
+          children: ini.languages.map((lang) {
+            return InkWell(
+              onTap: () {
+                context.setLocale(lang.ref);
+              },
+              child: Container(
+                width: 150,
+                height: 45,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: uiStyle.roundCorner2,
+                ),
+                child: text3(lang.langName),
+              ),
+            );
+          }).toList(),
+        ),
+        SizedBox(height: 2.h),
+      ],
+    );
+  }
+
+  Widget settingMember() {
+    return ExpansionTile(
+      title: text3(context.tr('settingUserSetting'), isBold: true),
+      children: [
+        ExpansionTile(
+          title: text3(context.tr('settingUserCreate')),
           children: [
-            ExpansionTile(
-              title: text3(context.tr('settingLanguage'), isBold: true),
+            Row(
               children: [
-                SizedBox(height: 2.h),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 5,
-                  alignment: WrapAlignment.center,
-                  children: ini.languages.map((lang) {
-                    return InkWell(
-                      onTap: () {
-                        context.setLocale(lang.ref);
-                      },
-                      child: Container(
-                        width: 150,
-                        height: 45,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: uiStyle.roundCorner2,
-                        ),
-                        child: text3(lang.langName),
-                      ),
-                    );
-                  }).toList(),
+                SizedBox(width: 1.w),
+                Expanded(
+                  child: TextField(
+                    controller: newName,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                      labelText: context.tr('userName'),
+                    ),
+                  ),
                 ),
-                SizedBox(height: 2.h),
+                SizedBox(width: 0.5.w),
+                Expanded(
+                  child: TextField(
+                    controller: newEmail,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                      labelText: context.tr('userEmail'),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 1.w),
               ],
             ),
-            ExpansionTile(
-              title: text3(context.tr('settingUserSetting'), isBold: true),
+            SizedBox(height: 1.h),
+            Row(
               children: [
-                ExpansionTile(
-                  title: text3(context.tr('settingUserCreate')),
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(width: 1.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newName,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userName'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 0.5.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newEmail,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userEmail'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 1.w),
-                      ],
+                SizedBox(width: 1.w),
+                Expanded(
+                  child: TextField(
+                    controller: newCompany,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                      labelText: context.tr('userCompany'),
                     ),
-                    SizedBox(height: 1.h),
-                    Row(
-                      children: [
-                        SizedBox(width: 1.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newCompany,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userCompany'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 0.5.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newPhone,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userJobTitle'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 1.w),
-                      ],
+                  ),
+                ),
+                SizedBox(width: 0.5.w),
+                Expanded(
+                  child: TextField(
+                    controller: newPhone,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                      labelText: context.tr('userJobTitle'),
                     ),
-                    SizedBox(height: 1.h),
-                    Row(
-                      children: [
-                        SizedBox(width: 1.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newBankCode,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userBankCode'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 0.5.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newBankAccount,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userBankAccount'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 1.w),
-                      ],
+                  ),
+                ),
+                SizedBox(width: 1.w),
+              ],
+            ),
+            SizedBox(height: 1.h),
+            Row(
+              children: [
+                SizedBox(width: 1.w),
+                Expanded(
+                  child: TextField(
+                    controller: newBankCode,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                      labelText: context.tr('userBankCode'),
                     ),
-                    SizedBox(height: 1.h),
-                    Row(
-                      children: [
-                        SizedBox(width: 1.w),
-                        /*
+                  ),
+                ),
+                SizedBox(width: 0.5.w),
+                Expanded(
+                  child: TextField(
+                    controller: newBankAccount,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                      labelText: context.tr('userBankAccount'),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 1.w),
+              ],
+            ),
+            SizedBox(height: 1.h),
+            Row(
+              children: [
+                SizedBox(width: 1.w),
+                /*
                               DropdownButton2(
                                   underline: const SizedBox(),
                                   iconStyleData: const IconStyleData(icon: SizedBox()),
@@ -245,336 +269,264 @@ class _SettingDialogState extends State<SettingDialog> {
                                   value: ini.transactionStatus[searchStatus],
                                 ),
                               */
-                        SizedBox(width: 0.5.w),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: uiStyle.roundCorner2,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.cleaning_services_rounded),
-                            tooltip: context.tr('clear'),
-                            onPressed: () {
-                              setState(() {
-                                newName.text = newPhone.text = newEmail.text = "";
-                                newCompany.text = newJobTitle.text = newBankCode.text = newBankAccount.text = "";
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 0.5.w),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: uiStyle.roundCorner2,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.save_alt),
-                            tooltip: context.tr('save'),
-                            onPressed: () {
-                              setState(() {
-                                if (newName.text.isEmpty) {
-                                  alertDialog(context, context.tr('error'), context.tr('emptyUser'), context.tr('ok'));
-                                } else if (newEmail.text.isEmpty) {
-                                  alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
-                                }
-
-                                Member newMember = Member(
-                                  id: -1,
-                                  name: newName.text,
-                                  phone: newPhone.text,
-                                  account: newEmail.text,
-                                  company: newCompany.text,
-                                  jobTitle: newJobTitle.text,
-                                  bankCode: newBankCode.text,
-                                  bankAccount: newBankAccount.text,
-                                  role: RoleDefault.guest.toRole(),
-                                );
-
-                                if (memberExist(newMember)) {
-                                  alertDialog(context, context.tr('error'), context.tr('userExist'), context.tr('ok'));
-                                } else {
-                                  postMember(newMember, "").then((value) {
-                                    if (value.isEmpty) {
-                                      setState(() {
-                                        newName.text = newPhone.text = newEmail.text = "";
-                                        newCompany.text = newJobTitle.text = newBankCode.text = newBankAccount.text = "";
-                                      });
-                                    } else {
-                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
-                                    }
-                                  });
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 1.w),
-                      ],
-                    ),
-                    SizedBox(height: 1.h)
-                  ],
+                SizedBox(width: 0.5.w),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: uiStyle.roundCorner2,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.cleaning_services_rounded),
+                    tooltip: context.tr('clear'),
+                    onPressed: () {
+                      setState(() {
+                        newName.text = newPhone.text = newEmail.text = "";
+                        newCompany.text = newJobTitle.text = newBankCode.text = newBankAccount.text = "";
+                      });
+                    },
+                  ),
                 ),
-                ExpansionTile(
-                  title: text3(context.tr('settingUserList')),
-                  children: const [],
-                )
-              ],
-            ),
-            ExpansionTile(
-              title: text3(context.tr('settingRoleSetting'), isBold: true),
-              children: [
-                ExpansionTile(
-                  title: text3(context.tr('settingRoleCreate')),
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(width: 1.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newName,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userName'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 0.5.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newEmail,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userEmail'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 1.w),
-                      ],
-                    ),
-                    SizedBox(height: 1.h),
-                    Row(
-                      children: [
-                        SizedBox(width: 1.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newCompany,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userCompany'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 0.5.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newPhone,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userJobTitle'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 1.w),
-                      ],
-                    ),
-                    SizedBox(height: 1.h),
-                    Row(
-                      children: [
-                        SizedBox(width: 1.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newBankCode,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userBankCode'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 0.5.w),
-                        Expanded(
-                          child: TextField(
-                            controller: newBankAccount,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: const OutlineInputBorder(),
-                              labelText: context.tr('userBankAccount'),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 1.w),
-                      ],
-                    ),
-                    SizedBox(height: 1.h),
-                    Row(
-                      children: [
-                        SizedBox(width: 1.w),
-                        /*
-                              DropdownButton2(
-                                  underline: const SizedBox(),
-                                  iconStyleData: const IconStyleData(icon: SizedBox()),
-                                  hint: Text(context.tr('customer_selStatus')),
-                                  buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
-                                  items: ini.transactionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      searchStatus = ini.transactionStatus.indexWhere((element) => element == newValue);
-                                    });
-                                  },
-                                  value: ini.transactionStatus[searchStatus],
-                                ),
-                              */
-                        SizedBox(width: 0.5.w),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: uiStyle.roundCorner2,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.cleaning_services_rounded),
-                            tooltip: context.tr('clear'),
-                            onPressed: () {
-                              setState(() {
-                                newName.text = newPhone.text = newEmail.text = "";
-                                newCompany.text = newJobTitle.text = newBankCode.text = newBankAccount.text = "";
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 0.5.w),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: uiStyle.roundCorner2,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(Icons.save_alt),
-                            tooltip: context.tr('save'),
-                            onPressed: () {
-                              setState(() {
-                                if (newName.text.isEmpty) {
-                                  alertDialog(context, context.tr('error'), context.tr('emptyUser'), context.tr('ok'));
-                                } else if (newEmail.text.isEmpty) {
-                                  alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
-                                }
-
-                                Member newMember = Member(
-                                  id: -1,
-                                  name: newName.text,
-                                  phone: newPhone.text,
-                                  account: newEmail.text,
-                                  company: newCompany.text,
-                                  jobTitle: newJobTitle.text,
-                                  bankCode: newBankCode.text,
-                                  bankAccount: newBankAccount.text,
-                                  role: RoleDefault.guest.toRole(),
-                                );
-
-                                if (memberExist(newMember)) {
-                                  alertDialog(context, context.tr('error'), context.tr('userExist'), context.tr('ok'));
-                                } else {
-                                  postMember(newMember, "").then((value) {
-                                    if (value.isEmpty) {
-                                      setState(() {
-                                        newName.text = newPhone.text = newEmail.text = "";
-                                        newCompany.text = newJobTitle.text = newBankCode.text = newBankAccount.text = "";
-                                      });
-                                    } else {
-                                      alertDialog(context, context.tr('error'), value, context.tr('ok'));
-                                    }
-                                  });
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 1.w),
-                      ],
-                    ),
-                    SizedBox(height: 1.h)
-                  ],
-                ),
-                ExpansionTile(
-                  title: text3(context.tr('settingRoleList')),
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: roleList.length,
-                      itemBuilder: (context, index) {
-                        String permText = roleList[index].permission.toString();
-                        List<String> permList = List.filled(maxPage, "0");
-
-                        for (var i = 0; i < maxPage; i++) {
-                          if (permText.length > i) {
-                            permList[i] = permText[i];
-                          }
+                SizedBox(width: 0.5.w),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: uiStyle.roundCorner2,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.save_alt),
+                    tooltip: context.tr('save'),
+                    onPressed: () {
+                      setState(() {
+                        if (newName.text.isEmpty) {
+                          alertDialog(context, context.tr('error'), context.tr('emptyUser'), context.tr('ok'));
+                        } else if (newEmail.text.isEmpty) {
+                          alertDialog(context, context.tr('error'), context.tr('emptyEmail'), context.tr('ok'));
                         }
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 0.5.h, horizontal: 1.h),
-                          decoration: BoxDecoration(
-                            color: index % 2 == 0 ? Colors.white : Colors.grey[200],
-                            border: Border.all(color: Colors.black),
-                            borderRadius: uiStyle.roundCorner2,
-                          ),
-                          child: ListTile(
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                text3(roleList[index].name),
-                                SizedBox(width: 1.w),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  tooltip: context.tr('delete'),
-                                  onPressed: () {
-                                    setState(() {
-                                      deleteRole([roleList[index].id]).then((value) {
-                                        if (value.isEmpty) {
-                                          fetchData().then((value) => setState(() {}));
-                                        } else {
-                                          alertDialog(context, context.tr('error'), value, context.tr('ok'));
-                                        }
-                                      });
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            subtitle: Wrap(
-                              spacing: 5,
-                              runSpacing: 5,
-                              alignment: WrapAlignment.center,
-                              runAlignment: WrapAlignment.center,
-                              children: [
-                                "${context.tr('dashboard_tabName')}: ${permList[0]}",
-                                "${context.tr('customer_tabName')}: ${permList[1]}",
-                                "${context.tr('product_tabName')}: ${permList[2]}",
-                                "${context.tr('leadsAppointment_tabName')}: ${permList[3]}",
-                                "${context.tr('payment_tabName')}: ${permList[4]}",
-                                "${context.tr('setting')}: ${permList[5]}",
-                              ].map((e) => Chip(label: text3(e))).toList(),
-                            ),
-                          ),
+
+                        Member newMember = Member(
+                          id: -1,
+                          name: newName.text,
+                          phone: newPhone.text,
+                          account: newEmail.text,
+                          company: newCompany.text,
+                          jobTitle: newJobTitle.text,
+                          bankCode: newBankCode.text,
+                          bankAccount: newBankAccount.text,
+                          role: RoleDefault.guest.toRole(),
                         );
-                      },
-                    ),
-                    SizedBox(height: 1.h),
-                  ],
-                )
+
+                        if (memberExist(newMember)) {
+                          alertDialog(context, context.tr('error'), context.tr('userExist'), context.tr('ok'));
+                        } else {
+                          postMember(newMember, "").then((value) {
+                            if (value.isEmpty) {
+                              setState(() {
+                                newName.text = newPhone.text = newEmail.text = "";
+                                newCompany.text = newJobTitle.text = newBankCode.text = newBankAccount.text = "";
+                              });
+                            } else {
+                              alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                            }
+                          });
+                        }
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 1.w),
               ],
             ),
+            SizedBox(height: 1.h)
           ],
         ),
-      ),
+        ExpansionTile(
+          title: text3(context.tr('settingUserList')),
+          children: const [],
+        )
+      ],
+    );
+  }
+
+  Widget settingRole() {
+    return ExpansionTile(
+      title: text3(context.tr('settingRoleSetting'), isBold: true),
+      children: [
+        ExpansionTile(
+          title: text3(context.tr('settingRoleCreate')),
+          children: [
+            Row(
+              children: [
+                SizedBox(width: 1.w),
+                Expanded(child: Row(children: [text4("${context.tr('dashboard_tabName')} : "), editPerm(0)])),
+                SizedBox(width: 0.5.w),
+                Expanded(child: Row(children: [text4("${context.tr('customer_tabName')} : "), editPerm(1)])),
+                SizedBox(width: 0.5.w),
+                Expanded(child: Row(children: [text4("${context.tr('product_tabName')} : "), editPerm(2)])),
+                SizedBox(width: 1.w),
+              ],
+            ),
+            SizedBox(height: 1.h),
+            Row(
+              children: [
+                SizedBox(width: 1.w),
+                Expanded(child: Row(children: [text4('${context.tr('leadsAppointment_tabName')} : '), editPerm(3)])),
+                SizedBox(width: 0.5.w),
+                Expanded(child: Row(children: [text4('${context.tr('payment_tabName')} : '), editPerm(4)])),
+                SizedBox(width: 0.5.w),
+                Expanded(child: Row(children: [text4('${context.tr('setting')} : '), editPerm(5)])),
+                SizedBox(width: 1.w),
+              ],
+            ),
+            SizedBox(height: 1.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(width: 1.w),
+                Expanded(
+                  child: TextField(
+                    controller: newRoleName,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: const OutlineInputBorder(),
+                      labelText: context.tr('userRoleName'),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 0.5.w),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: uiStyle.roundCorner2,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.cleaning_services_rounded),
+                    tooltip: context.tr('clear'),
+                    onPressed: () {
+                      setState(() {
+                        newRoleName.text = "";
+                        newPerms = List.filled(ini.maxPerm, 0);
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 1.w),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: uiStyle.roundCorner2,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.save_alt),
+                    tooltip: context.tr('save'),
+                    onPressed: () {
+                      setState(() {
+                        if (newRoleName.text.isEmpty) {
+                          alertDialog(context, context.tr('error'), context.tr('emptyRole'), context.tr('ok'));
+                        } else {
+                          final newRole = RolePostRequest(
+                            name: newRoleName.text,
+                            permission: newPerms.fold(0, (previousValue, element) => previousValue * 10 + element),
+                          );
+
+                          roleExist(newRole).then((isExist) {
+                            if (isExist) {
+                              alertDialog(context, context.tr('error'), context.tr('roleExist'), context.tr('ok'));
+                            } else {
+                              postRole(newRole).then((value) {
+                                if (value.isEmpty) {
+                                  setState(() {
+                                    newRoleName.text = "";
+                                    newPerms = List.filled(ini.maxPerm, 0);
+                                  });
+                                } else {
+                                  alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                }
+                              });
+                            }
+                          });
+                        }
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(width: 1.w),
+              ],
+            ),
+            SizedBox(height: 1.h)
+          ],
+        ),
+        ExpansionTile(
+          title: text3(context.tr('settingRoleList')),
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: roleList.length,
+              itemBuilder: (context, index) {
+                String permText = roleList[index].permission.toString();
+                List<String> permList = List.filled(ini.maxPerm, "0");
+
+                for (var i = 0; i < ini.maxPerm; i++) {
+                  if (permText.length > i) {
+                    permList[i] = permText[i];
+                  }
+                }
+                return Container(
+                  margin: EdgeInsets.symmetric(vertical: 0.5.h, horizontal: 1.h),
+                  decoration: BoxDecoration(
+                    color: index % 2 == 0 ? Colors.white : Colors.grey[200],
+                    border: Border.all(color: Colors.black),
+                    borderRadius: uiStyle.roundCorner2,
+                  ),
+                  child: ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        text3(roleList[index].name),
+                        SizedBox(width: 1.w),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          tooltip: context.tr('delete'),
+                          onPressed: () {
+                            setState(() {
+                              deleteRole([roleList[index].id]).then((value) {
+                                if (value.isEmpty) {
+                                  fetchData().then((value) => setState(() {}));
+                                } else {
+                                  alertDialog(context, context.tr('error'), value, context.tr('ok'));
+                                }
+                              });
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    subtitle: Wrap(
+                      spacing: 5,
+                      runSpacing: 5,
+                      alignment: WrapAlignment.center,
+                      runAlignment: WrapAlignment.center,
+                      children: [
+                        "${context.tr('dashboard_tabName')}: ${permList[0]}",
+                        "${context.tr('customer_tabName')}: ${permList[1]}",
+                        "${context.tr('product_tabName')}: ${permList[2]}",
+                        "${context.tr('leadsAppointment_tabName')}: ${permList[3]}",
+                        "${context.tr('payment_tabName')}: ${permList[4]}",
+                        "${context.tr('setting')}: ${permList[5]}",
+                      ].map((e) => Chip(label: text3(e))).toList(),
+                    ),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 1.h),
+          ],
+        )
+      ],
     );
   }
 }

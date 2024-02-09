@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 // ##### Rooted Setting
 class InitSetting {
+  int maxPerm;
   Api api;
   String separator;
   String apiBase;
@@ -9,13 +10,15 @@ class InitSetting {
   DateTime timeStart;
   DateTime timeEnd;
   CacheName cacheName;
+  List<int> permModes;
+  List<Url> urls;
+  List<Lang> languages;
   List<String> transactionStatus;
   List<String> appointmentLeadStatus;
   List<String> commissionStatus;
-  List<Url> urls;
-  List<Lang> languages;
 
   InitSetting({
+    required this.maxPerm,
     required this.api,
     required this.separator,
     required this.apiBase,
@@ -28,6 +31,7 @@ class InitSetting {
     required this.appointmentLeadStatus,
     required this.commissionStatus,
     required this.languages,
+    required this.permModes,
   });
 }
 

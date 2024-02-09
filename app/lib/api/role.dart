@@ -1,13 +1,24 @@
 import '../config.dart';
-import '../object/member.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../object/role.dart';
 
-bool roleExist(newMember) {
-  return true;
+Future<bool> roleExist(RolePostRequest r) async {
+  if (r.name.isEmpty) {
+    return false;
+  }
+
+  await getRoleList().then((roleList) {
+    for (var role in roleList) {
+      if (role.name == r.name) {
+        return true;
+      }
+    }
+  });
+
+  return false;
 }
 
 Future<List<Role>> getRoleList() async {
@@ -26,14 +37,14 @@ Future<List<Role>> getRoleList() async {
   }
 }
 
-Future<String> postMember(Member m, String password) async {
+Future<String> postRole(RolePostRequest r) async {
   SharedPreferences cache = await SharedPreferences.getInstance();
 
   try {
     http.Response response = await http.post(
       Uri.parse(ini.apiServer + ini.api.member),
       headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8'},
-      body: jsonEncode(m.toJsonCreate()),
+      body: jsonEncode(r.toJson()),
     );
 
     return response.statusCode == 201 ? "" : response.body;

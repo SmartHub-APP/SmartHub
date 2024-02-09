@@ -13,11 +13,11 @@ type Role struct {
 var sqlRoleGet = `SELECT * FROM Role;`
 var sqlRolePOST = `
 INSERT INTO Role (Name, Permission)
-VALUES ('%s', '%s');
+VALUES ('%s', %s);
 `
 var sqlRolePUT = `
 UPDATE Role
-SET Name="%s", Permission="%s"
+SET Name="%s", Permission=%d
 WHERE ID="%d";
 `
 var sqlRoleDELETE = `DELETE FROM Role WHERE ID IN (%s);`
@@ -46,7 +46,7 @@ func (DB *SmartHubDB) RoleGET() ([]Role, string) {
 	return Roles, ""
 }
 
-func (DB *SmartHubDB) RolePOST(name, perm string) string {
+func (DB *SmartHubDB) RolePOST(name string, perm int) string {
 	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePOST, name, perm)); err != nil {
 		return "Query failed"
 	}
@@ -54,7 +54,7 @@ func (DB *SmartHubDB) RolePOST(name, perm string) string {
 	return ""
 }
 
-func (DB *SmartHubDB) RolePUT(name, perm string, id int) string {
+func (DB *SmartHubDB) RolePUT(name string, perm, id int) string {
 	if _, err := DB.ctl.Exec(fmt.Sprintf(sqlRolePUT, name, perm, id)); err != nil {
 		return "Query failed"
 	}
