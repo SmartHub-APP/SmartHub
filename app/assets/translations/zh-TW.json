@@ -13,6 +13,7 @@
   "settingUserCreate": "新建使用者",
   "settingUserAuthentication": "使用者授權",
   "settingRoleList": "角色清單",
+  "settingRoleExist": "角色已存在",
   "settingRoleSetting": "角色設定",
   "settingRoleCreate": "新建角色",
   "settingRoleName": "角色名稱",

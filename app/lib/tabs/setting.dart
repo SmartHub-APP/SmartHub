@@ -434,7 +434,7 @@ class _SettingDialogState extends State<SettingDialog> {
 
                           roleExist(newRole).then((isExist) {
                             if (isExist) {
-                              alertDialog(context, context.tr('error'), context.tr('roleExist'), context.tr('ok'));
+                              alertDialog(context, context.tr('error'), context.tr('settingRoleExist'), context.tr('ok'));
                             } else {
                               postRole(newRole).then((value) {
                                 if (value.isEmpty) {

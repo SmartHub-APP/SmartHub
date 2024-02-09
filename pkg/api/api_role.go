@@ -3,6 +3,7 @@ package api
 import (
 	SmartHubDatabase "SmartHub/pkg/database"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -56,6 +57,8 @@ func RouterRole(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *http.
 			}
 
 			trimName := strings.TrimSpace(Req.Name)
+
+			fmt.Println(trimName, Req.Perm)
 
 			if trimName == "" || Req.Perm < 0 {
 				http.Error(w, "Missed field", http.StatusBadRequest)

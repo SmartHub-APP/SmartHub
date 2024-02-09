@@ -13,6 +13,7 @@
   "settingUserCreate": "Create User",
   "settingUserAuthentication": "User Authentication",
   "settingRoleList": "Role list",
+  "settingRoleExist": "Role exist",
   "settingRoleSetting": "Role setting",
   "settingRoleCreate": "Create Role",
   "settingRoleName": "Role Name",

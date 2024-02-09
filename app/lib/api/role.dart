@@ -10,15 +10,18 @@ Future<bool> roleExist(RolePostRequest r) async {
     return false;
   }
 
+  bool ret = false;
+
   await getRoleList().then((roleList) {
     for (var role in roleList) {
       if (role.name == r.name) {
-        return true;
+        ret = true;
+        break;
       }
     }
   });
 
-  return false;
+  return ret;
 }
 
 Future<List<Role>> getRoleList() async {
