@@ -56,6 +56,9 @@ func (DB *SmartHubDB) GetStatistic(queryFrom, queryTo string) (Statistic, string
 		return StatisticData, msg
 	}
 
+	fmt.Println(queryFrom, queryTo)
+	fmt.Println(SubMonth(queryFrom), SubMonth(queryTo))
+
 	if monthRange, msg := DB.GetRangeData(SubMonth(queryFrom), SubMonth(queryTo)); msg == "" {
 		StatisticData.MonthRange = monthRange
 	} else {
@@ -70,11 +73,8 @@ func SubMonth(input string) string {
 	month, _ := strconv.Atoi(input[5:7])
 
 	if month == 1 {
-		return fmt.Sprintf("%4d-%s-%s", year-1, "12", input[7:])
+		return fmt.Sprintf("%4d-%s-%s", year-1, "12", input[8:])
 	}
 
-	fmt.Println("<" + input[:4] + ">" + "<" + input[5:7] + ">" + "<" + input[7:] + ">")
-	fmt.Println(fmt.Sprintf("%s-%02d-%s", input[:4], month-1, input[7:]))
-
-	return fmt.Sprintf("%s-%02d-%s", input[:4], month-1, input[7:])
+	return fmt.Sprintf("%s-%02d-%s", input[:4], month-1, input[8:])
 }
