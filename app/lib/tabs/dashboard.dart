@@ -1,12 +1,18 @@
 import '../config.dart';
 import '../api/transaction.dart';
-import '../object/plot.dart';
 import '../object/transaction.dart';
 import '../component/interaction.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
+
+class DataPoint {
+  final String x;
+  final double y;
+
+  DataPoint(this.x, this.y);
+}
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -16,44 +22,25 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  DateTimeRange selectRange = DateTimeRange(start: ini.timeStart, end: DateTime.now());
+  DateTimeRange selectRange = DateTimeRange(start: ini.timeEnd.subtract(Duration(days: ini.dayOfMonth)), end: ini.timeEnd);
+  List<Transaction> recentTransactions = [];
   List<DataPoint> pltData = [
-    DataPoint('1', 5),
-    DataPoint('2', 8),
-    DataPoint('3', 3),
-    DataPoint('4', 7),
-    DataPoint('5', 4),
-    DataPoint('6', 5),
-    DataPoint('7', 8),
-    DataPoint('8', 3),
-    DataPoint('9', 7),
-    DataPoint('10', 4),
+    DataPoint('Jan', 35),
+    DataPoint('Feb', 28),
+    DataPoint('Mar', 34),
+    DataPoint('Apr', 32),
+    DataPoint('May', 40),
+    DataPoint('Jun', 30),
+    DataPoint('Jul', 33),
+    DataPoint('Aug', 31),
+    DataPoint('Sep', 29),
+    DataPoint('Oct', 35),
+    DataPoint('Nov', 37),
+    DataPoint('Dec', 36),
   ];
 
-  List<Transaction> recentTransactions = [];
-
-  @override
-  void initState() {
-    getTransactionList(
-      TransactionGetRequest(
-        name: "",
-        projectName: "",
-        unit: "",
-        status: -1,
-        payStatus: -1,
-        saleDateStart: ini.timeStart.toString(),
-        saleDateEnd: DateTime.now().toString(),
-        launchDateStart: ini.timeStart.toString(),
-        launchDateEnd: DateTime.now().toString(),
-      ),
-    ).then((value) {
-      if (value != null) {
-        setState(() {
-          recentTransactions = value;
-        });
-      }
-    });
-    super.initState();
+  Future<bool> queryDate() async {
+    return true;
   }
 
   @override
@@ -62,79 +49,92 @@ class _DashboardState extends State<Dashboard> {
       builder: (context, orientation, screenType) {
         double sWidth = MediaQuery.of(context).size.width;
         bool isMobile = sWidth < 700;
-        return Scaffold(
-          body: Container(
-            margin: EdgeInsets.symmetric(horizontal: isMobile ? 2.w : 10.w, vertical: 2.h),
-            child: Center(
-              child: SizedBox(
-                width: 90.w,
-                height: 95.h,
-                child: Column(
-                  children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Container(
-                        width: 23.w,
-                        height: 5.h,
-                        alignment: Alignment.centerLeft,
-                        child: text2(context.tr('dashboard_overview'), color: Colors.black),
+        return FutureBuilder(
+          future: queryDate(),
+          builder: (context, snapshot) {
+            Widget viewPage = Container();
+            if (snapshot.hasData) {
+              viewPage = Scaffold(
+                body: Container(
+                  margin: EdgeInsets.symmetric(horizontal: isMobile ? 2.w : 10.w, vertical: 2.h),
+                  child: Center(
+                    child: SizedBox(
+                      width: 90.w,
+                      height: 95.h,
+                      child: Column(
+                        children: [
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                            Container(
+                              width: 23.w,
+                              height: 5.h,
+                              alignment: Alignment.centerLeft,
+                              child: text2(context.tr('dashboard_overview'), color: Colors.black),
+                            ),
+                            downloadForm()
+                          ]),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: statisticBlock(
+                                  context.tr('dashboard_totalRevenue'),
+                                  "+20.1% from last month",
+                                  "\$45,231.87",
+                                  const Icon(Icons.attach_money, color: Colors.black),
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              Expanded(
+                                flex: 1,
+                                child: statisticBlock(
+                                  context.tr('dashboard_avgPayment'),
+                                  "+7% from last month",
+                                  "+32,234",
+                                  const Icon(Icons.support_agent_outlined, color: Colors.black),
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              Expanded(
+                                flex: 1,
+                                child: statisticBlock(
+                                  context.tr('dashboard_conversionRate'),
+                                  "+6% from last month",
+                                  "36%",
+                                  const Icon(Icons.local_convenience_store_rounded, color: Colors.black),
+                                ),
+                              ),
+                              SizedBox(width: 2.w),
+                              Expanded(
+                                flex: 1,
+                                child: statisticBlock(
+                                  context.tr('dashboard_sales'),
+                                  "+19% from last month",
+                                  "+12,234",
+                                  const Icon(Icons.credit_card, color: Colors.black),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(flex: 6, child: plotBlock()),
+                              SizedBox(width: 2.w),
+                              Expanded(flex: 4, child: recentSales()),
+                            ],
+                          ),
+                        ],
                       ),
-                      downloadForm()
-                    ]),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: statisticBlock(
-                            context.tr('dashboard_totalRevenue'),
-                            "+20.1% from last month",
-                            "\$45,231.87",
-                            const Icon(Icons.attach_money, color: Colors.black),
-                          ),
-                        ),
-                        SizedBox(width: 2.w),
-                        Expanded(
-                          flex: 1,
-                          child: statisticBlock(
-                            context.tr('dashboard_avgPayment'),
-                            "+7% from last month",
-                            "+32,234",
-                            const Icon(Icons.support_agent_outlined, color: Colors.black),
-                          ),
-                        ),
-                        SizedBox(width: 2.w),
-                        Expanded(
-                          flex: 1,
-                          child: statisticBlock(
-                            context.tr('dashboard_conversionRate'),
-                            "+6% from last month",
-                            "36%",
-                            const Icon(Icons.local_convenience_store_rounded, color: Colors.black),
-                          ),
-                        ),
-                        SizedBox(width: 2.w),
-                        Expanded(
-                          flex: 1,
-                          child: statisticBlock(
-                            context.tr('dashboard_sales'),
-                            "+19% from last month",
-                            "+12,234",
-                            const Icon(Icons.credit_card, color: Colors.black),
-                          ),
-                        ),
-                      ],
                     ),
-                    Row(
-                      children: [
-                        Expanded(flex: 6, child: plotBlock()),
-                        SizedBox(width: 2.w),
-                        Expanded(flex: 4, child: recentSales()),
-                      ],
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
+              );
+            } else if (snapshot.hasError) {
+              viewPage = Center(child: Text('${context.tr("error")}\n${snapshot.error}'));
+            } else {
+              viewPage = loadingData();
+            }
+            return viewPage;
+          },
         );
       },
     );
@@ -347,6 +347,21 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
           const Expanded(flex: 1, child: SizedBox()),
+        ],
+      ),
+    );
+  }
+
+  Widget loadingData() {
+    return Container(
+      width: 60.w,
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          SizedBox(height: 5.h),
+          text3(context.tr('loading')),
         ],
       ),
     );
