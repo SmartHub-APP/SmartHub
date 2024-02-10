@@ -55,7 +55,12 @@ class _DashboardState extends State<Dashboard> {
       builder: (context, orientation, screenType) {
         double sWidth = MediaQuery.of(context).size.width;
         bool isMobile = sWidth < 700;
-        double percentTotalRevenue = statistic.monthRange.revenue == 0 ? 0 : statistic.queryRange.revenue / statistic.monthRange.revenue;
+        double diffTotalRevenuePercent = statistic.monthRange.revenue == 0 ? 0 : statistic.queryRange.revenue / statistic.monthRange.revenue;
+        double diffAvgCommissionValue = statistic.queryRange.commission - statistic.monthRange.commission;
+        double diffAvgCommissionPercent = statistic.monthRange.commission == 0 ? 0 : diffAvgCommissionValue / statistic.monthRange.commission;
+        double diffConvPercent = statistic.monthConv == 0 ? 0 : statistic.queryConv / statistic.monthConv;
+        int diffAmountValue = statistic.queryRange.amount - statistic.monthRange.amount;
+        double diffAmountPercent = statistic.monthRange.amount == 0 ? 0 : diffAmountValue / statistic.monthRange.amount;
         return Scaffold(
           body: Container(
             margin: EdgeInsets.symmetric(horizontal: isMobile ? 2.w : 10.w, vertical: 2.h),
@@ -85,7 +90,7 @@ class _DashboardState extends State<Dashboard> {
                             context.tr('dashboard_totalRevenue'),
                             sprintf(
                               context.tr('fromLastMonth'),
-                              [(percentTotalRevenue > 0 ? "+" : "") + (percentTotalRevenue * 100).toStringAsFixed(2)],
+                              [(diffTotalRevenuePercent >= 0 ? "+" : "") + (diffTotalRevenuePercent * 100).toStringAsFixed(2)],
                             ),
                             "\$${statistic.queryRange.revenue}",
                             const Icon(Icons.attach_money, color: Colors.black),
@@ -96,8 +101,11 @@ class _DashboardState extends State<Dashboard> {
                           flex: 1,
                           child: statisticBlock(
                             context.tr('dashboard_avgPayment'),
-                            "+7% from last month",
-                            "+32,234",
+                            sprintf(
+                              context.tr('fromLastMonth'),
+                              [(diffAvgCommissionPercent >= 0 ? "+" : "") + diffAvgCommissionPercent.toStringAsFixed(2)],
+                            ),
+                            (diffAvgCommissionValue >= 0 ? "+" : "") + diffAvgCommissionValue.toStringAsFixed(2),
                             const Icon(Icons.support_agent_outlined, color: Colors.black),
                           ),
                         ),
@@ -106,8 +114,11 @@ class _DashboardState extends State<Dashboard> {
                           flex: 1,
                           child: statisticBlock(
                             context.tr('dashboard_conversionRate'),
-                            "+6% from last month",
-                            "36%",
+                            sprintf(
+                              context.tr('fromLastMonth'),
+                              [(diffConvPercent >= 0 ? "+" : "") + diffConvPercent.toStringAsFixed(2)],
+                            ),
+                            "${(statistic.queryConv * 100).toStringAsFixed(2)}%",
                             const Icon(Icons.local_convenience_store_rounded, color: Colors.black),
                           ),
                         ),
@@ -116,8 +127,11 @@ class _DashboardState extends State<Dashboard> {
                           flex: 1,
                           child: statisticBlock(
                             context.tr('dashboard_sales'),
-                            "+19% from last month",
-                            "+12,234",
+                            sprintf(
+                              context.tr('fromLastMonth'),
+                              [(diffAmountPercent >= 0 ? "+" : "") + diffAmountPercent.toStringAsFixed(2)],
+                            ),
+                            "${diffAmountValue >= 0 ? "+" : ""}$diffAmountValue",
                             const Icon(Icons.credit_card, color: Colors.black),
                           ),
                         ),
@@ -248,13 +262,7 @@ class _DashboardState extends State<Dashboard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Expanded(flex: 1, child: SizedBox()),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
-              child: text3(context.tr('dashboard_overview'), isBold: true),
-            ),
-          ),
+          Expanded(flex: 1, child: text3(context.tr('dashboard_overview'), isBold: true)),
           const Expanded(flex: 1, child: SizedBox()),
           Expanded(
             flex: 16,

@@ -14,14 +14,22 @@ type FinancialData struct {
 	Commission float64 `json:"Commission"`
 }
 
+type TopData struct {
+	Price float64 `json:"Price"`
+	Name  string  `json:"Name"`
+	Email string  `json:"Email"`
+}
+
 type Statistic struct {
 	QueryConv   float64         `json:"QueryConv"`
 	MonthConv   float64         `json:"MonthConv"`
 	QueryRange  FinancialData   `json:"QueryRange"`
 	MonthRange  FinancialData   `json:"MonthRange"`
 	YearSummary []FinancialData `json:"YearSummary"`
+	RecentTrans []TopData       `json:"RecentTrans"`
 }
 
+var sqlTopTransaction = `SELECT Price, Client FROM Transaction ORDER BY SaleDate DESC LIMIT 10`
 var sqlSumAppointment = `SELECT Lead, Agent FROM Appointment WHERE AppointTime BETWEEN "%s" AND "%s";`
 var sqlSumTransaction = `SELECT Price, Commission FROM Transaction WHERE SaleDate BETWEEN "%s" AND "%s";`
 
@@ -98,6 +106,39 @@ func (DB *SmartHubDB) GetRangeTransaction(from, to string) (FinancialData, strin
 	return RangeData, ""
 }
 
+func (DB *SmartHubDB) GetTopTransaction() ([]TopData, string) {
+	var TopDataList []TopData
+
+	Hits, err := DB.ctl.Query(sqlTopTransaction)
+	if err != nil {
+		return TopDataList, "Query failed"
+	}
+	defer Hits.Close()
+
+	for Hits.Next() {
+		var price float64
+		var Client string
+
+		Hits.Scan(&price, &Client)
+
+		Clients, _ := DB.MemberGetByID(Client)
+
+		if len(Clients) > 0 {
+			TopDataList = append(
+				TopDataList,
+				TopData{Price: price, Name:  Clients[0].Name, Email: Clients[0].Account},
+			)
+		} else {
+			TopDataList = append(
+				TopDataList,
+				TopData{Price: price, Name: "N/A", Email: "N/A"}
+			)
+		}
+	}
+
+	return TopDataList, ""
+}
+
 func (DB *SmartHubDB) GetStatistic(queryFrom, queryTo string) (Statistic, string) {
 	var StatisticData Statistic
 
@@ -127,6 +168,12 @@ func (DB *SmartHubDB) GetStatistic(queryFrom, queryTo string) (Statistic, string
 
 	if monthRange, msg := DB.GetRangeTransaction(lastMonthStart, lastMonthEnd); msg == "" {
 		StatisticData.MonthRange = monthRange
+	} else {
+		return StatisticData, msg
+	}
+
+	if TopTrans, msg := DB.GetTopTransaction(); msg == "" {
+		StatisticData.RecentTrans = TopTrans
 	} else {
 		return StatisticData, msg
 	}
