@@ -56,7 +56,7 @@ func (DB *SmartHubDB) GetRangeAppointment(from, to string) (float64, string) {
 		totalAgent += numAgent
 	}
 
-	if totalAgent == 0 {
+	if totalAgent == 0 || totalLead == 0 {
 		return 0, ""
 	}
 
