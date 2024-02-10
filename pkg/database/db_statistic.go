@@ -121,7 +121,7 @@ func (DB *SmartHubDB) GetTopTransaction() ([]TopData, string) {
 		var Client string
 		var SaleDate string
 
-		Hits.Scan(&price, &Client)
+		Hits.Scan(&price, &Client, &SaleDate)
 
 		Clients, _ := DB.MemberGetByID(Client)
 
