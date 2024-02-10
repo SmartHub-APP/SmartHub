@@ -88,7 +88,12 @@ func (DB *SmartHubDB) GetRangeTransaction(from, to string) (FinancialData, strin
 	RangeData.From = from
 	RangeData.To = to
 	RangeData.Revenue = totalRevenue
-	RangeData.Commission = totalCommission / float64(count)
+
+	if count == 0 {
+		RangeData.Commission = 0
+	} else {
+		RangeData.Commission = totalCommission / float64(count)
+	}
 
 	return RangeData, ""
 }
