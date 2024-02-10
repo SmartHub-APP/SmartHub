@@ -35,6 +35,7 @@
   "upload": "Upload",
   "result": "result",
   "download": "Download",
+  "fromLastMonth": "%s%% from last month",
   "noStatistic": "No statistical data",
   "noDataSelect": "No data selected",
   "pagePast": "Previous page",

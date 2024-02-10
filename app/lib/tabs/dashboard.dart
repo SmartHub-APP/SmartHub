@@ -1,3 +1,5 @@
+import 'package:sprintf/sprintf.dart';
+
 import '../api/statistic.dart';
 import '../config.dart';
 import '../object/statistic.dart';
@@ -31,12 +33,16 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    queryStatistic();
+  }
+
+  queryStatistic() async {
     getStatistic(selectRange.start.toString(), selectRange.end.toString()).then((value) {
       statistic = value;
       statistic.yearSummary.sort((a, b) => a.from.compareTo(b.from));
       pltData = statistic.yearSummary
           .map(
-            (e) => DataPoint(e.from.length > 7 ? e.from.substring(0, 7).replaceAll("-", "\n") : e.from, e.revenue)
+            (e) => DataPoint(e.from.length > 7 ? e.from.substring(0, 7).replaceAll("-", "\n") : e.from, e.revenue),
           )
           .toList();
       setState(() {});
@@ -49,6 +55,7 @@ class _DashboardState extends State<Dashboard> {
       builder: (context, orientation, screenType) {
         double sWidth = MediaQuery.of(context).size.width;
         bool isMobile = sWidth < 700;
+        double percentTotalRevenue = statistic.monthRange.revenue == 0 ? 0 : statistic.queryRange.revenue / statistic.monthRange.revenue;
         return Scaffold(
           body: Container(
             margin: EdgeInsets.symmetric(horizontal: isMobile ? 2.w : 10.w, vertical: 2.h),
@@ -58,23 +65,29 @@ class _DashboardState extends State<Dashboard> {
                 height: 95.h,
                 child: Column(
                   children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Container(
-                        width: 23.w,
-                        height: 5.h,
-                        alignment: Alignment.centerLeft,
-                        child: text2(context.tr('dashboard_overview'), color: Colors.black),
-                      ),
-                      downloadForm()
-                    ]),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 23.w,
+                          height: 5.h,
+                          alignment: Alignment.centerLeft,
+                          child: text2(context.tr('dashboard_overview'), color: Colors.black),
+                        ),
+                        downloadForm()
+                      ],
+                    ),
                     Row(
                       children: [
                         Expanded(
                           flex: 1,
                           child: statisticBlock(
                             context.tr('dashboard_totalRevenue'),
-                            "+20.1% from last month",
-                            "\$45,231.87",
+                            sprintf(
+                              context.tr('fromLastMonth'),
+                              [(percentTotalRevenue > 0 ? "+" : "") + (percentTotalRevenue * 100).toStringAsFixed(2)],
+                            ),
+                            "\$${statistic.queryRange.revenue}",
                             const Icon(Icons.attach_money, color: Colors.black),
                           ),
                         ),
@@ -153,6 +166,7 @@ class _DashboardState extends State<Dashboard> {
               selectDateRange(context).then((value) {
                 setState(() {
                   selectRange = value;
+                  queryStatistic();
                 });
               });
             },
@@ -253,7 +267,6 @@ class _DashboardState extends State<Dashboard> {
                 edgeLabelPlacement: EdgeLabelPlacement.none,
               ),
               primaryYAxis: NumericAxis(
-                title: AxisTitle(text: '\$ (K)'),
                 axisLine: const AxisLine(width: 0),
                 majorGridLines: const MajorGridLines(width: 0),
                 majorTickLines: const MajorTickLines(size: 0),
@@ -334,21 +347,6 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
           const Expanded(flex: 1, child: SizedBox()),
-        ],
-      ),
-    );
-  }
-
-  Widget loadingData() {
-    return Container(
-      width: 60.w,
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          SizedBox(height: 5.h),
-          text3(context.tr('loading')),
         ],
       ),
     );
