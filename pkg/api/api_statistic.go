@@ -3,6 +3,7 @@ package api
 import (
 	SmartHubDatabase "SmartHub/pkg/database"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -31,6 +32,7 @@ func RouterStatistic(db SmartHubDatabase.SmartHubDB) func(http.ResponseWriter, *
 				http.Error(w, msg, http.StatusInternalServerError)
 				return
 			} else {
+				fmt.Println(RET)
 				jsonResponse, err := json.Marshal(RET)
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
