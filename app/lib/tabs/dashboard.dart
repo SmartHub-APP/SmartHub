@@ -1,8 +1,8 @@
 import '../api/statistic.dart';
 import '../config.dart';
 import '../object/statistic.dart';
-import '../object/transaction.dart';
 import '../component/interaction.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -25,18 +25,21 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   DateTimeRange selectRange = DateTimeRange(start: ini.timeEnd.subtract(Duration(days: ini.dayOfMonth)), end: ini.timeEnd);
   Statistic statistic = Statistic.zero();
-  List<Transaction> recentTransactions = [];
   List<DataPoint> pltData = [];
 
   @override
   void initState() {
     super.initState();
+    queryStatistic();
+  }
+
+  queryStatistic() async {
     getStatistic(selectRange.start.toString(), selectRange.end.toString()).then((value) {
       statistic = value;
       statistic.yearSummary.sort((a, b) => a.from.compareTo(b.from));
       pltData = statistic.yearSummary
           .map(
-            (e) => DataPoint(e.from.length > 7 ? e.from.substring(0, 7).replaceAll("-", "\n") : e.from, e.revenue)
+            (e) => DataPoint(e.from.length > 7 ? e.from.substring(0, 7).replaceAll("-", "\n") : e.from, e.revenue),
           )
           .toList();
       setState(() {});
@@ -49,6 +52,12 @@ class _DashboardState extends State<Dashboard> {
       builder: (context, orientation, screenType) {
         double sWidth = MediaQuery.of(context).size.width;
         bool isMobile = sWidth < 700;
+        double diffTotalRevenuePercent = statistic.monthRange.revenue == 0 ? 0 : statistic.queryRange.revenue / statistic.monthRange.revenue;
+        double diffAvgCommissionValue = statistic.queryRange.commission - statistic.monthRange.commission;
+        double diffAvgCommissionPercent = statistic.monthRange.commission == 0 ? 0 : diffAvgCommissionValue / statistic.monthRange.commission;
+        double diffConvPercent = statistic.monthConv == 0 ? 0 : statistic.queryConv / statistic.monthConv;
+        int diffAmountValue = statistic.queryRange.amount - statistic.monthRange.amount;
+        double diffAmountPercent = statistic.monthRange.amount == 0 ? 0 : diffAmountValue / statistic.monthRange.amount;
         return Scaffold(
           body: Container(
             margin: EdgeInsets.symmetric(horizontal: isMobile ? 2.w : 10.w, vertical: 2.h),
@@ -58,23 +67,29 @@ class _DashboardState extends State<Dashboard> {
                 height: 95.h,
                 child: Column(
                   children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                      Container(
-                        width: 23.w,
-                        height: 5.h,
-                        alignment: Alignment.centerLeft,
-                        child: text2(context.tr('dashboard_overview'), color: Colors.black),
-                      ),
-                      downloadForm()
-                    ]),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: 23.w,
+                          height: 5.h,
+                          alignment: Alignment.centerLeft,
+                          child: text2(context.tr('dashboard_overview'), color: Colors.black),
+                        ),
+                        downloadForm()
+                      ],
+                    ),
                     Row(
                       children: [
                         Expanded(
                           flex: 1,
                           child: statisticBlock(
                             context.tr('dashboard_totalRevenue'),
-                            "+20.1% from last month",
-                            "\$45,231.87",
+                            sprintf(
+                              context.tr('fromLastMonth'),
+                              [(diffTotalRevenuePercent >= 0 ? "+" : "") + (diffTotalRevenuePercent * 100).toStringAsFixed(2)],
+                            ),
+                            "\$${statistic.queryRange.revenue}",
                             const Icon(Icons.attach_money, color: Colors.black),
                           ),
                         ),
@@ -83,8 +98,11 @@ class _DashboardState extends State<Dashboard> {
                           flex: 1,
                           child: statisticBlock(
                             context.tr('dashboard_avgPayment'),
-                            "+7% from last month",
-                            "+32,234",
+                            sprintf(
+                              context.tr('fromLastMonth'),
+                              [(diffAvgCommissionPercent >= 0 ? "+" : "") + diffAvgCommissionPercent.toStringAsFixed(2)],
+                            ),
+                            (diffAvgCommissionValue >= 0 ? "+" : "") + diffAvgCommissionValue.toStringAsFixed(2),
                             const Icon(Icons.support_agent_outlined, color: Colors.black),
                           ),
                         ),
@@ -93,8 +111,11 @@ class _DashboardState extends State<Dashboard> {
                           flex: 1,
                           child: statisticBlock(
                             context.tr('dashboard_conversionRate'),
-                            "+6% from last month",
-                            "36%",
+                            sprintf(
+                              context.tr('fromLastMonth'),
+                              [(diffConvPercent >= 0 ? "+" : "") + diffConvPercent.toStringAsFixed(2)],
+                            ),
+                            "${(statistic.queryConv * 100).toStringAsFixed(2)}%",
                             const Icon(Icons.local_convenience_store_rounded, color: Colors.black),
                           ),
                         ),
@@ -103,8 +124,11 @@ class _DashboardState extends State<Dashboard> {
                           flex: 1,
                           child: statisticBlock(
                             context.tr('dashboard_sales'),
-                            "+19% from last month",
-                            "+12,234",
+                            sprintf(
+                              context.tr('fromLastMonth'),
+                              [(diffAmountPercent >= 0 ? "+" : "") + diffAmountPercent.toStringAsFixed(2)],
+                            ),
+                            "${diffAmountValue >= 0 ? "+" : ""}$diffAmountValue",
                             const Icon(Icons.credit_card, color: Colors.black),
                           ),
                         ),
@@ -153,6 +177,7 @@ class _DashboardState extends State<Dashboard> {
               selectDateRange(context).then((value) {
                 setState(() {
                   selectRange = value;
+                  queryStatistic();
                 });
               });
             },
@@ -234,13 +259,7 @@ class _DashboardState extends State<Dashboard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Expanded(flex: 1, child: SizedBox()),
-          Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 2.w),
-              child: text3(context.tr('dashboard_overview'), isBold: true),
-            ),
-          ),
+          Expanded(flex: 1, child: text3(context.tr('dashboard_overview'), isBold: true)),
           const Expanded(flex: 1, child: SizedBox()),
           Expanded(
             flex: 16,
@@ -253,7 +272,6 @@ class _DashboardState extends State<Dashboard> {
                 edgeLabelPlacement: EdgeLabelPlacement.none,
               ),
               primaryYAxis: NumericAxis(
-                title: AxisTitle(text: '\$ (K)'),
                 axisLine: const AxisLine(width: 0),
                 majorGridLines: const MajorGridLines(width: 0),
                 majorTickLines: const MajorTickLines(size: 0),
@@ -299,7 +317,7 @@ class _DashboardState extends State<Dashboard> {
             child: SingleChildScrollView(
               child: ListView.separated(
                 shrinkWrap: true,
-                itemCount: recentTransactions.length,
+                itemCount: statistic.recentTrans.length,
                 separatorBuilder: (BuildContext context, int index) {
                   return const Divider();
                 },
@@ -310,19 +328,19 @@ class _DashboardState extends State<Dashboard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              text4(recentTransactions[index].saleDate.toString().substring(0, 16)),
-                              text2("\$ ${recentTransactions[index].price}", isBold: true),
+                              text3(statistic.recentTrans[index].date, isBold: true),
+                              text2("\$ ${statistic.recentTrans[index].price}", isBold: true),
                             ],
                           ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              text3(recentTransactions[index].name),
-                              text3(recentTransactions[index].projectName),
+                              text3(statistic.recentTrans[index].name, isBold: true),
+                              text3(statistic.recentTrans[index].email),
                             ],
                           ),
                         ],
@@ -334,21 +352,6 @@ class _DashboardState extends State<Dashboard> {
             ),
           ),
           const Expanded(flex: 1, child: SizedBox()),
-        ],
-      ),
-    );
-  }
-
-  Widget loadingData() {
-    return Container(
-      width: 60.w,
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          SizedBox(height: 5.h),
-          text3(context.tr('loading')),
         ],
       ),
     );
