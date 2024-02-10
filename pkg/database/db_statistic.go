@@ -28,6 +28,7 @@ var sqlSumTransaction = `SELECT Price, Commission FROM Transaction WHERE SaleDat
 func (DB *SmartHubDB) GetRangeAppointment(from, to string) (float64, string) {
 	var totalLead, totalAgent float64
 
+	fmt.Println(fmt.Sprintf(sqlSumAppointment, from, to))
 	Hits, err := DB.ctl.Query(fmt.Sprintf(sqlSumAppointment, from, to))
 	if err != nil {
 		return 0, "Query failed"
