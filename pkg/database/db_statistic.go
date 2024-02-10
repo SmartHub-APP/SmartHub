@@ -126,12 +126,12 @@ func (DB *SmartHubDB) GetTopTransaction() ([]TopData, string) {
 		if len(Clients) > 0 {
 			TopDataList = append(
 				TopDataList,
-				TopData{Price: price, Name:  Clients[0].Name, Email: Clients[0].Account},
+				TopData{Price: price, Name: Clients[0].Name, Email: Clients[0].Account},
 			)
 		} else {
 			TopDataList = append(
 				TopDataList,
-				TopData{Price: price, Name: "N/A", Email: "N/A"}
+				TopData{Price: price, Name: "N/A", Email: "N/A"},
 			)
 		}
 	}
