@@ -24,7 +24,7 @@ class TopData {
         price: json["Price"] ?? 0,
         name: json["Name"] ?? "N/A",
         email: json["Email"] ?? "N/A",
-        date: json["Date"] ?? "N/A",
+        date: json["Time"] ?? "N/A",
       );
 }
 

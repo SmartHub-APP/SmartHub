@@ -327,7 +327,14 @@ class _DashboardState extends State<Dashboard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          text2("\$ ${statistic.recentTrans[index].price}", isBold: true),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              text3(statistic.recentTrans[index].date, isBold: true),
+                              text2("\$ ${statistic.recentTrans[index].price}", isBold: true),
+                            ],
+                          ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
