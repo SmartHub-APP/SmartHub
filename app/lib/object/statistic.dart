@@ -5,6 +5,29 @@ class DataPoint {
   DataPoint(this.x, this.y);
 }
 
+class TopData {
+  double price;
+  String name;
+  String email;
+  String date;
+
+  TopData({
+    required this.price,
+    required this.name,
+    required this.email,
+    required this.date,
+  });
+
+  factory TopData.zero() => TopData(price: 0, name: "N/A", email: "N/A", date: "N/A");
+
+  factory TopData.fromJson(Map<String, dynamic> json) => TopData(
+        price: json["Price"] ?? 0,
+        name: json["Name"] ?? "N/A",
+        email: json["Email"] ?? "N/A",
+        date: json["Date"] ?? "N/A",
+      );
+}
+
 class Financial {
   int amount;
   String from;
@@ -36,6 +59,7 @@ class Statistic {
   double monthConv;
   Financial queryRange;
   Financial monthRange;
+  List<TopData> recentTrans;
   List<Financial> yearSummary;
 
   Statistic({
@@ -43,6 +67,7 @@ class Statistic {
     required this.monthConv,
     required this.queryRange,
     required this.monthRange,
+    required this.recentTrans,
     required this.yearSummary,
   });
 
@@ -51,6 +76,7 @@ class Statistic {
         monthConv: 0,
         queryRange: Financial.zero(),
         monthRange: Financial.zero(),
+        recentTrans: List<TopData>.generate(5, (index) => TopData.zero()),
         yearSummary: List<Financial>.generate(12, (index) => Financial.zero()),
       );
 
@@ -59,6 +85,7 @@ class Statistic {
         monthConv: json["MonthConv"] ?? 0,
         queryRange: Financial.fromJson(json["QueryRange"]),
         monthRange: Financial.fromJson(json["MonthRange"]),
+        recentTrans: List<TopData>.from(json["RecentTrans"].map((x) => TopData.fromJson(x))),
         yearSummary: List<Financial>.from(json["YearSummary"].map((x) => Financial.fromJson(x))),
       );
 }

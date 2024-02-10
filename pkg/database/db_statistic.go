@@ -18,6 +18,7 @@ type TopData struct {
 	Price float64 `json:"Price"`
 	Name  string  `json:"Name"`
 	Email string  `json:"Email"`
+	Time  string  `json:"Time"`
 }
 
 type Statistic struct {
@@ -29,9 +30,9 @@ type Statistic struct {
 	RecentTrans []TopData       `json:"RecentTrans"`
 }
 
-var sqlTopTransaction = `SELECT Price, Client FROM Transaction ORDER BY SaleDate DESC LIMIT 10`
 var sqlSumAppointment = `SELECT Lead, Agent FROM Appointment WHERE AppointTime BETWEEN "%s" AND "%s";`
 var sqlSumTransaction = `SELECT Price, Commission FROM Transaction WHERE SaleDate BETWEEN "%s" AND "%s";`
+var sqlTopTransaction = `SELECT Price, Client, SaleDate FROM Transaction ORDER BY SaleDate DESC LIMIT 10`
 
 func (DB *SmartHubDB) GetRangeAppointment(from, to string) (float64, string) {
 	var totalLead, totalAgent float64
@@ -118,6 +119,7 @@ func (DB *SmartHubDB) GetTopTransaction() ([]TopData, string) {
 	for Hits.Next() {
 		var price float64
 		var Client string
+		var SaleDate string
 
 		Hits.Scan(&price, &Client)
 
@@ -126,12 +128,17 @@ func (DB *SmartHubDB) GetTopTransaction() ([]TopData, string) {
 		if len(Clients) > 0 {
 			TopDataList = append(
 				TopDataList,
-				TopData{Price: price, Name: Clients[0].Name, Email: Clients[0].Account},
+				TopData{
+					Price: price,
+					Name:  Clients[0].Name,
+					Email: Clients[0].Account,
+					Time:  SaleDate,
+				},
 			)
 		} else {
 			TopDataList = append(
 				TopDataList,
-				TopData{Price: price, Name: "N/A", Email: "N/A"},
+				TopData{Price: price, Name: "N/A", Email: "N/A", Time: SaleDate},
 			)
 		}
 	}

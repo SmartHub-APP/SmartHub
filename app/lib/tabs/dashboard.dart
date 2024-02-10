@@ -1,10 +1,8 @@
-import 'package:sprintf/sprintf.dart';
-
 import '../api/statistic.dart';
 import '../config.dart';
 import '../object/statistic.dart';
-import '../object/transaction.dart';
 import '../component/interaction.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -27,7 +25,6 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   DateTimeRange selectRange = DateTimeRange(start: ini.timeEnd.subtract(Duration(days: ini.dayOfMonth)), end: ini.timeEnd);
   Statistic statistic = Statistic.zero();
-  List<Transaction> recentTransactions = [];
   List<DataPoint> pltData = [];
 
   @override
@@ -320,7 +317,7 @@ class _DashboardState extends State<Dashboard> {
             child: SingleChildScrollView(
               child: ListView.separated(
                 shrinkWrap: true,
-                itemCount: recentTransactions.length,
+                itemCount: statistic.recentTrans.length,
                 separatorBuilder: (BuildContext context, int index) {
                   return const Divider();
                 },
@@ -330,20 +327,13 @@ class _DashboardState extends State<Dashboard> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              text4(recentTransactions[index].saleDate.toString().substring(0, 16)),
-                              text2("\$ ${recentTransactions[index].price}", isBold: true),
-                            ],
-                          ),
+                          text2("\$ ${statistic.recentTrans[index].price}", isBold: true),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              text3(recentTransactions[index].name),
-                              text3(recentTransactions[index].projectName),
+                              text3(statistic.recentTrans[index].name, isBold: true),
+                              text3(statistic.recentTrans[index].email),
                             ],
                           ),
                         ],
