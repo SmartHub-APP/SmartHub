@@ -62,9 +62,8 @@ func String2FileList(s string) []File {
 	}
 
 	for _, f := range strings.Split(s, ";") {
-		var F File
-		fmt.Sscanf(f, "%s,%s", &F.FileName, &F.HashCode)
-		Files = append(Files, F)
+		filePre := strings.Split(f, ",")
+		Files = append(Files, File{FileName: filePre[0], HashCode: filePre[1]})
 	}
 
 	return Files
