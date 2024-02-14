@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"strings"
 )
 
 type File struct {
@@ -51,4 +52,19 @@ func (DB *SmartHubDB) FileDELETE(HashCode string) string {
 	}
 
 	return ""
+}
+
+func String2FileList(s string) []File {
+	var Files []File
+
+	if s == "" {
+		return Files
+	}
+
+	for _, f := range strings.Split(s, ";") {
+		filePre := strings.Split(f, ",")
+		Files = append(Files, File{FileName: filePre[0], HashCode: filePre[1]})
+	}
+
+	return Files
 }

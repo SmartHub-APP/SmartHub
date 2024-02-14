@@ -24,6 +24,7 @@ type Transaction struct {
 	SaleDate    string  `json:"SaleDate"`
 	LaunchDate  string  `json:"LaunchDate"`
 	CreateTime  string  `json:"CreateTime"`
+	File        string  `json:"File"`
 }
 
 type TransactionGetRequest struct {
@@ -56,6 +57,7 @@ type TransactionGetResponse struct {
 	Agent       []MemberInfo `json:"Agent"`
 	SaleDate    string       `json:"SaleDate"`
 	LaunchDate  string       `json:"LaunchDate"`
+	File        []File       `json:"File"`
 }
 
 type TransactionPost struct {
@@ -97,7 +99,13 @@ type TransactionPut struct {
 	LaunchDate  string  `json:"LaunchDate"`
 }
 
-var sqlTransactionGet = `SELECT * FROM Transaction %s;`
+var sqlTransactionGet = `
+SELECT Transaction.*, GROUP_CONCAT(CONCAT(File.FileName, ',', File.HashCode) SEPARATOR ';') AS File
+FROM Transaction
+LEFT JOIN File ON Transaction.ID = File.TransactionID
+%s
+GROUP BY Transaction.ID;
+`
 var sqlTransactionPOST = `
 INSERT INTO Transaction (Name, ProjectName, Price, PriceSQFT, Commission,
 	Status, PayStatus, Unit, Location, Developer, Description, Appoint,
@@ -174,11 +182,13 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]TransactionGe
 			&R.SaleDate,
 			&R.LaunchDate,
 			&R.CreateTime,
+			&R.File,
 		)
 
 		Appoints, _ := DB.MemberGetByID(R.Appoint)
 		Clients, _ := DB.MemberGetByID(R.Client)
 		Agents, _ := DB.MemberGetByID(R.Agent)
+		FilesList := String2FileList(R.File)
 
 		Transactions = append(
 			Transactions,
@@ -200,6 +210,7 @@ func (DB *SmartHubDB) TransactionGET(req TransactionGetRequest) ([]TransactionGe
 				Agent:       Agents,
 				SaleDate:    R.SaleDate,
 				LaunchDate:  R.LaunchDate,
+				File:        FilesList,
 			},
 		)
 	}
