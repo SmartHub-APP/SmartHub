@@ -156,34 +156,28 @@ class _CustomerState extends State<Customer> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Expanded(
-                              child: SizedBox(
-                                height: 7.h,
-                                child: TextField(
-                                  controller: filterName,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
-                                    labelText: context.tr('customer_colName'),
-                                  ),
+                              child: TextField(
+                                controller: filterName,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                  labelText: context.tr('customer_colName'),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
-                              child: SizedBox(
-                                height: 7.h,
-                                child: TextField(
-                                  controller: filterUnit,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
-                                    labelText: context.tr('customer_colUnit'),
-                                  ),
+                              child: TextField(
+                                controller: filterUnit,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                  labelText: context.tr('customer_colUnit'),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
                               child: Container(
-                                height: 7.h,
+                                height: 6.5.h,
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: DropdownButton2(
                                   underline: const SizedBox(),
@@ -212,7 +206,7 @@ class _CustomerState extends State<Customer> {
                                   });
                                 },
                                 child: Container(
-                                  height: 7.h,
+                                  height: 6.5.h,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                   child: text3(
