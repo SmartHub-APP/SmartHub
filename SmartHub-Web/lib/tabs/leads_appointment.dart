@@ -1,28 +1,28 @@
 import '../config.dart';
-import '../api/transaction.dart';
-import '../object/transaction.dart';
-import '../component/payment.dart';
+import '../api/appointment.dart';
+import '../object/appointment.dart';
+import '../component/appointment.dart';
 import '../component/interaction.dart';
-import '../component/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:easy_localization/easy_localization.dart';
 
-class Payment extends StatefulWidget {
-  const Payment({super.key});
+class LeadsAppointment extends StatefulWidget {
+  const LeadsAppointment({super.key});
 
   @override
-  State<Payment> createState() => _PaymentState();
+  State<LeadsAppointment> createState() => _LeadsAppointmentState();
 }
 
-class _PaymentState extends State<Payment> {
+class _LeadsAppointmentState extends State<LeadsAppointment> {
   int colIndex = 0;
-  int searchPayStatus = 0;
+  int searchStatus = 0;
   bool sortAscend = true;
-  TextEditingController filterAgent = TextEditingController(text: "");
+  DateTimeRange searchRange = DateTimeRange(start: ini.timeStart, end: ini.timeEnd);
+  TextEditingController filterName = TextEditingController(text: "");
   TextEditingController filterProjectName = TextEditingController(text: "");
-  List<Transaction> transactions = [];
+  List<Appointment> leadAppointments = [];
 
   @override
   Widget build(BuildContext context) {
@@ -40,52 +40,69 @@ class _PaymentState extends State<Payment> {
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 7,
+                        flex: 10,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Expanded(
-                              child: SizedBox(
-                                height: 7.h,
-                                child: TextField(
-                                  controller: filterAgent,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
-                                    labelText: context.tr('payment_colAgent'),
-                                  ),
+                              child: TextField(
+                                controller: filterName,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                  labelText: context.tr('customer_colName'),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
-                              child: SizedBox(
-                                height: 7.h,
-                                child: TextField(
-                                  controller: filterProjectName,
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
-                                    labelText: context.tr('customer_colProject'),
-                                  ),
+                              child: TextField(
+                                controller: filterProjectName,
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(borderRadius: uiStyle.roundCorner2),
+                                  labelText: context.tr('customer_colProject'),
                                 ),
                               ),
                             ),
                             SizedBox(width: 1.w),
                             Expanded(
                               child: Container(
-                                height: 7.h,
+                                height: 6.5.h,
                                 decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
                                 child: DropdownButton2(
                                   underline: const SizedBox(),
                                   iconStyleData: const IconStyleData(icon: SizedBox()),
                                   hint: Text(context.tr('customer_selStatus')),
                                   buttonStyleData: const ButtonStyleData(padding: EdgeInsets.zero),
-                                  items: ini.commissionStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
+                                  items: ini.appointmentLeadStatus.map((item) => DropdownMenuItem(value: item, child: text3(item))).toList(),
                                   onChanged: (newValue) {
                                     setState(() {
-                                      searchPayStatus = ini.commissionStatus.indexWhere((element) => element == newValue);
+                                      searchStatus = ini.appointmentLeadStatus.indexWhere((element) => element == newValue);
                                     });
                                   },
-                                  value: ini.commissionStatus[searchPayStatus],
+                                  value: ini.appointmentLeadStatus[searchStatus],
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 1.w),
+                            Expanded(
+                              child: TextButton(
+                                style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                                onPressed: () {
+                                  selectDateRange(context).then((value) {
+                                    setState(() {
+                                      searchRange = value;
+                                    });
+                                  });
+                                },
+                                child: Container(
+                                  height: 7.h,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(border: Border.all(color: Colors.grey), borderRadius: uiStyle.roundCorner2),
+                                  child: text3(
+                                    "${searchRange.start.year}/${searchRange.start.month}/${searchRange.start.day} ~"
+                                    "${searchRange.end.year}/${searchRange.end.month}/${searchRange.end.day}",
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                             ),
@@ -107,11 +124,11 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.add),
                                 tooltip: context.tr('add'),
                                 onPressed: () {
-                                  transactionEdit(context, Transaction.create(), 3, true).then((value) {
+                                  appointmentData(context, Appointment.create(), true).then((value) {
                                     if (value != "") {
                                       alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }
-                                    searchTransaction();
+                                    searchAppoint();
                                   });
                                 },
                               ),
@@ -127,7 +144,7 @@ class _PaymentState extends State<Payment> {
                                 icon: const Icon(Icons.search),
                                 tooltip: context.tr('search'),
                                 onPressed: () {
-                                  searchTransaction();
+                                  searchAppoint();
                                 },
                               ),
                             ),
@@ -143,71 +160,11 @@ class _PaymentState extends State<Payment> {
                                 tooltip: context.tr('clear'),
                                 onPressed: () {
                                   setState(() {
-                                    searchPayStatus = 0;
-                                    filterAgent.text = '';
+                                    searchStatus = 0;
+                                    filterName.text = '';
                                     filterProjectName.text = '';
+                                    searchRange = DateTimeRange(start: ini.timeStart, end: ini.timeEnd);
                                   });
-                                },
-                              ),
-                            ),
-                            SizedBox(width: 1.w),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: uiStyle.roundCorner2,
-                              ),
-                              child: IconButton(
-                                icon: const Icon(Icons.payment_sharp),
-                                tooltip: context.tr('payment_make'),
-                                onPressed: () {
-                                  List<Transaction> selects = [];
-                                  for (var i in transactions) {
-                                    if (i.onSelect) {
-                                      selects.add(i);
-                                    }
-                                  }
-                                  if (selects.isNotEmpty) {
-                                    makePayment(context, selects).then((value) {
-                                      if (value) {
-                                        setState(() {
-                                          for (var i in selects) {
-                                            i.onSelect = false;
-                                            putTransaction(
-                                              TransactionPutRequest(
-                                                id: i.id,
-                                                name: i.name,
-                                                projectName: i.projectName,
-                                                status: i.status,
-                                                payStatus: 1,
-                                                unit: i.unit,
-                                                launchDate: i.launchDate.toString(),
-                                                saleDate: i.saleDate.toString(),
-                                                appoint: i.appoint.map((e) => e.id.toString()).toList().join(ini.separator),
-                                                price: i.price,
-                                                commission: i.commission,
-                                                agent: i.agent.map((e) => e.id.toString()).toList().join(ini.separator),
-                                                client: i.client.map((e) => e.id.toString()).toList().join(ini.separator),
-                                                description: i.description,
-                                                developer: i.developer,
-                                                documents: [],
-                                                //i.documents.map((e) => e.id.toString()).toList().join(ini.separator),
-                                                location: i.location,
-                                                priceSQFT: i.priceSQFT,
-                                              ),
-                                            ).then((value) {
-                                              if (value != "") {
-                                                alertDialog(context, context.tr('error'), value, context.tr('ok'));
-                                              }
-                                            });
-                                          }
-                                          searchTransaction();
-                                        });
-                                      }
-                                    });
-                                  } else {
-                                    alertDialog(context, context.tr('error'), context.tr('noDataSelect'), context.tr('ok'));
-                                  }
                                 },
                               ),
                             ),
@@ -223,7 +180,7 @@ class _PaymentState extends State<Payment> {
                                 tooltip: context.tr('delete'),
                                 onPressed: () {
                                   List<int> deletes = [];
-                                  for (var element in transactions) {
+                                  for (var element in leadAppointments) {
                                     if (element.onSelect) {
                                       deletes.add(element.id);
                                     }
@@ -232,11 +189,11 @@ class _PaymentState extends State<Payment> {
                                     alertDialog(context, context.tr('error'), context.tr('noDataSelect'), context.tr('ok'));
                                     return;
                                   }
-                                  deleteTransaction(deletes).then((value) {
+                                  deleteAppointment(deletes).then((value) {
                                     if (value != "") {
                                       alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                     }
-                                    searchTransaction();
+                                    searchAppoint();
                                   });
                                 },
                               ),
@@ -248,7 +205,7 @@ class _PaymentState extends State<Payment> {
                   ),
                 ),
                 Expanded(
-                  flex: 9,
+                  flex: 7,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -264,65 +221,45 @@ class _PaymentState extends State<Payment> {
                         showCheckboxColumn: true,
                         columns: [
                           DataColumn(
-                            label: text3(context.tr('payment_colPrice'), isBold: true),
+                            label: text3(context.tr('customer_colProject'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                transactions.sort((a, b) => direction ? a.price.compareTo(b.price) : b.price.compareTo(a.price));
+                                leadAppointments
+                                    .sort((a, b) => direction ? a.projectName.compareTo(b.projectName) : b.projectName.compareTo(a.projectName));
                               });
                             },
                           ),
                           DataColumn(
-                            label: text3(context.tr('payment_colStatus'), isBold: true),
+                            label: text3(context.tr('leadsAppointment_colStatus'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                transactions.sort((a, b) => direction ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
+                                leadAppointments.sort((a, b) => direction ? a.status.compareTo(b.status) : b.status.compareTo(a.status));
                               });
                             },
                           ),
                           DataColumn(
-                            label: text3(context.tr('payment_colSoldDate'), isBold: true),
+                            label: text3(context.tr('leadsAppointment_colTime'), isBold: true),
                             onSort: (int colID, bool direction) {
                               setState(() {
                                 colIndex = colID;
                                 sortAscend = direction;
-                                transactions.sort(
+                                leadAppointments.sort(
                                   (a, b) => direction
-                                      ? a.saleDate.toString().compareTo(b.saleDate.toString())
-                                      : b.saleDate.toString().compareTo(a.saleDate.toString()),
+                                      ? a.appointDate.toString().compareTo(b.appointDate.toString())
+                                      : b.appointDate.toString().compareTo(a.appointDate.toString()),
                                 );
                               });
                             },
                           ),
-                          DataColumn(label: text3(context.tr('payment_colAgent'), isBold: true)),
-                          DataColumn(
-                            label: text3(context.tr('payment_colPercent'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                transactions.sort((a, b) => direction ? a.commission.compareTo(b.commission) : b.commission.compareTo(a.commission));
-                              });
-                            },
-                          ),
-                          DataColumn(
-                            label: text3(context.tr('payment_colCommission'), isBold: true),
-                            onSort: (int colID, bool direction) {
-                              setState(() {
-                                colIndex = colID;
-                                sortAscend = direction;
-                                transactions.sort((a, b) => direction
-                                    ? (a.commission * a.price).compareTo(b.commission * b.price)
-                                    : (b.commission * b.price).compareTo(a.commission * a.price));
-                              });
-                            },
-                          ),
-                          DataColumn(label: text3(context.tr('edit'), isBold: true)),
+                          DataColumn(label: text3(context.tr('leadsAppointment_colLeads'), isBold: true)),
+                          DataColumn(label: text3(context.tr('leadsAppointment_colAgent'), isBold: true)),
+                          const DataColumn(label: SizedBox()),
                         ],
-                        rows: transactions.map((data) {
+                        rows: leadAppointments.map((data) {
                           return DataRow(
                             selected: data.onSelect,
                             onSelectChanged: (selected) {
@@ -331,19 +268,29 @@ class _PaymentState extends State<Payment> {
                               });
                             },
                             cells: [
-                              DataCell(text3("\$ ${data.price}")),
-                              DataCell(text3(ini.commissionStatus[data.payStatus])),
-                              DataCell(text3(data.saleDate.toString().substring(0, 16))),
-                              DataCell(Container(padding: const EdgeInsets.all(10), child: userShow(context, data.appoint))),
-                              DataCell(text3("${data.commission} %")),
-                              DataCell(text3((data.commission * data.price * 0.01).toStringAsFixed(3))),
+                              DataCell(text3(data.projectName)),
+                              DataCell(text3(ini.appointmentLeadStatus[data.status])),
+                              DataCell(text3(data.appointDate.toString().substring(0, 16))),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: userShow(context, data.lead),
+                                ),
+                              ),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: userShow(context, data.agent),
+                                ),
+                              ),
                               DataCell(
                                 IconButton(
                                   onPressed: () {
-                                    transactionEdit(context, data, 3, false).then((value) {
+                                    appointmentData(context, data, false).then((value) {
                                       if (value != "") {
                                         alertDialog(context, context.tr('error'), value, context.tr('ok'));
                                       }
+                                      searchAppoint();
                                     });
                                   },
                                   icon: const Icon(Icons.edit_note_outlined),
@@ -365,22 +312,26 @@ class _PaymentState extends State<Payment> {
     );
   }
 
-  searchTransaction() {
-    getTransactionList(
-      TransactionGetRequest(
-        name: "",
-        projectName: filterProjectName.text,
-        status: 0,
-        payStatus: searchPayStatus,
-        unit: "",
-        launchDateStart: "",
-        launchDateEnd: "",
-        saleDateStart: "",
-        saleDateEnd: "",
-      ),
+  searchAppoint() {
+    getAppointmentList(
+      DateTimeRange(start: ini.timeStart, end: ini.timeEnd) == searchRange
+          ? AppointmentGetRequest(
+              name: filterName.text,
+              projectName: filterProjectName.text,
+              status: searchStatus,
+              appointTimeStart: "",
+              appointTimeEnd: "",
+            )
+          : AppointmentGetRequest(
+              name: filterName.text,
+              projectName: filterProjectName.text,
+              status: searchStatus,
+              appointTimeStart: searchRange.start.toString(),
+              appointTimeEnd: searchRange.end.toString(),
+            ),
     ).then((value) {
       if (value != null) {
-        transactions = value;
+        leadAppointments = value;
       } else {
         alertDialog(context, context.tr('error'), context.tr('emptySearch'), context.tr('ok'));
       }

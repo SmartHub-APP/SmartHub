@@ -11,6 +11,14 @@ class Role {
         "Permission": permission,
       };
 
+  factory Role.guest() {
+    return Role(
+      id: 0,
+      name: "Guest",
+      permission: 0,
+    );
+  }
+
   factory Role.fromJson(Map<String, dynamic> json) {
     return Role(
       id: json["ID"] ?? 0,

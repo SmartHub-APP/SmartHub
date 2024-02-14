@@ -37,6 +37,21 @@ class Member {
         "JobTitle": jobTitle,
       };
 
+  factory Member.guest() {
+    return Member(
+      id: -1,
+      status: 1,
+      role: Role.guest(),
+      name: "Guest",
+      account: "N/A",
+      phone: "N/A",
+      bankCode: "N/A",
+      bankAccount: "N/A",
+      company: "N/A",
+      jobTitle: "N/A",
+    );
+  }
+
   factory Member.fromJson(Map<String, dynamic> json) {
     return Member(
       id: json["ID"] ?? -1,

@@ -338,7 +338,7 @@ class _SettingDialogState extends State<SettingDialog> {
                           jobTitle: newJobTitle.text,
                           bankCode: newBankCode.text,
                           bankAccount: newBankAccount.text,
-                          role: RoleDefault.guest.toRole(),
+                          role: Role.guest(),
                         );
 
                         if (memberExist(newMember)) {
