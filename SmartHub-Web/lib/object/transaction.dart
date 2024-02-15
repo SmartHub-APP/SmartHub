@@ -104,7 +104,7 @@ class Transaction {
       appoint: List<Member>.from(json["Appoint"].map((x) => Member.fromJson(x))),
       saleDate: DateTime.parse(json["SaleDate"] ?? ini.timeStart.toString()),
       launchDate: DateTime.parse(json["LaunchDate"] ?? ini.timeStart.toString()),
-      documents: [], //List<File>.from(json["Documents"].map((x) => File(fileName: x["FileName"], fileHash: x["FileHash"]))),
+      documents: json["File"] == null ? [] : List<File>.from(json["File"].map((x) => File(fileName: x["FileName"] ?? "N/A", fileHash: x["FileHash"] ?? "N/A"))),
     );
   }
 }
