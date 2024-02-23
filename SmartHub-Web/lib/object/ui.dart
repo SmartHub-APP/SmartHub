@@ -1,4 +1,3 @@
-import 'permission.dart';
 import 'package:flutter/material.dart';
 
 class Button {
@@ -30,28 +29,5 @@ class FrontStyle {
     required this.fontSize4,
     required this.roundCorner,
     required this.roundCorner2,
-  });
-}
-
-class SystemControl {
-  String systemName;
-  User user;
-  Widget icon;
-  TabPermission tabPermission;
-
-  SystemControl updateLogin(User newUser, TabPermission newPerm) {
-    return SystemControl(
-      systemName: systemName,
-      user: newUser,
-      icon: icon,
-      tabPermission: newPerm,
-    );
-  }
-
-  SystemControl({
-    required this.systemName,
-    required this.user,
-    required this.icon,
-    required this.tabPermission,
   });
 }

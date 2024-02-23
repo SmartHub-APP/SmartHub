@@ -1,3 +1,4 @@
+import 'permission.dart';
 import 'package:flutter/cupertino.dart';
 
 // ##### Rooted Setting
@@ -83,5 +84,28 @@ class CacheName {
     required this.account,
     required this.tokenAccess,
     required this.tokenRefresh,
+  });
+}
+
+class SystemControl {
+  String systemName;
+  User user;
+  Widget icon;
+  TabPermission tabPermission;
+
+  SystemControl updateLogin(User newUser, TabPermission newPerm) {
+    return SystemControl(
+      systemName: systemName,
+      user: newUser,
+      icon: icon,
+      tabPermission: newPerm,
+    );
+  }
+
+  SystemControl({
+    required this.systemName,
+    required this.user,
+    required this.icon,
+    required this.tabPermission,
   });
 }
