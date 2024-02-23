@@ -73,14 +73,14 @@ class Url {
 }
 
 class CacheName {
+  String name;
   String account;
-  String password;
   String tokenAccess;
   String tokenRefresh;
 
   CacheName({
+    required this.name,
     required this.account,
-    required this.password,
     required this.tokenAccess,
     required this.tokenRefresh,
   });
