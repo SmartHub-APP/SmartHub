@@ -1,11 +1,13 @@
-import '../object/role.dart';
 import 'member.dart';
 import 'interaction.dart';
 import '../config.dart';
+import '../api/file.dart';
 import '../api/transaction.dart';
+import '../object/role.dart';
 import '../object/file.dart';
 import '../object/member.dart';
 import '../object/transaction.dart';
+import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -24,10 +26,12 @@ Future<String> transactionEdit(BuildContext context, Transaction inputTrans, int
   TextEditingController editCommission = TextEditingController(text: inputTrans.commission.toString());
   TextEditingController editProjectName = TextEditingController(text: inputTrans.projectName);
   TextEditingController editDescription = TextEditingController(text: inputTrans.description);
+  List<File> documents = inputTrans.documents;
   List<Member> agents = inputTrans.agent;
   List<Member> clients = inputTrans.client;
   List<Member> appoint = inputTrans.appoint;
-  List<File> documents = inputTrans.documents;
+  List<MultipartFile> uploadFiles = [];
+
   await showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -221,7 +225,17 @@ Future<String> transactionEdit(BuildContext context, Transaction inputTrans, int
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 text3("${context.tr('customer_colDocument')} : "),
-                                IconButton(icon: const Icon(Icons.upload_file), onPressed: () {}),
+                                IconButton(
+                                  icon: const Icon(Icons.upload_file),
+                                  onPressed: () async {
+                                    uploadFile().then((value) {
+                                      if (value != null) {
+                                        uploadFiles.add(value);
+                                        setState(() {});
+                                      }
+                                    });
+                                  },
+                                ),
                                 const SizedBox(width: 5),
                               ],
                             ),
